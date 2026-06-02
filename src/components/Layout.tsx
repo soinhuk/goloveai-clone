@@ -1,5 +1,4 @@
 import { Outlet } from 'react-router-dom'
-import Header from './Header'
 import Sidebar from './Sidebar'
 
 export default function Layout() {
@@ -9,8 +8,7 @@ export default function Layout() {
       <Sidebar className="hidden md:flex" />
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-h-screen">
-        <Header />
-        <main className="flex-1 pt-[88px]">
+        <main className="flex-1 ml-[85px]">
           <Outlet />
         </main>
       </div>

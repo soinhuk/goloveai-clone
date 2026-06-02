@@ -1,264 +1,413 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
-import { ChevronDown, Play, Sparkles, Users, Mic, Heart, Shield, Zap, Star, MessageSquare, ArrowRight, Check } from 'lucide-react'
+import { ChevronRight, ChevronLeft, Sparkles, User, Palette, Heart, Mic, Briefcase, Coffee, Users, Eye } from 'lucide-react'
 
-const GENDERS = ['Female', 'Trans']
-const STYLES = [
-  { id: 'realistic', label: 'Realistic', desc: 'Photorealistic characters with natural skin and lifelike details.' },
-  { id: 'anime', label: 'Anime', desc: 'Vibrant anime-inspired designs with bold colors and expressive eyes.' },
-]
-const STEPS = [
-  {
-    num: 1,
-    title: 'Design Her Look From Scratch',
-    desc: 'Go realistic or anime. Set her skin tone, eyes, hair, body type, and more.',
-    icon: '🎨',
-  },
-  {
-    num: 2,
-    title: 'Shape Her Into Someone Real',
-    desc: '40+ personality types, 19 voice options. Make her uniquely yours.',
-    icon: '✨',
-  },
-  {
-    num: 3,
-    title: 'Define What You Two Are',
-    desc: 'Set your relationship dynamic. Friends, partners, or something else.',
-    icon: '💜',
-  },
-]
-const FEATURES = [
-  { icon: Users, title: '40+ Personality Types', desc: 'Shy, bold, playful, or intense — design your own.' },
-  { icon: Mic, title: '19 Voice Options', desc: 'Soft, sweet, or sultry — pick what you love.' },
-  { icon: Heart, title: 'Fully Customizable', desc: 'Every detail shaped exactly as you want.' },
-  { icon: Zap, title: 'Instant Chat', desc: 'Start talking in under 2 minutes.' },
-]
-const FAQS = [
-  { q: 'Can I Create AI Girlfriend Free?', a: 'Yes — no card needed. Build her and start chatting right now.' },
-  { q: 'How do I Create Your AI Girlfriend from scratch?', a: 'Pick her look, set her personality, choose your dynamic. Done in under 2 minutes.' },
-  { q: 'Can I Create Girlfriend AI with a custom personality?', a: 'Absolutely. Choose from 40+ types or design her personality yourself.' },
-  { q: 'What makes this AI GF different from other chatbots?', a: 'She remembers your conversations, evolves with you, and feels genuinely personal.' },
-]
+// ========== STEP DATA ==========
+
+const GENDER_OPTIONS = ['Female', 'Trans']
+const STYLE_OPTIONS = ['Realistic', 'Anime']
+
+const ETHNICITY_OPTIONS = ['Caucasian', 'Asian', 'African', 'Latin', 'Indian', 'Middle Eastern', 'Mixed', 'Demon']
+
+const AGE_OPTIONS = ['18-22', '23-26', '27-30', '31-35', '36-40', '41+']
+
+const EYE_COLOR_OPTIONS = ['Brown', 'Blue', 'Green', 'Hazel', 'Gray', 'Amber', 'Red', 'Purple', 'Black', 'Heterochromia']
+
+const HAIR_COLOR_OPTIONS = ['Black', 'Brown', 'Blonde', 'Red', 'Pink', 'Blue', 'Purple', 'White', 'Gray', 'Rainbow']
+
+const HAIR_STYLE_OPTIONS = ['Long', 'Short', 'Medium', 'Curly', 'Straight', 'Wavy', 'Ponytail', 'Braids', 'Bun', 'Bald']
+
+const BODY_TYPE_OPTIONS = ['Slim', 'Athletic', 'Average', 'Curvy', 'Plump', 'Petite']
+
+const BREAST_SIZE_OPTIONS = ['Small', 'Medium', 'Large', 'Extra Large']
+
+const BUTT_SIZE_OPTIONS = ['Small', 'Medium', 'Large', 'Extra Large']
+
+const PERSONALITY_OPTIONS = ['Shy', 'Bold', 'Playful', 'Mysterious', 'Sweet', 'Sensual', 'Intellectual', 'Adventurous', 'Caring', 'Dominant', 'Submissive', 'Yandere']
+
+const VOICE_OPTIONS = ['Sweet', 'Mature', 'Young', 'Senpai', 'Tsundere', 'Mommy', 'Girl Next Door', 'Queen', 'Professional', 'Seductive']
+
+const OCCUPATION_OPTIONS = ['Student', 'Office Worker', 'Model', 'Nurse', 'Teacher', 'Artist', 'Streamer', 'Chef', 'Athlete', 'Doctor', 'Lawyer', 'Influencer', 'None']
+
+const RELATIONSHIP_OPTIONS = ['Girlfriend', 'Wife', 'Hookup', 'Friend', 'Sister', 'Mentee', 'Daughter', 'Colleague']
+
+const HOBBY_OPTIONS = ['Gaming', 'Reading', 'Music', 'Anime', 'Cooking', 'Sports', 'Art', 'Dancing', 'Travel', 'Photography', 'Fashion', 'Movies']
+
+const FETISH_OPTIONS = ['None', 'Cosplay', 'Uniform', 'Lingerie', 'Foot', 'Yuri', 'Futanari', 'Big Ass', 'Small Breasts', 'Petite', 'Tall', 'Muscle']
+
+// ========== COMPONENTS ==========
+
+function StepIndicator({ currentStep, totalSteps }: { currentStep: number, totalSteps: number }) {
+  return (
+    <div className="flex items-center justify-center gap-3 mb-8">
+      {Array.from({ length: totalSteps }).map((_, i) => (
+        <div key={i} className="relative">
+          <div
+            className={`w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold transition-all ${
+              i < currentStep
+                ? 'bg-gradient-to-br from-[#d05bf8] to-[#ff18a0] text-white'
+                : i === currentStep
+                ? 'bg-white/[15%] text-white border-2 border-[#d05bf8]'
+                : 'bg-white/[5%] text-white/30'
+            }`}
+          >
+            {i < currentStep ? (
+              <Sparkles size={16} />
+            ) : (
+              <span>{i + 1}</span>
+            )}
+          </div>
+          {/* Connector line */}
+          {i < totalSteps - 1 && (
+            <div className={`absolute top-1/2 -right-3 w-6 h-[2px] ${
+              i < currentStep ? 'bg-gradient-to-r from-[#d05bf8] to-[#ff18a0]' : 'bg-white/[10%]'
+            }`} />
+          )}
+        </div>
+      ))}
+    </div>
+  )
+}
+
+function OptionGrid({ options, selected, onSelect, columns = 4 }: { options: string[], selected: string, onSelect: (v: string) => void, columns?: number }) {
+  return (
+    <div className={`grid gap-2`} style={{ gridTemplateColumns: `repeat(${columns}, 1fr)` }}>
+      {options.map(opt => (
+        <button
+          key={opt}
+          onClick={() => onSelect(opt)}
+          className={`px-4 py-3 rounded-xl text-sm font-medium transition-all ${
+            selected === opt
+              ? 'bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] text-white'
+              : 'bg-white/[4%] text-white/60 hover:bg-white/[8%] hover:text-white'
+          }`}
+        >
+          {opt}
+        </button>
+      ))}
+    </div>
+  )
+}
+
+function SectionTitle({ icon: Icon, title, subtitle }: { icon: any, title: string, subtitle?: string }) {
+  return (
+    <div className="mb-6">
+      <div className="flex items-center gap-3 mb-2">
+        <div className="size-10 rounded-xl bg-gradient-to-br from-[#d05bf8]/20 to-[#ff18a0]/20 flex items-center justify-center">
+          <Icon size={20} className="text-gl-pink" />
+        </div>
+        <h3 className="text-white text-lg font-semibold">{title}</h3>
+      </div>
+      {subtitle && <p className="text-white/40 text-sm ml-[52px]">{subtitle}</p>}
+    </div>
+  )
+}
+
+// ========== MAIN COMPONENT ==========
 
 export default function Create() {
-  const [gender, setGender] = useState('Female')
-  const [style, setStyle] = useState('realistic')
-  const [expandedFaq, setExpandedFaq] = useState<number | null>(null)
-  const [hoveredStep, setHoveredStep] = useState<number | null>(null)
-
+  const [step, setStep] = useState(0)
+  const [gender, setGender] = useState('')
+  const [style, setStyle] = useState('')
+  
+  // Step 2
+  const [ethnicity, setEthnicity] = useState('')
+  const [age, setAge] = useState('')
+  
+  // Step 3
+  const [eyeColor, setEyeColor] = useState('')
+  const [hairColor, setHairColor] = useState('')
+  const [hairStyle, setHairStyle] = useState('')
+  
+  // Step 4
+  const [bodyType, setBodyType] = useState('')
+  const [breastSize, setBreastSize] = useState('')
+  const [buttSize, setButtSize] = useState('')
+  
+  // Step 5
+  const [charName, setCharName] = useState('')
+  const [personality, setPersonality] = useState<string[]>([])
+  const [voice, setVoice] = useState('')
+  const [occupation, setOccupation] = useState('')
+  const [relationship, setRelationship] = useState('')
+  const [hobby, setHobby] = useState('')
+  const [fetish, setFetish] = useState('')
+  
+  const totalSteps = 5
+  
+  const canContinue = () => {
+    switch (step) {
+      case 0: return gender && style
+      case 1: return ethnicity && age
+      case 2: return eyeColor && hairColor && hairStyle
+      case 3: return bodyType && breastSize && buttSize
+      case 4: return charName && personality.length > 0 && voice && relationship
+      default: return false
+    }
+  }
+  
+  const nextStep = () => {
+    if (step < totalSteps - 1 && canContinue()) {
+      setStep(step + 1)
+    }
+  }
+  
+  const prevStep = () => {
+    if (step > 0) setStep(step - 1)
+  }
+  
+  const togglePersonality = (p: string) => {
+    if (personality.includes(p)) {
+      setPersonality(personality.filter(x => x !== p))
+    } else if (personality.length < 3) {
+      setPersonality([...personality, p])
+    }
+  }
+  
+  const handleCreate = () => {
+    const charData = {
+      name: charName,
+      gender,
+      style,
+      ethnicity,
+      age,
+      eyeColor,
+      hairColor,
+      hairStyle,
+      bodyType,
+      breastSize,
+      buttSize,
+      personality,
+      voice,
+      occupation,
+      relationship,
+      hobby,
+      fetish
+    }
+    console.log('Creating character:', charData)
+    alert(`Character "${charName}" created! Check console for full data.`)
+  }
+  
   return (
     <div className="min-h-screen bg-gl-dark">
-      {/* ======== HERO SECTION ======== */}
-      <section className="relative min-h-[520px] flex flex-col items-center justify-center px-4 overflow-hidden">
-        {/* Background Glow */}
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <div className="w-[600px] h-[600px] rounded-full bg-gradient-to-br from-[#d05bf8]/10 via-[#ff18a0]/5 to-transparent blur-[120px]" />
+      {/* Top Bar */}
+      <div className="border-b border-white/[5%] px-6 py-4">
+        <div className="max-w-[720px] mx-auto">
+          <h1 className="text-white font-bold text-xl">Create Your AI Dream GF</h1>
         </div>
-
-        {/* Content */}
-        <div className="relative z-10 text-center max-w-2xl mx-auto">
-          {/* Logo area */}
-          <div className="flex items-center justify-center gap-2 mb-8">
-            <img
-              src="https://goloveai.com/logo_gradient_simple.svg"
-              alt="GoLove"
-              className="h-8"
-              onError={e => { (e.target as HTMLImageElement).style.display = 'none' }}
-            />
-          </div>
-
-          <h1 className="text-4xl desktop:text-5xl font-bold text-white mb-4 leading-tight">
-            Create Your <span className="gradient-text">AI Dream GF</span>
-          </h1>
-          <p className="text-white/60 text-lg mb-10">
-            Start for free — shape every detail, and chat instantly.
-          </p>
-
-          {/* Gender Selection */}
-          <div className="flex justify-center gap-3 mb-6">
-            {GENDERS.map(g => (
-              <button
-                key={g}
-                onClick={() => setGender(g)}
-                className={`px-8 py-3.5 rounded-full text-sm font-semibold transition-all ${
-                  gender === g
-                    ? 'bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] text-white shadow-lg'
-                    : 'bg-white/[8%] text-white/60 hover:bg-white/[12%] hover:text-white'
-                }`}
-              >
-                {g}
-              </button>
-            ))}
-          </div>
-
-          {/* Style Selection */}
-          <div className="flex justify-center gap-3 mb-10">
-            {STYLES.map(s => (
-              <button
-                key={s.id}
-                onClick={() => setStyle(s.id)}
-                className={`px-6 py-3 rounded-full text-sm font-medium transition-all flex items-center gap-2 ${
-                  style === s.id
-                    ? 'bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] text-white shadow-lg'
-                    : 'bg-white/[8%] text-white/60 hover:bg-white/[12%] hover:text-white'
-                }`}
-              >
-                {s.id === 'realistic' ? '📷' : '🎨'} {s.label}
-              </button>
-            ))}
-          </div>
-
-          {/* Style Preview Video/Image */}
-          <div className="relative rounded-3xl overflow-hidden mb-10 bg-black/40 aspect-video max-w-xl mx-auto">
-            <img
-              src={style === 'realistic'
-                ? 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=800&q=80'
-                : 'https://images.unsplash.com/photo-1578632767115-351597cf2477?w=800&q=80'
-              }
-              alt={`${style} preview`}
-              className="w-full h-full object-cover opacity-80"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-            <div className="absolute bottom-4 left-4 right-4">
-              <p className="text-white text-sm font-medium">
-                {style === 'realistic' ? 'Realistic AI Girlfriend' : 'Anime Style Girlfriend'}
-              </p>
+      </div>
+      
+      {/* Content */}
+      <div className="max-w-[720px] mx-auto px-4 py-8">
+        <StepIndicator currentStep={step} totalSteps={totalSteps} />
+        
+        {/* STEP 0: Gender + Style */}
+        {step === 0 && (
+          <div className="space-y-8 animate-fade-in">
+            {/* Gender */}
+            <div>
+              <h2 className="text-white/60 text-sm font-medium mb-3">Choose Gender</h2>
+              <div className="flex gap-3">
+                {GENDER_OPTIONS.map(g => (
+                  <button
+                    key={g}
+                    onClick={() => setGender(g)}
+                    className={`px-6 py-3 rounded-xl font-medium transition-all ${
+                      gender === g
+                        ? 'bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] text-white'
+                        : 'bg-white/[4%] text-white/60 hover:bg-white/[8%]'
+                    }`}
+                  >
+                    {g}
+                  </button>
+                ))}
+              </div>
             </div>
-            <button className="absolute inset-0 flex items-center justify-center group">
-              <div className="size-16 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center group-hover:scale-110 transition-transform">
-                <Play size={24} className="text-white ml-1" />
+            
+            {/* Style */}
+            <div>
+              <h2 className="text-white/60 text-sm font-medium mb-3">Choose Style</h2>
+              <div className="grid grid-cols-2 gap-4">
+                {STYLE_OPTIONS.map(s => (
+                  <button
+                    key={s}
+                    onClick={() => setStyle(s)}
+                    className={`relative overflow-hidden rounded-2xl transition-all ${
+                      style === s ? 'ring-2 ring-[#d05bf8]' : 'hover:ring-1 hover:ring-white/20'
+                    }`}
+                    style={{ aspectRatio: '1/1.33' }}
+                  >
+                    <div className={`absolute inset-0 ${
+                      s === 'Realistic'
+                        ? 'bg-gradient-to-br from-[#8B7355] to-[#D4A574]'
+                        : 'bg-gradient-to-br from-[#FF69B4] to-[#9370DB]'
+                    }`} />
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <span className="text-white text-xl font-bold">{s}</span>
+                    </div>
+                    {style === s && (
+                      <div className="absolute top-3 right-3 size-6 rounded-full bg-white/20 flex items-center justify-center">
+                        <div className="size-3 rounded-full bg-white" />
+                      </div>
+                    )}
+                  </button>
+                ))}
               </div>
-            </button>
-          </div>
-
-          {/* CTA Buttons */}
-          <div className="flex justify-center gap-3">
-            <button className="btn-pink rounded-full px-8 py-4 text-sm font-bold flex items-center gap-2">
-              <Sparkles size={16} />
-              Design AI
-              <span className="ml-1 px-2 py-0.5 bg-white/20 rounded-full text-xs">New</span>
-            </button>
-            <button className="px-8 py-4 rounded-full bg-white/[8%] text-white text-sm font-semibold hover:bg-white/[12%] transition-all flex items-center gap-2">
-              Continue
-              <ArrowRight size={16} />
-            </button>
-          </div>
-        </div>
-      </section>
-
-      {/* ======== HOW IT WORKS - 3 STEPS ======== */}
-      <section className="px-8 desktop:px-16 py-16">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-2xl desktop:text-3xl font-bold text-white mb-2">
-              How to Create Your AI Girlfriend <br />in 3 Steps
-            </h2>
-            <p className="text-white/50">Simple. Fast. Completely yours.</p>
-          </div>
-
-          <div className="grid grid-cols-1 desktop:grid-cols-3 gap-6">
-            {STEPS.map(step => (
-              <div
-                key={step.num}
-                className="relative p-6 rounded-3xl bg-white/[3%] border border-white/[5%] hover:border-[#d05bf8]/30 transition-all group"
-                onMouseEnter={() => setHoveredStep(step.num)}
-                onMouseLeave={() => setHoveredStep(null)}
-              >
-                <div className="text-4xl mb-4">{step.icon}</div>
-                <div className="flex items-center gap-3 mb-3">
-                  <span className="size-7 rounded-full bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] text-white text-sm font-bold flex items-center justify-center">
-                    {step.num}
-                  </span>
-                  <h3 className="text-white font-semibold text-base">{step.title}</h3>
-                </div>
-                <p className="text-white/50 text-sm leading-relaxed">{step.desc}</p>
-                {hoveredStep === step.num && (
-                  <div className="absolute top-4 right-4">
-                    <ArrowRight size={16} className="text-[#d05bf8]" />
+            </div>
+            
+            {/* 3 Steps Guide */}
+            <div className="bg-white/[2%] rounded-2xl p-6 border border-white/[5%]">
+              <h3 className="text-white font-semibold mb-4">How to Create Your AI Girlfriend in 3 Steps</h3>
+              <div className="space-y-4">
+                <div className="flex items-start gap-3">
+                  <div className="size-8 rounded-full bg-[#d05bf8]/20 flex items-center justify-center shrink-0">
+                    <span className="text-gl-pink text-sm font-bold">1</span>
                   </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ======== FEATURES ======== */}
-      <section className="px-8 desktop:px-16 py-16 bg-gradient-to-b from-transparent via-[#d05bf8]/[2%] to-transparent">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-2xl desktop:text-3xl font-bold text-white mb-2">
-              Everything You Need
-            </h2>
-            <p className="text-white/50">Premium features, unlimited possibilities.</p>
-          </div>
-
-          <div className="grid grid-cols-2 desktop:grid-cols-4 gap-4">
-            {FEATURES.map(({ icon: Icon, title, desc }) => (
-              <div key={title} className="p-5 rounded-2xl bg-white/[3%] border border-white/[5%] text-center">
-                <div className="size-12 rounded-2xl bg-gradient-to-br from-[#d05bf8]/20 to-[#ff18a0]/20 flex items-center justify-center mx-auto mb-4">
-                  <Icon size={22} className="text-gl-pink" />
+                  <div>
+                    <h4 className="text-white font-medium">Design Her Look From Scratch</h4>
+                    <p className="text-white/40 text-sm mt-1">Go realistic or anime. Set her skin tone, eyes, hair, body type, and more.</p>
+                  </div>
                 </div>
-                <h3 className="text-white font-semibold text-sm mb-1">{title}</h3>
-                <p className="text-white/40 text-xs">{desc}</p>
+                <div className="flex items-start gap-3">
+                  <div className="size-8 rounded-full bg-[#d05bf8]/20 flex items-center justify-center shrink-0">
+                    <span className="text-gl-pink text-sm font-bold">2</span>
+                  </div>
+                  <div>
+                    <h4 className="text-white font-medium">Shape Her Into Someone Real</h4>
+                    <p className="text-white/40 text-sm mt-1">Create AI Girlfriend with 40+ personality types or build one from scratch.</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="size-8 rounded-full bg-[#d05bf8]/20 flex items-center justify-center shrink-0">
+                    <span className="text-gl-pink text-sm font-bold">3</span>
+                  </div>
+                  <div>
+                    <h4 className="text-white font-medium">Define What You Two Are</h4>
+                    <p className="text-white/40 text-sm mt-1">Choose your relationship dynamic, shared hobbies, and intimate preferences.</p>
+                  </div>
+                </div>
               </div>
-            ))}
+            </div>
           </div>
-        </div>
-      </section>
-
-      {/* ======== FAQ ======== */}
-      <section className="px-8 desktop:px-16 py-16">
-        <div className="max-w-2xl mx-auto">
-          <div className="text-center mb-10">
-            <h2 className="text-2xl font-bold text-white mb-2">Frequently Asked Questions</h2>
+        )}
+        
+        {/* STEP 1: Ethnicity + Age */}
+        {step === 1 && (
+          <div className="space-y-8 animate-fade-in">
+            <SectionTitle icon={Users} title="Ethnicity" subtitle="Choose her ethnic background" />
+            <OptionGrid options={ETHNICITY_OPTIONS} selected={ethnicity} onSelect={setEthnicity} columns={4} />
+            
+            <SectionTitle icon={Heart} title="Age" subtitle="Select age range" />
+            <OptionGrid options={AGE_OPTIONS} selected={age} onSelect={setAge} columns={3} />
           </div>
-
-          <div className="space-y-3">
-            {FAQS.map((faq, idx) => (
-              <div
-                key={idx}
-                className="rounded-2xl bg-white/[3%] border border-white/[5%] overflow-hidden"
-              >
+        )}
+        
+        {/* STEP 2: Eye/Hair */}
+        {step === 2 && (
+          <div className="space-y-8 animate-fade-in">
+            <SectionTitle icon={Eye} title="Eye Color" subtitle="Her eye color" />
+            <OptionGrid options={EYE_COLOR_OPTIONS} selected={eyeColor} onSelect={setEyeColor} columns={5} />
+            
+            <SectionTitle icon={Palette} title="Hair Color" subtitle="Her hair color" />
+            <OptionGrid options={HAIR_COLOR_OPTIONS} selected={hairColor} onSelect={setHairColor} columns={5} />
+            
+            <SectionTitle icon={Sparkles} title="Hair Style" subtitle="Her hairstyle" />
+            <OptionGrid options={HAIR_STYLE_OPTIONS} selected={hairStyle} onSelect={setHairStyle} columns={5} />
+          </div>
+        )}
+        
+        {/* STEP 3: Body */}
+        {step === 3 && (
+          <div className="space-y-8 animate-fade-in">
+            <SectionTitle icon={User} title="Body Type" subtitle="Overall body shape" />
+            <OptionGrid options={BODY_TYPE_OPTIONS} selected={bodyType} onSelect={setBodyType} columns={3} />
+            
+            <SectionTitle icon={Heart} title="Breast Size" subtitle="Breast size preference" />
+            <OptionGrid options={BREAST_SIZE_OPTIONS} selected={breastSize} onSelect={setBreastSize} columns={4} />
+            
+            <SectionTitle icon={Users} title="Butt Size" subtitle="Buttock size preference" />
+            <OptionGrid options={BUTT_SIZE_OPTIONS} selected={buttSize} onSelect={setButtSize} columns={4} />
+          </div>
+        )}
+        
+        {/* STEP 4: Personality + Details */}
+        {step === 4 && (
+          <div className="space-y-8 animate-fade-in">
+            <SectionTitle icon={User} title="Character Name" />
+            <input
+              type="text"
+              value={charName}
+              onChange={e => setCharName(e.target.value)}
+              placeholder="Enter her name..."
+              className="w-full bg-white/[4%] border border-white/[8%] rounded-xl px-4 py-3 text-white placeholder:text-white/30 focus:outline-none focus:border-[#d05bf8]/40"
+            />
+            
+            <SectionTitle icon={Heart} title="Personality" subtitle="Select up to 3 traits" />
+            <div className="flex flex-wrap gap-2">
+              {PERSONALITY_OPTIONS.map(p => (
                 <button
-                  onClick={() => setExpandedFaq(expandedFaq === idx ? null : idx)}
-                  className="w-full flex items-center justify-between p-5 text-left"
+                  key={p}
+                  onClick={() => togglePersonality(p)}
+                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+                    personality.includes(p)
+                      ? 'bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] text-white'
+                      : 'bg-white/[4%] text-white/60 hover:bg-white/[8%]'
+                  }`}
                 >
-                  <span className="text-white font-medium text-sm pr-4">{faq.q}</span>
-                  <ChevronDown
-                    size={18}
-                    className={`text-white/40 shrink-0 transition-transform ${expandedFaq === idx ? 'rotate-180' : ''}`}
-                  />
+                  {p}
                 </button>
-                {expandedFaq === idx && (
-                  <div className="px-5 pb-5 pt-0 text-white/50 text-sm animate-fade-in">
-                    {faq.a}
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ======== FINAL CTA ======== */}
-      <section className="px-8 desktop:px-16 py-16">
-        <div className="max-w-2xl mx-auto">
-          <div className="rounded-3xl bg-gradient-to-br from-[#1a0a2e] via-[#2d1054] to-[#0f0e0f] border border-white/[5%] p-10 text-center relative overflow-hidden">
-            <div className="absolute inset-0 opacity-20">
-              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-[#d05bf8] rounded-full blur-[120px]" />
+              ))}
             </div>
-            <div className="relative z-10">
-              <h2 className="text-2xl font-bold text-white mb-3">Ready to Meet Her?</h2>
-              <p className="text-white/50 mb-8">No credit card required. Start chatting in 2 minutes.</p>
-              <button className="btn-pink rounded-full px-10 py-4 text-sm font-bold inline-flex items-center gap-2">
-                <Sparkles size={16} />
-                Create Your AI Girlfriend Now
-              </button>
-            </div>
+            
+            <SectionTitle icon={Mic} title="Voice Style" />
+            <OptionGrid options={VOICE_OPTIONS} selected={voice} onSelect={setVoice} columns={5} />
+            
+            <SectionTitle icon={Briefcase} title="Occupation" />
+            <OptionGrid options={OCCUPATION_OPTIONS} selected={occupation} onSelect={setOccupation} columns={4} />
+            
+            <SectionTitle icon={Heart} title="Relationship" subtitle="What is she to you?" />
+            <OptionGrid options={RELATIONSHIP_OPTIONS} selected={relationship} onSelect={setRelationship} columns={4} />
+            
+            <SectionTitle icon={Coffee} title="Hobby" subtitle="What does she like to do?" />
+            <OptionGrid options={HOBBY_OPTIONS} selected={hobby} onSelect={setHobby} columns={4} />
+            
+            <SectionTitle icon={Sparkles} title="Fetish (Optional)" />
+            <OptionGrid options={FETISH_OPTIONS} selected={fetish} onSelect={setFetish} columns={4} />
+            
+            {/* Create Button */}
+            <button
+              onClick={handleCreate}
+              disabled={!canContinue()}
+              className="w-full bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] text-white font-semibold py-4 rounded-full mt-4 disabled:opacity-40 hover:opacity-90 transition-all"
+            >
+              Create Character
+            </button>
           </div>
+        )}
+        
+        {/* Navigation Buttons */}
+        <div className="flex gap-3 mt-8">
+          {step > 0 && (
+            <button
+              onClick={prevStep}
+              className="flex items-center gap-2 px-6 py-3 rounded-full bg-white/[4%] text-white/60 hover:bg-white/[8%] transition-all"
+            >
+              <ChevronLeft size={18} />
+              Back
+            </button>
+          )}
+          {step < 4 && (
+            <button
+              onClick={nextStep}
+              disabled={!canContinue()}
+              className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] text-white font-semibold py-3 rounded-full disabled:opacity-40 hover:opacity-90 transition-all ml-auto"
+              style={{ maxWidth: 200 }}
+            >
+              Continue
+              <ChevronRight size={18} />
+            </button>
+          )}
         </div>
-      </section>
+      </div>
     </div>
   )
 }
