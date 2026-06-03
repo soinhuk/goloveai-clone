@@ -1,1 +1,1 @@
-feat: Chat persona & memory system with localStorage persistence
+feat: Chat UI improvements - compact layout, bubble styling, time grouping

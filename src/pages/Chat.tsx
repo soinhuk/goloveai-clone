@@ -4,10 +4,10 @@ import { Send, Smile, Image, MoreVertical, Star, Search, ArrowLeft, Phone, Video
 import { characters } from '../data/characters'
 
 const sampleMessages = [
-  { id: '1', sender: 'ai' as const, text: "Hey there! I've been waiting for you...", time: '2:30 PM' },
-  { id: '2', sender: 'user' as const, text: "Hi! Nice to meet you", time: '2:31 PM' },
-  { id: '3', sender: 'ai' as const, text: "The pleasure is all mine! I can't wait to get to know you better", time: '2:32 PM' },
-  { id: '4', sender: 'ai' as const, text: "Tell me something about yourself, I want to know everything", time: '2:33 PM' },
+  { id: '1', sender: 'ai' as const, text: "Hey there! I've been waiting for you...", time: '14:30' },
+  { id: '2', sender: 'user' as const, text: "Hi! Nice to meet you", time: '14:31' },
+  { id: '3', sender: 'ai' as const, text: "The pleasure is all mine! I can't wait to get to know you better", time: '14:32' },
+  { id: '4', sender: 'ai' as const, text: "Tell me something about yourself, I want to know everything", time: '14:33' },
 ]
 
 export default function Chat() {
@@ -33,11 +33,13 @@ export default function Chat() {
 
   const sendMessage = () => {
     if (!input.trim()) return
+    const now = new Date()
+    const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })
     setMessages(prev => [...prev, {
       id: Date.now().toString(),
       sender: 'user',
       text: input.trim(),
-      time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
+      time: timeStr
     }])
     setInput('')
     setTimeout(() => {
@@ -45,7 +47,7 @@ export default function Chat() {
         id: (Date.now() + 1).toString(),
         sender: 'ai',
         text: "That's really sweet of you to say! Tell me more about yourself...",
-        time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
+        time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })
       }])
     }, 1500)
   }
@@ -61,21 +63,33 @@ export default function Chat() {
     c.name.toLowerCase().includes(searchChat.toLowerCase())
   )
 
+  // Group messages by time proximity: only show time if different from previous
+  const shouldShowTime = (index: number) => {
+    if (index === 0) return true
+    const prev = messages[index - 1]
+    const curr = messages[index]
+    if (prev.sender !== curr.sender) return true
+    const [prevH, prevM] = prev.time.split(':').map(Number)
+    const [currH, currM] = curr.time.split(':').map(Number)
+    const diff = (currH * 60 + currM) - (prevH * 60 + prevM)
+    return diff >= 2
+  }
+
   return (
     <div className="flex h-[calc(100vh-88px)] bg-gl-dark overflow-hidden">
-      {/* ======== LEFT: CHAT LIST (Narrower) ======== */}
-      <aside className="w-[200px] shrink-0 border-r border-white/[5%] flex flex-col">
+      {/* ======== LEFT: CHAT LIST ======== */}
+      <aside className="w-[220px] shrink-0 border-r border-white/[5%] flex flex-col">
         {/* Header */}
         <div className="p-3 border-b border-white/[5%]">
-          <h2 className="text-white font-bold text-sm mb-2">Chats</h2>
+          <h2 className="text-white font-bold text-xs mb-2">Messages</h2>
           <div className="relative">
-            <Search size={12} className="absolute left-2 top-1/2 -translate-y-1/2 text-white/30" />
+            <Search size={11} className="absolute left-2 top-1/2 -translate-y-1/2 text-white/30" />
             <input
               type="text"
               value={searchChat}
               onChange={e => setSearchChat(e.target.value)}
-              placeholder="Search..."
-              className="w-full bg-white/[4%] border border-white/[5%] rounded-lg py-1.5 pl-7 pr-2 text-white text-xs placeholder:text-white/30 focus:outline-none focus:border-[#d05bf8]/40 transition-all"
+              placeholder="Search chats..."
+              className="w-full bg-white/[4%] border border-white/[5%] rounded-lg py-1.5 pl-7 pr-2 text-white text-xs placeholder:text-white/30 focus:outline-none focus:border-gl-pink/40 transition-all"
             />
           </div>
         </div>
@@ -89,25 +103,25 @@ export default function Chat() {
                 setSelectedChar(char.username)
                 navigate(`/chat/${char.username}`)
               }}
-              className={`w-full flex items-center gap-2 p-2.5 transition-all hover:bg-white/[3%] ${
+              className={`w-full flex items-center gap-2 p-2 transition-all hover:bg-white/[3%] ${
                 selectedChar === char.username ? 'bg-white/[5%] border-l-2 border-gl-pink' : ''
               }`}
             >
               <div className="relative shrink-0">
-                <img src={char.avatar} alt={char.name} className="size-9 rounded-full object-cover" />
+                <img src={char.avatar} alt={char.name} className="size-8 rounded-full object-cover" />
                 {char.isOnline && (
-                  <span className="absolute bottom-0 right-0 size-2 rounded-full bg-green-400 border border-gl-dark" />
+                  <span className="absolute bottom-0 right-0 size-1.5 rounded-full bg-green-400 border border-gl-dark" />
                 )}
               </div>
               <div className="flex-1 min-w-0 text-left">
                 <div className="flex items-center justify-between">
                   <span className="text-white font-medium text-xs truncate">{char.name}</span>
-                  <span className="text-white/30 text-[9px] shrink-0 ml-1">2:30</span>
+                  <span className="text-white/30 text-[9px] shrink-0 ml-1">14:30</span>
                 </div>
                 <p className="text-white/40 text-[10px] truncate mt-0.5">Hey baby! I've been waiting...</p>
               </div>
               {char.isLive && (
-                <span className="shrink-0 px-1 py-0.5 text-[8px] font-bold bg-red-500 text-white rounded">
+                <span className="shrink-0 px-1 py-0.5 text-[7px] font-bold bg-red-500 text-white rounded leading-none flex items-center">
                   LIVE
                 </span>
               )}
@@ -116,12 +130,12 @@ export default function Chat() {
         </div>
       </aside>
 
-      {/* ======== RIGHT: CHAT WINDOW (Compact) ======== */}
+      {/* ======== RIGHT: CHAT WINDOW ======== */}
       <main className="flex-1 flex flex-col min-w-0">
         {currentChar ? (
           <>
             {/* Chat Top Bar */}
-            <div className="flex items-center justify-between px-4 py-2.5 border-b border-white/[5%]">
+            <div className="flex items-center justify-between px-4 py-2 border-b border-white/[5%]">
               <div className="flex items-center gap-2.5">
                 <button onClick={() => navigate('/app/chats')} className="md:hidden">
                   <ArrowLeft size={16} className="text-white/60" />
@@ -131,10 +145,10 @@ export default function Chat() {
                     <img
                       src={currentChar.avatar}
                       alt={currentChar.name}
-                      className="size-9 rounded-full object-cover border border-gl-pink/50"
+                      className="size-8 rounded-full object-cover border border-gl-pink/40"
                     />
                     {currentChar.isOnline && (
-                      <span className="absolute bottom-0 right-0 size-2 rounded-full bg-green-400 border border-gl-dark" />
+                      <span className="absolute bottom-0 right-0 size-1.5 rounded-full bg-green-400 border border-gl-dark" />
                     )}
                   </div>
                   <div>
@@ -167,37 +181,57 @@ export default function Chat() {
             </div>
 
             {/* Messages Area */}
-            <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3 no-scrollbar">
-              {/* Intro */}
-              <div className="flex gap-2 mb-4 animate-slide-up">
-                <img src={currentChar.avatar} alt={currentChar.name} className="size-8 rounded-full object-cover shrink-0" />
-                <div className="bg-white/[4%] rounded-xl rounded-tl-sm px-3 py-2 max-w-[260px]">
+            <div className="flex-1 overflow-y-auto px-4 py-3 space-y-2 no-scrollbar">
+              {/* Intro bubble */}
+              <div className="flex gap-2 mb-3 animate-slide-up">
+                <img
+                  src={currentChar.avatar}
+                  alt={currentChar.name}
+                  className="size-7 rounded-full object-cover shrink-0 mt-0.5"
+                />
+                <div className="bg-white/[5%] rounded-2xl rounded-tl-md px-3 py-2 max-w-[240px]">
                   <p className="text-white/80 text-xs leading-relaxed">
-                    Hey baby! {currentChar.name} here. I'm so excited to talk to you!
+                    Hey baby! {currentChar.name} here — so excited to chat with you! 💕
                   </p>
                 </div>
               </div>
 
               {/* Messages */}
-              {messages.map(msg => (
-                <div
-                  key={msg.id}
-                  className={`flex gap-2 animate-slide-up ${msg.sender === 'user' ? 'flex-row-reverse' : ''}`}
-                >
-                  {msg.sender === 'ai' && (
-                    <img src={currentChar.avatar} alt={currentChar.name} className="size-8 rounded-full object-cover shrink-0" />
-                  )}
-                  <div className={`flex flex-col gap-0.5 ${msg.sender === 'user' ? 'items-end' : ''}`}>
-                    <div
-                      className={`px-3 py-2 rounded-xl max-w-[260px] text-xs leading-relaxed ${
-                        msg.sender === 'user'
-                          ? 'bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] text-white rounded-tr-sm'
-                          : 'bg-white/[4%] text-white/80 rounded-tl-sm'
-                      }`}
-                    >
-                      {msg.text}
+              {messages.map((msg, index) => (
+                <div key={msg.id}>
+                  {/* Show time when: first message, sender changes, or >2min gap */}
+                  {shouldShowTime(index) && (
+                    <div className="flex items-center gap-2 my-2">
+                      <div className="flex-1 h-px bg-white/[5%]" />
+                      <span className="text-white/20 text-[9px]">{msg.time}</span>
+                      <div className="flex-1 h-px bg-white/[5%]" />
                     </div>
-                    <span className="text-white/25 text-[9px] px-1">{msg.time}</span>
+                  )}
+                  <div
+                    className={`flex gap-1.5 animate-slide-up ${
+                      msg.sender === 'user' ? 'flex-row-reverse' : ''
+                    }`}
+                  >
+                    {msg.sender === 'ai' && (
+                      <img
+                        src={currentChar.avatar}
+                        alt={currentChar.name}
+                        className="size-7 rounded-full object-cover shrink-0 mt-0.5"
+                      />
+                    )}
+                    <div
+                      className={`flex flex-col ${msg.sender === 'user' ? 'items-end' : ''}`}
+                    >
+                      <div
+                        className={`px-3 py-1.5 rounded-2xl max-w-[220px] text-xs leading-relaxed ${
+                          msg.sender === 'user'
+                            ? 'bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] text-white rounded-br-md'
+                            : 'bg-white/[5%] text-white/80 rounded-bl-md'
+                        }`}
+                      >
+                        {msg.text}
+                      </div>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -205,14 +239,14 @@ export default function Chat() {
             </div>
 
             {/* Input Area */}
-            <div className="px-4 py-3 border-t border-white/[5%]">
+            <div className="px-4 py-2.5 border-t border-white/[5%]">
               {/* Quick Actions */}
-              <div className="flex items-center gap-1.5 mb-2.5 overflow-x-auto no-scrollbar">
+              <div className="flex items-center gap-1.5 mb-2 overflow-x-auto no-scrollbar">
                 {['Hey!', 'How are you?', 'Tell me more', 'What do you like?', '💕', '🔥'].map(txt => (
                   <button
                     key={txt}
                     onClick={() => setInput(txt)}
-                    className="shrink-0 px-2 py-1 text-[10px] bg-white/[4%] rounded-full text-white/40 hover:bg-white/[8%] hover:text-white transition-all"
+                    className="shrink-0 px-2 py-0.5 text-[10px] bg-white/[4%] rounded-full text-white/40 hover:bg-white/[8%] hover:text-white/80 transition-all"
                   >
                     {txt}
                   </button>
@@ -220,9 +254,12 @@ export default function Chat() {
               </div>
 
               {/* Input Row */}
-              <div className="flex items-end gap-2">
-                <button className="size-8 flex items-center justify-center rounded-full text-white/30 hover:text-white hover:bg-white/[8%] transition-all shrink-0">
-                  <Smile size={16} />
+              <div className="flex items-end gap-1.5">
+                <button className="size-7 flex items-center justify-center rounded-full text-white/30 hover:text-white hover:bg-white/[8%] transition-all shrink-0">
+                  <Smile size={14} />
+                </button>
+                <button className="size-7 flex items-center justify-center rounded-full text-white/25 hover:text-white hover:bg-white/[8%] transition-all shrink-0">
+                  <Image size={13} />
                 </button>
                 <div className="flex-1 relative">
                   <textarea
@@ -231,27 +268,22 @@ export default function Chat() {
                     onKeyDown={handleKeyDown}
                     placeholder="Type a message..."
                     rows={1}
-                    className="w-full bg-white/[4%] border border-white/[5%] rounded-xl px-3 py-2 pr-12 text-white text-xs placeholder:text-white/30 focus:outline-none focus:border-[#d05bf8]/40 transition-all resize-none"
-                    style={{ minHeight: '36px', maxHeight: '80px', height: 'auto' }}
+                    className="w-full bg-white/[4%] border border-white/[5%] rounded-2xl px-3 py-2 pr-16 text-white text-xs placeholder:text-white/30 focus:outline-none focus:border-gl-pink/40 transition-all resize-none"
+                    style={{ minHeight: '34px', maxHeight: '72px', height: 'auto' }}
                     onInput={e => {
                       const t = e.target as HTMLTextAreaElement
                       t.style.height = 'auto'
-                      t.style.height = Math.min(t.scrollHeight, 80) + 'px'
+                      t.style.height = Math.min(t.scrollHeight, 72) + 'px'
                     }}
                   />
-                  <div className="absolute right-2 bottom-1.5 flex gap-0.5">
-                    <button className="size-6 flex items-center justify-center rounded-full text-white/25 hover:text-white transition-all">
-                      <Image size={14} />
-                    </button>
-                  </div>
+                  <button
+                    onClick={sendMessage}
+                    disabled={!input.trim()}
+                    className="absolute right-1.5 top-1/2 -translate-y-1/2 size-6 flex items-center justify-center rounded-full bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] text-white disabled:opacity-30 disabled:cursor-not-allowed hover:opacity-90 transition-all active:scale-95"
+                  >
+                    <Send size={11} />
+                  </button>
                 </div>
-                <button
-                  onClick={sendMessage}
-                  disabled={!input.trim()}
-                  className="size-8 flex items-center justify-center rounded-full bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] text-white disabled:opacity-40 disabled:cursor-not-allowed hover:opacity-90 transition-all shrink-0 active:scale-95"
-                >
-                  <Send size={14} />
-                </button>
               </div>
             </div>
           </>
