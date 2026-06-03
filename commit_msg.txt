@@ -1,0 +1,1 @@
+feat: Chat persona & memory system with localStorage persistence

@@ -1,3 +1,13 @@
+export type SpeakingStyle = 'sweet' | 'bold' | 'shy' | 'mysterious' | 'playful';
+
+export type CharacterPersona = {
+  role: string;
+  personality: string[];
+  speakingStyle: SpeakingStyle;
+  interests: string[];
+  backstory: string;
+};
+
 export type Character = {
   id: string;
   name: string;
@@ -14,6 +24,7 @@ export type Character = {
   isPremium?: boolean;
   isFavorite?: boolean;
   age?: number;
+  persona?: CharacterPersona;
 };
 
 export type NavItem = {
