@@ -1,0 +1,240 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* GoLoveAI Global Styles */
+
+:root {
+  --gl-bg: #0F0E0F;
+  --gl-bg-2: #181718;
+  --gl-pink-start: #d05bf8;
+  --gl-pink-end: #ff18a0;
+  --gl-pink: #FF18A0;
+  --gl-purple: #D05BF8;
+  --gl-text: #ffffff;
+  --gl-text-muted: rgba(255,255,255,0.5);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Poppins', system-ui, -apple-system, sans-serif;
+  background-color: #0F0E0F;
+  color: #ffffff;
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #0b0b0b;
+}
+::-webkit-scrollbar-thumb {
+  background: #181718;
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #2a2a2a;
+}
+
+/* Pink Gradient Button */
+.btn-pink {
+  background: linear-gradient(135deg, #d05bf8 0%, #ff18a0 100%);
+  color: white;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  border: none;
+}
+.btn-pink:hover {
+  background: linear-gradient(135deg, #e070ff 0%, #ff3db0 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 20px rgba(208,91,248,0.4);
+}
+.btn-pink:active {
+  transform: scale(0.98);
+}
+
+/* Gradient Border Button */
+.btn-outline-gradient {
+  background: transparent;
+  color: white;
+  font-weight: 600;
+  border: 1px solid rgba(255,255,255,0.2);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+.btn-outline-gradient:hover {
+  border-color: #d05bf8;
+  background: rgba(208,91,248,0.1);
+}
+
+/* Card */
+.card-hover {
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+}
+
+/* Pink Glow */
+.glow-pink {
+  box-shadow: 0 0 15px rgba(255,24,160,0.4), 0 0 30px rgba(255,24,160,0.2);
+}
+.glow-purple {
+  box-shadow: 0 0 15px rgba(208,91,248,0.4), 0 0 30px rgba(208,91,248,0.2);
+}
+
+/* Gradient Text */
+.gradient-text {
+  background: linear-gradient(135deg, #d05bf8 0%, #ff18a0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Gradient Border */
+.border-gradient {
+  position: relative;
+  background: #1a1a1a;
+  border-radius: 22px;
+}
+.border-gradient::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: 23px;
+  background: linear-gradient(135deg, #d05bf8 0%, #ff18a0 100%);
+  z-index: -1;
+  opacity: 0.6;
+}
+
+/* Ring Pink Gradient */
+.ring-pink-gradient {
+  box-shadow: 0 0 0 2px rgba(208,91,248,0.3), 0 0 20px rgba(208,91,248,0.2);
+}
+
+/* Input */
+.input-gl {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 25px;
+  padding: 12px 20px;
+  color: white;
+  font-family: 'Poppins', sans-serif;
+  font-size: 15px;
+  transition: all 0.2s ease;
+  resize: none;
+  width: 100%;
+}
+.input-gl::placeholder {
+  color: rgba(255,255,255,0.3);
+}
+.input-gl:focus {
+  outline: none;
+  background: rgba(255,255,255,0.06);
+  border-color: rgba(208,91,248,0.4);
+  box-shadow: 0 0 0 3px rgba(208,91,248,0.1);
+}
+
+/* Tag Pills */
+.tag-pill {
+  background: rgba(255,255,255,0.06);
+  color: rgba(255,255,255,0.7);
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  transition: all 0.2s ease;
+}
+.tag-pill:hover {
+  background: rgba(208,91,248,0.2);
+  color: white;
+}
+
+/* LIVE Badge */
+.live-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #ff3b3b;
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 20px;
+  animation: flash 1.2s steps(1) infinite;
+}
+
+/* Heart Loader */
+.lds-heart {
+  display: inline-block;
+  position: relative;
+  width: 24px;
+  height: 24px;
+  transform: rotate(45deg);
+}
+.lds-heart::before {
+  content: '';
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background: linear-gradient(135deg, #d05bf8, #ff18a0);
+  animation: pulse 1s ease-in-out infinite;
+}
+
+/* Animations */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.loading-shimmer {
+  background: linear-gradient(90deg, #0F0E0F 25%, #181718 50%, #0F0E0F 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-slide-up {
+  animation: slideUp 0.4s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+/* Hide scrollbar */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Text selection */
+::selection {
+  background: rgba(228,77,213,0.4);
+  color: white;
+}
