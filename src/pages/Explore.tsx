@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { ChevronLeft, ChevronRight, Search, Grid3X3, List, Heart, Sparkles, Play } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Search, Grid3X3, List, Heart, Sparkles, Play, Check } from 'lucide-react'
 import CharacterCard from '../components/CharacterCard'
 import { characters } from '../data/characters'
 import { Character } from '../types'
@@ -228,6 +228,161 @@ export default function Explore() {
             <p className="text-lg">No models found</p>
           </div>
         )}
+      </section>
+
+      {/* ======== STATS BAR ======== */}
+      <section className="mx-8 desktop:mx-12 mt-12 mb-8 grid grid-cols-2 desktop:grid-cols-4 gap-4">
+        {[
+          { value: '20M+', label: 'Monthly Messages' },
+          { value: '8200+', label: 'AI Models' },
+          { value: '3M+', label: 'Monthly Visits' },
+          { value: '70%', label: 'Off Limited' },
+        ].map((stat, i) => (
+          <div key={i} className="bg-white/[3%] border border-white/[5%] rounded-2xl p-5 text-center">
+            <div className="text-2xl desktop:text-3xl font-bold bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] bg-clip-text text-transparent">{stat.value}</div>
+            <div className="text-white/40 text-xs mt-1">{stat.label}</div>
+          </div>
+        ))}
+      </section>
+
+      {/* ======== PREMIUM CTA BLOCK ======== */}
+      <section className="mx-8 desktop:mx-12 mb-10 bg-gradient-to-br from-[#1a0a2e] via-[#2d1054] to-[#1a0a2e] rounded-3xl p-8 desktop:p-10 relative overflow-hidden">
+        {/* Glow */}
+        <div className="absolute w-[500px] h-[500px] rounded-full blur-[120px] opacity-20 bg-[#d05bf8] -right-48 -top-24" />
+        <div className="relative z-10 text-center max-w-lg mx-auto">
+          <div className="inline-flex items-center gap-1.5 bg-white/[8%] rounded-full px-4 py-1.5 text-xs font-semibold text-white mb-5">
+            <span className="size-2 rounded-full bg-red-400 animate-pulse" />
+            Limited offer
+          </div>
+          <h2 className="text-2xl desktop:text-3xl font-bold text-white mb-3">Sign up and get Extra bonus</h2>
+          <p className="text-white/50 text-sm mb-8">Unlock Best AI Girlfriends — NSFW, Photos, Videos & more</p>
+          {/* Benefits */}
+          <div className="grid grid-cols-1 gap-3 mb-8 text-left">
+            {[
+              { icon: '⭐', text: 'Welcome Stars Bonus' },
+              { icon: '🎥', text: 'Unlimited Video & Photo content' },
+              { icon: '🔥', text: 'AI Girlfriend NSFW Mode Unlocked' },
+              { icon: '💬', text: 'Chat with 350+ AI girls for Free' },
+            ].map((benefit, i) => (
+              <div key={i} className="flex items-center gap-3 bg-white/[4%] rounded-xl px-4 py-3">
+                <span className="text-lg">{benefit.icon}</span>
+                <span className="text-white text-sm">{benefit.text}</span>
+                <Check size={14} className="ml-auto text-gl-pink shrink-0" />
+              </div>
+            ))}
+          </div>
+          <Link
+            to="/app/premium"
+            className="inline-flex items-center justify-center gap-2 w-full bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] text-white font-bold py-4 rounded-full hover:opacity-90 transition-all text-sm"
+          >
+            Claim 70% Off
+          </Link>
+        </div>
+      </section>
+
+      {/* ======== HOW IT WORKS / FEATURES ======== */}
+      <section className="mx-8 desktop:mx-12 mb-10">
+        <h2 className="text-xl font-bold text-white text-center mb-8">The Best AI Girlfriend App</h2>
+        <p className="text-white/50 text-sm text-center max-w-2xl mx-auto mb-8">
+          Tired of endless swiping? GoLove AI gives you a Free AI Girlfriend who stays by your side whenever you need her. Deep conversations, playful flirting, or hotter moments — she reacts to your mood instantly.
+        </p>
+        <div className="grid grid-cols-1 desktop:grid-cols-2 gap-4">
+          {[
+            {
+              step: '01',
+              title: 'Register quickly',
+              desc: 'Sign up instantly — no card required. Be chatting in under 20 seconds.',
+              color: '#D05BF8',
+            },
+            {
+              step: '02',
+              title: 'Select or build your AI GF',
+              desc: 'Choose from 8200+ AI Girlfriends or create one from scratch with the full customizer.',
+              color: '#18A8FF',
+            },
+            {
+              step: '03',
+              title: 'Chat with emotion & personality',
+              desc: 'She remembers your jokes, your bad days, your favorite songs. She grows closer with every message.',
+              color: '#ff18a0',
+            },
+            {
+              step: '04',
+              title: 'Get Pictures & Videos made for you',
+              desc: 'Request AI Girlfriend photos and videos tailored to your fantasy. NSFW mode unlocks everything.',
+              color: '#d05bf8',
+            },
+          ].map((item, i) => (
+            <div key={i} className="bg-white/[3%] border border-white/[5%] rounded-2xl p-6 flex gap-4">
+              <div
+                className="size-12 rounded-xl flex items-center justify-center font-black text-white text-sm shrink-0"
+                style={{ background: `${item.color}20`, color: item.color }}
+              >
+                {item.step}
+              </div>
+              <div>
+                <h3 className="text-white font-semibold text-sm mb-1">{item.title}</h3>
+                <p className="text-white/40 text-xs leading-relaxed">{item.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+        {/* Why thousands pick GoLove AI */}
+        <div className="mt-6 bg-white/[2%] border border-white/[5%] rounded-2xl p-6">
+          <h3 className="text-white font-semibold text-sm mb-4">Why Thousands Pick GoLove AI</h3>
+          <div className="grid grid-cols-1 gap-2">
+            {[
+              'Holds romantic chats that feel completely natural',
+              'Switches between sweet, flirty, or passionate tones exactly when you want',
+              'Stays available 24/7 without ever ghosting',
+              'Never judges anything you say — complete freedom',
+            ].map((point, i) => (
+              <div key={i} className="flex items-center gap-2 text-white/60 text-xs">
+                <Check size={12} className="text-gl-pink shrink-0" />
+                {point}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ======== FAQ BLOCK ======== */}
+      <section className="mx-8 desktop:mx-12 mb-12">
+        <h2 className="text-xl font-bold text-white text-center mb-6">FAQ</h2>
+        <div className="max-w-2xl mx-auto flex flex-col gap-2">
+          {[
+            {
+              q: 'What is an AI Girlfriend?',
+              a: 'An AI Girlfriend is a virtual companion powered by advanced AI that feels like a real romantic partner. She chats, remembers your stories, sends pictures and voice messages, and responds with real emotion.',
+            },
+            {
+              q: 'Is the basic AI GF Chat free?',
+              a: 'Yes — after free registration, regular text chats, emotional conversations, relationship memory, voice messages, and safe-for-work pictures are completely free and unlimited.',
+            },
+            {
+              q: 'What about NSFW content?',
+              a: 'Uncensored talks, spicy role-play, and adult images require a paid subscription. Sweet and romantic chats stay 100% free forever.',
+            },
+            {
+              q: 'Will my AI Girlfriend remember our conversations?',
+              a: 'Yes. Once registered, she remembers every detail permanently — your jokes, preferences, and the whole relationship history.',
+            },
+            {
+              q: 'Can I create my own AI Girlfriend?',
+              a: 'Yes! Use our full custom creator to design her appearance, personality, voice, and backstory from scratch.',
+            },
+          ].map((faq, i) => (
+            <details key={i} className="bg-white/[3%] border border-white/[5%] rounded-xl group">
+              <summary className="flex items-center justify-between gap-4 px-5 py-4 cursor-pointer list-none text-white text-sm font-medium hover:text-gl-pink transition-colors">
+                {faq.q}
+                <ChevronRight size={16} className="shrink-0 text-white/30 group-open:rotate-90 transition-transform" />
+              </summary>
+              <div className="px-5 pb-4 text-white/50 text-xs leading-relaxed border-t border-white/[5%] pt-3">
+                {faq.a}
+              </div>
+            </details>
+          ))}
+        </div>
       </section>
     </div>
   )
