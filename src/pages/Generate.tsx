@@ -1,51 +1,74 @@
 import { useState } from 'react'
-import { ChevronLeft, ChevronRight, ChevronDown, X, Sparkles, Image as ImageIcon, Video, Shirt, Mountain, Settings2, Wand2, Clapperboard, Upload } from 'lucide-react'
+import { ChevronLeft, ChevronRight, ChevronDown, X, Sparkles, Image as ImageIcon, Video, Shirt, Mountain, Settings2, Wand2, Clapperboard, Upload, Search } from 'lucide-react'
 import { characters } from '../data/characters'
 
-// Preset configurations with visual styling
-const PRESETS = [
-  { name: 'Sunset Beach', gradient: 'from-orange-400 via-pink-500 to-purple-600', emoji: '🏖️' },
-  { name: 'Cozy Bedroom', gradient: 'from-amber-400 via-orange-500 to-red-500', emoji: '🛏️' },
-  { name: 'City Night', gradient: 'from-blue-600 via-indigo-700 to-purple-900', emoji: '🌃' },
-  { name: 'Studio Light', gradient: 'from-gray-300 via-gray-400 to-gray-500', emoji: '💡' },
-  { name: 'Rainy Window', gradient: 'from-blue-300 via-blue-400 to-slate-600', emoji: '🌧️' },
-  { name: 'Garden Party', gradient: 'from-green-400 via-emerald-500 to-teal-600', emoji: '🌸' },
-  { name: 'Romantic Dinner', gradient: 'from-rose-400 via-pink-500 to-fuchsia-500', emoji: '🥂' },
-  { name: 'Underwater', gradient: 'from-cyan-400 via-blue-500 to-indigo-600', emoji: '🫧' },
-]
-
+// Actions data - 44 actions with VIDEO preview thumbnails
 const ACTIONS = [
-  { name: 'Standing', icon: '🧍' },
-  { name: 'Sitting', icon: '🪑' },
-  { name: 'Lying Down', icon: '😴' },
-  { name: 'Walking', icon: '🚶' },
-  { name: 'Dancing', icon: '💃' },
-  { name: 'Stretching', icon: '🧘' },
-  { name: 'Laughing', icon: '😂' },
-  { name: 'Thinking', icon: '🤔' },
+  'POV Handjob Cumshot', 'Titjob Cum', 'Tongue Blowjob', 'Couch Lap Blowjob',
+  'Dildo Anal Riding', 'Foot Job', 'Shibaru Swing', 'BDSM Ass Tease',
+  'Tentacle', 'Prone Bone', 'Doggy', 'Blowjob', 'POV Missionary',
+  'Reverse Cowgirl', 'Cumshot', 'Pussy Insertion', 'Jiggle Tits',
+  'Twerk', 'Spread Pussy', 'Pussy Show', 'Fingering', 'Dildo',
+  'Shirt Lifting', 'Anal Missionary', 'Doggy Kneel', 'Drill',
+  'Zoom Out Riding', 'Sex Spoon', 'Pussy Licking', 'Handjob',
+  'Dick Kiss', 'French Kiss', 'Huge Cum', 'Mouth Cum', 'Squirt',
+  'Ahegao', 'Breast Expand', 'Bouncing Tits', 'Changing Room',
+  'Pregnant', 'Footjob', 'Stockings Feet', 'Heels Feet', 'Bare Feet'
 ]
 
+// Clothes data - 21 options with preview images
 const CLOTHES = [
-  { name: 'Casual', emoji: '👕' },
-  { name: 'Elegant', emoji: '👗' },
-  { name: 'Lingerie', emoji: '🥰' },
-  { name: 'Swimwear', emoji: '👙' },
-  { name: 'Cosplay', emoji: '✨' },
-  { name: 'Business', emoji: '👔' },
-  { name: 'Sportswear', emoji: '🏃' },
-  { name: 'None', emoji: '⬜' },
+  'Custom', 'Sweater', 'Dress', 'Bikini', 'Naked', 'Blouse', 'T-Shirt',
+  'Tank Top', 'Crop Top', 'Bra', 'Hoodie', 'Jeans', 'Skirt', 'Pants',
+  'Hosiery', 'Footwear', 'Accessories', 'Makeup', 'Fit Details',
+  'Outerwear', 'Headwear'
 ]
 
+// Backgrounds data - 34 options with preview images
 const BACKGROUNDS = [
-  { name: 'Bedroom', gradient: 'from-slate-700 to-slate-900', icon: '🛏️' },
-  { name: 'Beach', gradient: 'from-cyan-400 to-blue-500', icon: '🏖️' },
-  { name: 'City', gradient: 'from-slate-800 to-slate-900', icon: '🌆' },
-  { name: 'Forest', gradient: 'from-green-600 to-emerald-800', icon: '🌲' },
-  { name: 'Studio', gradient: 'from-gray-600 to-gray-800', icon: '🎬' },
-  { name: 'Living Room', gradient: 'from-amber-700 to-orange-800', icon: '🛋️' },
-  { name: 'Bathroom', gradient: 'from-cyan-300 to-blue-400', icon: '🚿' },
-  { name: 'Office', gradient: 'from-slate-500 to-slate-700', icon: '💼' },
+  'Custom', 'Bathroom', 'Kitchen', 'Bedroom', 'Living Room', 'Backyard',
+  'Hallway', 'Red Bed', 'Carpet', 'Greenhouse', 'Rooftop', 'Poolside',
+  'Luxury Pool', 'Beach', 'Office', 'DJ Room', 'Balcony Trees',
+  'City Balcony', 'White Architecture', 'Cozy Living', 'Boat Deck',
+  'Urban Park', 'Cozy Cafe', 'Modern Gym', 'Classic Library',
+  'Mountain Balcony', 'Neon Bar', 'Fine Dining', 'Sunset Beach',
+  'Vineyard Hills', 'Fireplace Room', 'Rooftop Pool', 'Desert Dunes',
+  'Piano Lounge'
 ]
+
+// Image paths
+const POSE_PLACEHOLDER = '/images/generate-page/pose-card-placeholder.avif'
+const CLOTHES_PLACEHOLDER = '/images/generate-page/clothes-card-placeholder.avif'
+const BG_PLACEHOLDER = '/images/generate-page/background-card-placeholder.avif'
+
+// Get background image path
+const getBgImagePath = (name: string) => {
+  const nameMap: Record<string, string> = {
+    'Living Room': 'livingroom',
+    'Red Bed': 'redbed',
+    'Luxury Pool': 'luxurypool',
+    'Balcony Trees': 'balconytrees',
+    'City Balcony': 'citybalcony',
+    'White Architecture': 'whitearchitecture',
+    'Cozy Living': 'cozyliving',
+    'Boat Deck': 'boatdeck',
+    'Urban Park': 'urbanpark',
+    'Cozy Cafe': 'cozycafe',
+    'Modern Gym': 'moderngym',
+    'Classic Library': 'classiclibrary',
+    'Mountain Balcony': 'mountainbalcony',
+    'Neon Bar': 'neonbar',
+    'Fine Dining': 'finedining',
+    'Sunset Beach': 'sunsetbeach',
+    'Vineyard Hills': 'vineyardhills',
+    'Fireplace Room': 'fireplaceroom',
+    'Rooftop Pool': 'rooftoppool',
+    'Desert Dunes': 'desertdunes',
+    'Piano Lounge': 'pianolounge'
+  }
+  const key = nameMap[name] || name.toLowerCase().replace(/\s+/g, '')
+  return `/images/generate-page/backgrounds/${key}.avif`
+}
 
 const ASPECT_RATIOS = [
   { ratio: '1:1', desc: 'Square' },
@@ -74,6 +97,10 @@ export default function Generate() {
   const [mode, setMode] = useState<'video' | 'image'>('video')
   const [genMode, setGenMode] = useState<GenerationMode>('presets')
   const [showGenModeDialog, setShowGenModeDialog] = useState(false)
+  const [showActionDialog, setShowActionDialog] = useState(false)
+  const [showClothesDialog, setShowClothesDialog] = useState(false)
+  const [showBgDialog, setShowBgDialog] = useState(false)
+  const [showAdvancedDialog, setShowAdvancedDialog] = useState(false)
   const [activeTab, setActiveTab] = useState<ContentTab>('presets')
   const [selectedPreset, setSelectedPreset] = useState('')
   const [selectedAction, setSelectedAction] = useState('')
@@ -82,6 +109,9 @@ export default function Generate() {
   const [aspectRatio, setAspectRatio] = useState('9:16')
   const [quality, setQuality] = useState('HD')
   const [customPrompt, setCustomPrompt] = useState('')
+  const [actionSearch, setActionSearch] = useState('')
+  const [clothesSearch, setClothesSearch] = useState('')
+  const [bgSearch, setBgSearch] = useState('')
 
   // Navigate through characters
   const navigateChar = (dir: 1 | -1) => {
@@ -112,8 +142,45 @@ export default function Generate() {
     setCharSearch('')
   }
 
+  // Filter actions by search
+  const filteredActions = ACTIONS.filter(a =>
+    a.toLowerCase().includes(actionSearch.toLowerCase())
+  )
+
+  // Filter clothes by search
+  const filteredClothes = CLOTHES.filter(c =>
+    c.toLowerCase().includes(clothesSearch.toLowerCase())
+  )
+
+  // Filter backgrounds by search
+  const filteredBackgounds = BACKGROUNDS.filter(b =>
+    b.toLowerCase().includes(bgSearch.toLowerCase())
+  )
+
+  // Handle tab click - open dialog
+  const handleTabClick = (tab: ContentTab) => {
+    setActiveTab(tab)
+    switch (tab) {
+      case 'presets':
+        setShowGenModeDialog(true)
+        break
+      case 'action':
+        setShowActionDialog(true)
+        break
+      case 'clothes':
+        setShowClothesDialog(true)
+        break
+      case 'background':
+        setShowBgDialog(true)
+        break
+      case 'advanced':
+        setShowAdvancedDialog(true)
+        break
+    }
+  }
+
   return (
-    <div className="min-h-screen bg-[#0F0E0F] text-white pb-20">
+    <div className="min-h-screen bg-[#0F0E0F] text-white pb-24">
       {/* Header with Character Navigation */}
       <div className="flex items-center justify-between px-4 py-4 border-b border-white/[6%]">
         <button
@@ -182,7 +249,7 @@ export default function Generate() {
         ].map(tab => (
           <button
             key={tab.key}
-            onClick={() => setActiveTab(tab.key as ContentTab)}
+            onClick={() => handleTabClick(tab.key as ContentTab)}
             className={`shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-xl text-[12px] font-semibold transition-all duration-200 ${
               activeTab === tab.key
                 ? 'bg-white/[10%] text-white shadow-sm'
@@ -195,222 +262,18 @@ export default function Generate() {
               <tab.icon size={14} />
             ) : null}
             {tab.label}
-            {tab.key === 'presets' && <ChevronDown size={10} className="text-white/30" />}
+            <ChevronDown size={10} className="text-white/30" />
           </button>
         ))}
       </div>
 
-      {/* Tab Content */}
-      <div className="px-4 pb-32">
-        {/* Presets Tab */}
-        {activeTab === 'presets' && (
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="text-[15px] font-semibold">Choose a Preset</h3>
-              <span className="text-[11px] text-white/40">{PRESETS.length} presets</span>
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              {PRESETS.map((preset, idx) => (
-                <button
-                  key={preset.name}
-                  onClick={() => setSelectedPreset(preset.name)}
-                  className={`relative h-[130px] rounded-[18px] overflow-hidden border-2 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] ${
-                    selectedPreset === preset.name
-                      ? 'border-[#d05bf8] shadow-lg shadow-[#d05bf8]/20'
-                      : 'border-white/[6%] hover:border-white/[15%]'
-                  }`}
-                >
-                  {/* Gradient Background */}
-                  <div className={`absolute inset-0 bg-gradient-to-br ${preset.gradient}`} />
-
-                  {/* Decorative Pattern */}
-                  <div className="absolute inset-0 opacity-20">
-                    <div className="absolute top-3 right-3 size-12 rounded-full bg-white/20 blur-xl" />
-                    <div className="absolute bottom-8 left-4 size-16 rounded-full bg-white/10 blur-2xl" />
-                  </div>
-
-                  {/* Selection Indicator */}
-                  {selectedPreset === preset.name && (
-                    <div className="absolute top-3 right-3 size-6 rounded-full bg-white flex items-center justify-center shadow-lg">
-                      <svg className="size-3.5 text-[#d05bf8]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                      </svg>
-                    </div>
-                  )}
-
-                  {/* Content */}
-                  <div className="relative z-10 h-full flex flex-col items-center justify-center gap-2">
-                    <span className="text-3xl">{preset.emoji}</span>
-                    <span className="text-[13px] font-semibold text-white drop-shadow-lg">{preset.name}</span>
-                  </div>
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Action Tab */}
-        {activeTab === 'action' && (
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="text-[15px] font-semibold">Select Action</h3>
-              <span className="text-[11px] text-white/40">Choose pose</span>
-            </div>
-            <div className="grid grid-cols-2 gap-2.5">
-              {ACTIONS.map(action => (
-                <button
-                  key={action.name}
-                  onClick={() => setSelectedAction(action.name)}
-                  className={`px-4 py-4 rounded-[14px] text-[13px] font-medium transition-all duration-200 flex items-center gap-3 ${
-                    selectedAction === action.name
-                      ? 'bg-gradient-to-r from-[#d05bf8]/25 to-[#ff18a0]/25 border border-[#d05bf8]/50 text-white shadow-lg'
-                      : 'bg-white/[5%] border border-white/[8%] text-white/70 hover:bg-white/[8%] hover:text-white/90'
-                  }`}
-                >
-                  <span className="text-xl">{action.icon}</span>
-                  {action.name}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Clothes Tab */}
-        {activeTab === 'clothes' && (
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="text-[15px] font-semibold">Select Outfit</h3>
-              <span className="text-[11px] text-white/40">{CLOTHES.length} options</span>
-            </div>
-            <div className="grid grid-cols-2 gap-2.5">
-              {CLOTHES.map(cloth => (
-                <button
-                  key={cloth.name}
-                  onClick={() => setSelectedClothes(cloth.name)}
-                  className={`px-4 py-4 rounded-[14px] text-[13px] font-medium transition-all duration-200 flex items-center gap-3 ${
-                    selectedClothes === cloth.name
-                      ? 'bg-gradient-to-r from-[#d05bf8]/25 to-[#ff18a0]/25 border border-[#d05bf8]/50 text-white shadow-lg'
-                      : 'bg-white/[5%] border border-white/[8%] text-white/70 hover:bg-white/[8%] hover:text-white/90'
-                  }`}
-                >
-                  <span className="text-xl">{cloth.emoji}</span>
-                  {cloth.name}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Background Tab */}
-        {activeTab === 'background' && (
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="text-[15px] font-semibold">Choose Background</h3>
-              <span className="text-[11px] text-white/40">{BACKGROUNDS.length} scenes</span>
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              {BACKGROUNDS.map(bg => (
-                <button
-                  key={bg.name}
-                  onClick={() => setSelectedBg(bg.name)}
-                  className={`relative h-[110px] rounded-[16px] overflow-hidden border-2 transition-all duration-200 hover:scale-[1.02] ${
-                    selectedBg === bg.name
-                      ? 'border-[#d05bf8] shadow-lg shadow-[#d05bf8]/20'
-                      : 'border-white/[6%] hover:border-white/[15%]'
-                  }`}
-                >
-                  <div className={`absolute inset-0 bg-gradient-to-br ${bg.gradient}`} />
-                  <div className="absolute inset-0 bg-black/20" />
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="text-4xl opacity-40">{bg.icon}</span>
-                  </div>
-                  <div className="absolute bottom-3 left-3">
-                    <span className="text-[13px] font-semibold drop-shadow-lg">{bg.name}</span>
-                  </div>
-                  {selectedBg === bg.name && (
-                    <div className="absolute top-3 right-3 size-5 rounded-full bg-white flex items-center justify-center">
-                      <svg className="size-3 text-[#d05bf8]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                      </svg>
-                    </div>
-                  )}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Advanced Settings Tab */}
-        {activeTab === 'advanced' && (
-          <div className="space-y-6">
-            <h3 className="text-[15px] font-semibold">Advanced Settings</h3>
-
-            {/* Custom Prompt */}
-            <div className="space-y-2">
-              <label className="text-[12px] text-white/50 font-medium">Custom Prompt</label>
-              <textarea
-                value={customPrompt}
-                onChange={e => setCustomPrompt(e.target.value)}
-                placeholder="Describe the scene, mood, and actions in detail..."
-                rows={4}
-                maxLength={1000}
-                className="w-full bg-white/[4%] border border-white/[8%] rounded-xl py-3.5 px-4 text-[14px] text-white placeholder:text-white/25 focus:outline-none focus:border-[#d05bf8]/40 resize-none transition-colors"
-              />
-              <div className="text-right text-[11px] text-white/20">{customPrompt.length}/1000</div>
-            </div>
-
-            {/* Aspect Ratio */}
-            <div className="space-y-3">
-              <label className="text-[12px] text-white/50 font-medium">Aspect Ratio</label>
-              <div className="grid grid-cols-4 gap-2">
-                {ASPECT_RATIOS.map(r => (
-                  <button
-                    key={r.ratio}
-                    onClick={() => setAspectRatio(r.ratio)}
-                    className={`px-3 py-3 rounded-xl text-[13px] font-medium transition-all duration-200 ${
-                      aspectRatio === r.ratio
-                        ? 'bg-gradient-to-r from-[#d05bf8]/30 to-[#ff18a0]/30 border border-[#d05bf8]/50 text-white'
-                        : 'bg-white/[4%] border border-white/[8%] text-white/50 hover:text-white/70'
-                    }`}
-                  >
-                    <div className="font-semibold">{r.ratio}</div>
-                    <div className="text-[10px] text-white/30 mt-0.5">{r.desc}</div>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Quality */}
-            <div className="space-y-3">
-              <label className="text-[12px] text-white/50 font-medium">Quality</label>
-              <div className="flex gap-2">
-                {QUALITIES.map(q => (
-                  <button
-                    key={q.name}
-                    onClick={() => setQuality(q.name)}
-                    className={`flex-1 px-4 py-3 rounded-xl text-[12px] font-semibold transition-all duration-200 ${
-                      quality === q.name
-                        ? 'bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] text-white shadow-lg'
-                        : 'bg-white/[4%] border border-white/[8%] text-white/50 hover:text-white/70'
-                    }`}
-                  >
-                    {q.name}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Generate Button */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 px-4 py-3 bg-[#0F0E0F]/95 backdrop-blur-xl border-t border-white/[6%]">
+      {/* Select Character Button */}
+      <div className="px-4">
         <button
-          onClick={() => setShowGenModeDialog(true)}
-          className="w-full py-3.5 rounded-full bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] text-white text-[14px] font-bold hover:shadow-[0_0_25px_rgba(208,91,248,0.45)] transition-all flex items-center justify-center gap-2 active:scale-[0.98]"
+          onClick={() => setShowCharPicker(true)}
+          className="w-full py-4 rounded-2xl bg-white/[5%] border border-white/[8%] hover:bg-white/[8%] hover:border-white/[15%] transition-all text-center"
         >
-          <Sparkles size={18} />
-          Generate {mode === 'video' ? 'Video' : 'Image'}
+          <span className="text-[14px] font-semibold">Select Character</span>
         </button>
       </div>
 
@@ -420,7 +283,7 @@ export default function Generate() {
           <div className="bg-[#181718] rounded-t-[24px] w-full max-w-lg overflow-hidden animate-in slide-in-from-bottom duration-300">
             {/* Header */}
             <div className="flex items-center justify-between px-5 py-4 border-b border-white/[6%]">
-              <h2 className="text-[17px] font-bold">Choose Generation Mode</h2>
+              <h2 className="text-[17px] font-bold">Generation Mode</h2>
               <button
                 onClick={() => setShowGenModeDialog(false)}
                 className="size-9 flex items-center justify-center rounded-full hover:bg-white/[8%] transition-colors"
@@ -441,8 +304,8 @@ export default function Generate() {
                     <Sparkles size={22} />
                   </div>
                   <div className="flex-1">
-                    <div className="text-[15px] font-semibold mb-1">Use Presets</div>
-                    <div className="text-[12px] text-white/40">Quick generation with pre-made scenes</div>
+                    <div className="text-[15px] font-semibold mb-1">Presets</div>
+                    <div className="text-[12px] text-white/40">Ready-made presets for quick generation</div>
                   </div>
                 </div>
               </button>
@@ -458,7 +321,7 @@ export default function Generate() {
                   </div>
                   <div className="flex-1">
                     <div className="text-[15px] font-semibold mb-1">Custom Video</div>
-                    <div className="text-[12px] text-white/40">Write your own prompt for unique content</div>
+                    <div className="text-[12px] text-white/40">Write custom prompts for unique content</div>
                   </div>
                 </div>
               </button>
@@ -474,7 +337,7 @@ export default function Generate() {
                   </div>
                   <div className="flex-1">
                     <div className="text-[15px] font-semibold mb-1">Image to Video</div>
-                    <div className="text-[12px] text-white/40">Upload an image and animate it</div>
+                    <div className="text-[12px] text-white/40">Animate uploaded images into videos</div>
                   </div>
                 </div>
               </button>
@@ -486,10 +349,296 @@ export default function Generate() {
         </div>
       )}
 
+      {/* Action Dialog */}
+      {showActionDialog && (
+        <div className="fixed inset-0 z-[200] bg-black/80 backdrop-blur-md flex items-end justify-center">
+          <div className="bg-[#181718] rounded-t-[24px] w-full max-w-lg max-h-[85vh] overflow-hidden animate-in slide-in-from-bottom duration-300 flex flex-col">
+            {/* Header */}
+            <div className="flex items-center justify-between px-5 py-4 border-b border-white/[6%]">
+              <h2 className="text-[17px] font-bold">Select Action</h2>
+              <button
+                onClick={() => setShowActionDialog(false)}
+                className="size-9 flex items-center justify-center rounded-full hover:bg-white/[8%] transition-colors"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            {/* Search */}
+            <div className="px-5 py-4">
+              <div className="relative">
+                <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/40" />
+                <input
+                  type="text"
+                  value={actionSearch}
+                  onChange={e => setActionSearch(e.target.value)}
+                  placeholder="Search actions..."
+                  className="w-full bg-white/[5%] border border-white/[8%] rounded-xl py-3 pl-10 pr-4 text-[14px] text-white placeholder:text-white/30 focus:outline-none focus:border-[#d05bf8]/40 transition-colors"
+                />
+              </div>
+            </div>
+
+            {/* Actions Grid */}
+            <div className="overflow-y-auto flex-1 px-5 pb-6">
+              <div className="grid grid-cols-3 gap-2">
+                {filteredActions.map(action => (
+                  <button
+                    key={action}
+                    onClick={() => { setSelectedAction(action); setShowActionDialog(false) }}
+                    className={`relative aspect-video rounded-xl overflow-hidden border transition-all duration-200 ${
+                      selectedAction === action
+                        ? 'border-[#d05bf8] shadow-lg shadow-[#d05bf8]/20'
+                        : 'border-white/[6%] hover:border-white/[15%]'
+                    }`}
+                  >
+                    <img
+                      src={POSE_PLACEHOLDER}
+                      alt={action}
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+                    <div className="absolute bottom-1.5 left-1.5 right-1.5">
+                      <span className="text-[10px] font-medium text-white truncate block">{action}</span>
+                    </div>
+                    {selectedAction === action && (
+                      <div className="absolute top-1.5 right-1.5 size-4 rounded-full bg-white flex items-center justify-center">
+                        <svg className="size-2.5 text-[#d05bf8]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                        </svg>
+                      </div>
+                    )}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Safe Area Bottom */}
+            <div className="h-6" />
+          </div>
+        </div>
+      )}
+
+      {/* Clothes Dialog */}
+      {showClothesDialog && (
+        <div className="fixed inset-0 z-[200] bg-black/80 backdrop-blur-md flex items-end justify-center">
+          <div className="bg-[#181718] rounded-t-[24px] w-full max-w-lg max-h-[85vh] overflow-hidden animate-in slide-in-from-bottom duration-300 flex flex-col">
+            {/* Header */}
+            <div className="flex items-center justify-between px-5 py-4 border-b border-white/[6%]">
+              <h2 className="text-[17px] font-bold">Select Clothes</h2>
+              <button
+                onClick={() => setShowClothesDialog(false)}
+                className="size-9 flex items-center justify-center rounded-full hover:bg-white/[8%] transition-colors"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            {/* Search */}
+            <div className="px-5 py-4">
+              <div className="relative">
+                <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/40" />
+                <input
+                  type="text"
+                  value={clothesSearch}
+                  onChange={e => setClothesSearch(e.target.value)}
+                  placeholder="Search clothes..."
+                  className="w-full bg-white/[5%] border border-white/[8%] rounded-xl py-3 pl-10 pr-4 text-[14px] text-white placeholder:text-white/30 focus:outline-none focus:border-[#d05bf8]/40 transition-colors"
+                />
+              </div>
+            </div>
+
+            {/* Clothes Grid */}
+            <div className="overflow-y-auto flex-1 px-5 pb-6">
+              <div className="grid grid-cols-3 gap-2">
+                {filteredClothes.map(cloth => (
+                  <button
+                    key={cloth}
+                    onClick={() => { setSelectedClothes(cloth); setShowClothesDialog(false) }}
+                    className={`relative aspect-video rounded-xl overflow-hidden border transition-all duration-200 ${
+                      selectedClothes === cloth
+                        ? 'border-[#d05bf8] shadow-lg shadow-[#d05bf8]/20'
+                        : 'border-white/[6%] hover:border-white/[15%]'
+                    }`}
+                  >
+                    <img
+                      src={CLOTHES_PLACEHOLDER}
+                      alt={cloth}
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+                    <div className="absolute bottom-1.5 left-1.5 right-1.5">
+                      <span className="text-[10px] font-medium text-white truncate block">{cloth}</span>
+                    </div>
+                    {selectedClothes === cloth && (
+                      <div className="absolute top-1.5 right-1.5 size-4 rounded-full bg-white flex items-center justify-center">
+                        <svg className="size-2.5 text-[#d05bf8]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                        </svg>
+                      </div>
+                    )}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Safe Area Bottom */}
+            <div className="h-6" />
+          </div>
+        </div>
+      )}
+
+      {/* Background Dialog */}
+      {showBgDialog && (
+        <div className="fixed inset-0 z-[200] bg-black/80 backdrop-blur-md flex items-end justify-center">
+          <div className="bg-[#181718] rounded-t-[24px] w-full max-w-lg max-h-[85vh] overflow-hidden animate-in slide-in-from-bottom duration-300 flex flex-col">
+            {/* Header */}
+            <div className="flex items-center justify-between px-5 py-4 border-b border-white/[6%]">
+              <h2 className="text-[17px] font-bold">Select Background</h2>
+              <button
+                onClick={() => setShowBgDialog(false)}
+                className="size-9 flex items-center justify-center rounded-full hover:bg-white/[8%] transition-colors"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            {/* Search */}
+            <div className="px-5 py-4">
+              <div className="relative">
+                <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/40" />
+                <input
+                  type="text"
+                  value={bgSearch}
+                  onChange={e => setBgSearch(e.target.value)}
+                  placeholder="Search backgrounds..."
+                  className="w-full bg-white/[5%] border border-white/[8%] rounded-xl py-3 pl-10 pr-4 text-[14px] text-white placeholder:text-white/30 focus:outline-none focus:border-[#d05bf8]/40 transition-colors"
+                />
+              </div>
+            </div>
+
+            {/* Backgrounds Grid */}
+            <div className="overflow-y-auto flex-1 px-5 pb-6">
+              <div className="grid grid-cols-3 gap-2">
+                {filteredBackgounds.map(bg => (
+                  <button
+                    key={bg}
+                    onClick={() => { setSelectedBg(bg); setShowBgDialog(false) }}
+                    className={`relative aspect-video rounded-xl overflow-hidden border transition-all duration-200 ${
+                      selectedBg === bg
+                        ? 'border-[#d05bf8] shadow-lg shadow-[#d05bf8]/20'
+                        : 'border-white/[6%] hover:border-white/[15%]'
+                    }`}
+                  >
+                    <img
+                      src={getBgImagePath(bg)}
+                      alt={bg}
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+                    <div className="absolute bottom-1.5 left-1.5 right-1.5">
+                      <span className="text-[10px] font-medium text-white truncate block">{bg}</span>
+                    </div>
+                    {selectedBg === bg && (
+                      <div className="absolute top-1.5 right-1.5 size-4 rounded-full bg-white flex items-center justify-center">
+                        <svg className="size-2.5 text-[#d05bf8]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                        </svg>
+                      </div>
+                    )}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Safe Area Bottom */}
+            <div className="h-6" />
+          </div>
+        </div>
+      )}
+
+      {/* Advanced Settings Dialog */}
+      {showAdvancedDialog && (
+        <div className="fixed inset-0 z-[200] bg-black/80 backdrop-blur-md flex items-end justify-center">
+          <div className="bg-[#181718] rounded-t-[24px] w-full max-w-lg max-h-[85vh] overflow-hidden animate-in slide-in-from-bottom duration-300 flex flex-col">
+            {/* Header */}
+            <div className="flex items-center justify-between px-5 py-4 border-b border-white/[6%]">
+              <h2 className="text-[17px] font-bold">Advanced Settings</h2>
+              <button
+                onClick={() => setShowAdvancedDialog(false)}
+                className="size-9 flex items-center justify-center rounded-full hover:bg-white/[8%] transition-colors"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            {/* Content */}
+            <div className="overflow-y-auto flex-1 px-5 py-4 space-y-6">
+              {/* Custom Prompt */}
+              <div className="space-y-2">
+                <label className="text-[12px] text-white/50 font-medium">Custom Prompt</label>
+                <textarea
+                  value={customPrompt}
+                  onChange={e => setCustomPrompt(e.target.value)}
+                  placeholder="Describe the scene, mood, and actions in detail..."
+                  rows={4}
+                  maxLength={1000}
+                  className="w-full bg-white/[4%] border border-white/[8%] rounded-xl py-3.5 px-4 text-[14px] text-white placeholder:text-white/25 focus:outline-none focus:border-[#d05bf8]/40 resize-none transition-colors"
+                />
+                <div className="text-right text-[11px] text-white/20">{customPrompt.length}/1000</div>
+              </div>
+
+              {/* Aspect Ratio */}
+              <div className="space-y-3">
+                <label className="text-[12px] text-white/50 font-medium">Aspect Ratio</label>
+                <div className="grid grid-cols-4 gap-2">
+                  {ASPECT_RATIOS.map(r => (
+                    <button
+                      key={r.ratio}
+                      onClick={() => setAspectRatio(r.ratio)}
+                      className={`px-3 py-3 rounded-xl text-[13px] font-medium transition-all duration-200 ${
+                        aspectRatio === r.ratio
+                          ? 'bg-gradient-to-r from-[#d05bf8]/30 to-[#ff18a0]/30 border border-[#d05bf8]/50 text-white'
+                          : 'bg-white/[4%] border border-white/[8%] text-white/50 hover:text-white/70'
+                      }`}
+                    >
+                      <div className="font-semibold">{r.ratio}</div>
+                      <div className="text-[10px] text-white/30 mt-0.5">{r.desc}</div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Quality */}
+              <div className="space-y-3">
+                <label className="text-[12px] text-white/50 font-medium">Quality</label>
+                <div className="flex gap-2">
+                  {QUALITIES.map(q => (
+                    <button
+                      key={q.name}
+                      onClick={() => setQuality(q.name)}
+                      className={`flex-1 px-4 py-3 rounded-xl text-[12px] font-semibold transition-all duration-200 ${
+                        quality === q.name
+                          ? 'bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] text-white shadow-lg'
+                          : 'bg-white/[4%] border border-white/[8%] text-white/50 hover:text-white/70'
+                      }`}
+                    >
+                      {q.name}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Safe Area Bottom */}
+            <div className="h-6" />
+          </div>
+        </div>
+      )}
+
       {/* Character Picker Modal */}
       {showCharPicker && (
         <div className="fixed inset-0 z-[200] bg-black/80 backdrop-blur-md flex items-end justify-center">
-          <div className="bg-[#181718] rounded-t-[24px] w-full max-w-lg max-h-[85vh] overflow-hidden animate-in slide-in-from-bottom duration-300">
+          <div className="bg-[#181718] rounded-t-[24px] w-full max-w-lg max-h-[85vh] overflow-hidden animate-in slide-in-from-bottom duration-300 flex flex-col">
             {/* Header */}
             <div className="flex items-center justify-between px-5 py-4 border-b border-white/[6%]">
               <h2 className="text-[17px] font-bold">Select Model</h2>
@@ -530,7 +679,7 @@ export default function Generate() {
             </div>
 
             {/* Character List */}
-            <div className="overflow-y-auto max-h-[50vh] px-5 pb-6 space-y-1">
+            <div className="overflow-y-auto flex-1 px-5 pb-6 space-y-1">
               {filteredChars.length === 0 ? (
                 <div className="text-center py-8 text-white/40 text-[14px]">
                   No models found
