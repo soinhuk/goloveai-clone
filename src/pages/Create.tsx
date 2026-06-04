@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { X, ChevronDown, ChevronUp, Wand2, Play, ChevronLeft, ChevronRight } from 'lucide-react'
+import { X, ChevronDown, ChevronUp, Play, ChevronLeft, ChevronRight } from 'lucide-react'
 
 // Step indicator icons
 const STEP_ICONS = [
@@ -17,87 +17,86 @@ const VIDEO_URLS = {
   anime: '/videos/create/anime.mp4'
 }
 
-// Avatar placeholder
-const AVATAR_PLACEHOLDER = '/characters/barbara_dixon/images_avif_q50_720/barbara_dixon_avatar.avif'
+// Default avatar for preview
+const DEFAULT_AVATAR = '/images/create/ethnicity-step/asian.avif'
 
 // Eye colors with hex values
 const EYE_COLORS = [
-  { name: 'Brown', color: '#8B4513' },
-  { name: 'Blue', color: '#4169E1' },
-  { name: 'Green', color: '#228B22' },
-  { name: 'Hazel', color: '#8E7618' },
-  { name: 'Gray', color: '#708090' },
-  { name: 'Black', color: '#1C1C1C' },
-  { name: 'Amber', color: '#FFBF00' },
-  { name: 'Gold', color: '#FFD700' },
-  { name: 'Red', color: '#DC143C' },
-  { name: 'Violet', color: '#8B008B' },
+  { name: 'Brown', color: '#8B4513', image: '/images/create/face/eye-color/brown.avif' },
+  { name: 'Blue', color: '#4169E1', image: '/images/create/face/eye-color/blue.avif' },
+  { name: 'Green', color: '#228B22', image: '/images/create/face/eye-color/green.avif' },
+  { name: 'Hazel', color: '#8E7618', image: '/images/create/face/eye-color/hazel.avif' },
+  { name: 'Gray', color: '#708090', image: '/images/create/face/eye-color/gray.avif' },
+  { name: 'Black', color: '#1C1C1C', image: '/images/create/face/eye-color/black.avif' },
+  { name: 'Amber', color: '#FFBF00', image: '/images/create/face/eye-color/amber.avif' },
+  { name: 'Gold', color: '#FFD700', image: '/images/create/face/eye-color/gold.avif' },
+  { name: 'Red', color: '#DC143C', image: '/images/create/face/eye-color/red.avif' },
+  { name: 'Violet', color: '#8B008B', image: '/images/create/face/eye-color/violet.avif' },
 ]
 
 // Hair colors with preview URLs
 const HAIR_COLORS = [
-  { name: 'Brown', color: '#4A2518' },
-  { name: 'Black', color: '#1C1C1C' },
-  { name: 'Blonde', color: '#D4A76A' },
-  { name: 'Red', color: '#8B4513' },
-  { name: 'Auburn', color: '#6B3319' },
-  { name: 'Grey', color: '#808080' },
-  { name: 'Pink', color: '#FF69B4' },
-  { name: 'Blue', color: '#4169E1' },
-  { name: 'Purple', color: '#8B008B' },
-  { name: 'Green', color: '#228B22' },
-  { name: 'Silver', color: '#C0C0C0' },
+  { name: 'Brown', color: '#4A2518', image: '/images/create/face/hair-color/brown.avif' },
+  { name: 'Black', color: '#1C1C1C', image: '/images/create/face/hair-color/black.avif' },
+  { name: 'Blonde', color: '#D4A76A', image: '/images/create/face/hair-color/blonde.avif' },
+  { name: 'Red', color: '#8B4513', image: '/images/create/face/hair-color/red.avif' },
+  { name: 'Grey', color: '#808080', image: '/images/create/face/hair-color/grey.avif' },
+  { name: 'Hazel', color: '#8E7618', image: '/images/create/face/hair-color/hazel.avif' },
+  { name: 'Amber', color: '#FFBF00', image: '/images/create/face/hair-color/amber.avif' },
+  { name: 'Gold', color: '#FFD700', image: '/images/create/face/hair-color/gold.avif' },
+  { name: 'Blue', color: '#4169E1', image: '/images/create/face/hair-color/blue.avif' },
+  { name: 'Green', color: '#228B22', image: '/images/create/face/hair-color/green.avif' },
+  { name: 'Violet', color: '#8B008B', image: '/images/create/face/hair-color/violet.avif' },
 ]
 
 // Hair styles
 const HAIR_STYLES = [
-  { name: 'Long Straight', image: AVATAR_PLACEHOLDER },
-  { name: 'Long Wavy', image: AVATAR_PLACEHOLDER },
-  { name: 'Short Bob', image: AVATAR_PLACEHOLDER },
-  { name: 'Curly', image: AVATAR_PLACEHOLDER },
-  { name: 'Ponytail', image: AVATAR_PLACEHOLDER },
-  { name: 'Braids', image: AVATAR_PLACEHOLDER },
-  { name: 'Bun', image: AVATAR_PLACEHOLDER },
-  { name: 'Pigtails', image: AVATAR_PLACEHOLDER },
+  { name: 'Long Straight', image: '/images/create/face/hair-style/long.avif' },
+  { name: 'Long Wavy', image: '/images/create/face/hair-style/wavy.avif' },
+  { name: 'Short Bob', image: '/images/create/face/hair-style/short.avif' },
+  { name: 'Bangs', image: '/images/create/face/hair-style/bangs.avif' },
+  { name: 'Ponytail', image: '/images/create/face/hair-style/ponytail.avif' },
+  { name: 'Braids', image: '/images/create/face/hair-style/braided.avif' },
+  { name: 'Bun', image: '/images/create/face/hair-style/bun.avif' },
+  { name: 'Pigtails', image: '/images/create/face/hair-style/buns.avif' },
 ]
 
 // Ethnicity options
 const ETHNICITIES = [
-  { name: 'Asian', image: AVATAR_PLACEHOLDER },
-  { name: 'Black', image: AVATAR_PLACEHOLDER },
-  { name: 'White', image: AVATAR_PLACEHOLDER },
-  { name: 'Latina', image: AVATAR_PLACEHOLDER },
-  { name: 'Arab', image: AVATAR_PLACEHOLDER },
-  { name: 'Indian', image: AVATAR_PLACEHOLDER },
-  { name: 'Elf', image: AVATAR_PLACEHOLDER },
-  { name: 'Demon', image: AVATAR_PLACEHOLDER },
+  { name: 'Asian', image: '/images/create/ethnicity-step/asian.avif' },
+  { name: 'Black', image: '/images/create/ethnicity-step/black.avif' },
+  { name: 'White', image: '/images/create/ethnicity-step/white.avif' },
+  { name: 'Latina', image: '/images/create/ethnicity-step/latina.avif' },
+  { name: 'Arab', image: '/images/create/ethnicity-step/arab.avif' },
+  { name: 'Indian', image: '/images/create/ethnicity-step/indian.avif' },
+  { name: 'Elf', image: '/images/create/ethnicity-step/elf.avif' },
+  { name: 'Demon', image: '/images/create/ethnicity-step/demon.avif' },
 ]
 
 // Body types
 const BODY_TYPES = [
-  { name: 'Slim', image: AVATAR_PLACEHOLDER },
-  { name: 'Athletic', image: AVATAR_PLACEHOLDER },
-  { name: 'Curvy', image: AVATAR_PLACEHOLDER },
-  { name: 'BBW', image: AVATAR_PLACEHOLDER },
-  { name: 'Muscular', image: AVATAR_PLACEHOLDER },
+  { name: 'Slim', image: '/images/create/body-type/slim.avif' },
+  { name: 'Athletic', image: '/images/create/body-type/athletic.avif' },
+  { name: 'Voluptuous', image: '/images/create/body-type/voluptuous.avif' },
+  { name: 'Curvy', image: '/images/create/body-type/curvy.avif' },
+  { name: 'Muscular', image: '/images/create/body-type/muscular.avif' },
 ]
 
 // Breast sizes
 const BREAST_SIZES = [
-  { name: 'Flat', image: AVATAR_PLACEHOLDER },
-  { name: 'Small', image: AVATAR_PLACEHOLDER },
-  { name: 'Medium', image: AVATAR_PLACEHOLDER },
-  { name: 'Large', image: AVATAR_PLACEHOLDER },
-  { name: 'Huge', image: AVATAR_PLACEHOLDER },
+  { name: 'Flat', image: '/images/create/breast-size/flat.avif' },
+  { name: 'Small', image: '/images/create/breast-size/small.avif' },
+  { name: 'Medium', image: '/images/create/breast-size/medium.avif' },
+  { name: 'Large', image: '/images/create/breast-size/large.avif' },
+  { name: 'Huge', image: '/images/create/breast-size/xl.avif' },
 ]
 
 // Butt sizes
 const BUTT_SIZES = [
-  { name: 'Small', image: AVATAR_PLACEHOLDER },
-  { name: 'Medium', image: AVATAR_PLACEHOLDER },
-  { name: 'Large', image: AVATAR_PLACEHOLDER },
-  { name: 'XL', image: AVATAR_PLACEHOLDER },
-  { name: 'Huge', image: AVATAR_PLACEHOLDER },
+  { name: 'Small', image: '/images/create/butt-size/small.avif' },
+  { name: 'Medium', image: '/images/create/butt-size/athletic.avif' },
+  { name: 'Large', image: '/images/create/butt-size/medium.avif' },
+  { name: 'XL', image: '/images/create/butt-size/large.avif' },
 ]
 
 // Voice options
@@ -137,12 +136,12 @@ const FETISHES = ['Bondage', 'Foot', 'Lingerie', 'Uniform', 'Anime', 'Cosplay', 
 
 // Detail card configuration
 const DETAIL_CARDS = [
-  { key: 'voice', label: 'Voice', options: VOICES, hasPlayButton: true },
-  { key: 'personality', label: 'Personality', options: PERSONALITIES, hasPlayButton: false },
-  { key: 'occupation', label: 'Occupation', options: OCCUPATIONS, hasPlayButton: false },
-  { key: 'relationship', label: 'Relationship', options: RELATIONSHIPS, hasPlayButton: false },
-  { key: 'hobby', label: 'Hobby', options: HOBBIES, hasPlayButton: false },
-  { key: 'fetish', label: 'Fetish', options: FETISHES, hasPlayButton: false },
+  { key: 'voice', label: 'Voice', options: VOICES, hasPlayButton: true, image: '/images/create/personality/voice.avif' },
+  { key: 'personality', label: 'Personality', options: PERSONALITIES, hasPlayButton: false, image: '/images/create/personality/personality.avif' },
+  { key: 'occupation', label: 'Occupation', options: OCCUPATIONS, hasPlayButton: false, image: '/images/create/personality/occupation.avif' },
+  { key: 'relationship', label: 'Relationship', options: RELATIONSHIPS, hasPlayButton: false, image: '/images/create/personality/relationship.avif' },
+  { key: 'hobby', label: 'Hobby', options: HOBBIES, hasPlayButton: false, image: '/images/create/personality/hobby.avif' },
+  { key: 'fetish', label: 'Fetish', options: FETISHES, hasPlayButton: false, image: '/images/create/personality/fetish.avif' },
 ]
 
 // Detail card icons
@@ -186,6 +185,12 @@ const DETAIL_ICONS: Record<string, JSX.Element> = {
       <line x1="12" y1="8" x2="12.01" y2="8"/>
     </svg>
   ),
+}
+
+// Icon paths
+const ICONS = {
+  magicWand: '/icons/create/details/magic-wand.svg',
+  info: '/icons/create/details/info.svg',
 }
 
 // FAQ data
@@ -559,7 +564,7 @@ export default function Create() {
               <div className="flex justify-center mb-4">
                 <div className="relative w-48 h-48 rounded-[20px] overflow-hidden bg-[#1a1a1a]">
                   <img
-                    src={AVATAR_PLACEHOLDER}
+                    src={eyeColor.image || DEFAULT_AVATAR}
                     alt="Preview"
                     className="w-full h-full object-cover"
                   />
@@ -723,7 +728,7 @@ export default function Create() {
             {/* Butt Size */}
             <div>
               <h2 className="text-[20px] font-[700] tracking-[-4%] mb-4">Butt Size</h2>
-              <div className="grid grid-cols-5 gap-3">
+              <div className="grid grid-cols-4 gap-3">
                 {BUTT_SIZES.map(b => (
                   <button
                     key={b.name}
@@ -773,7 +778,7 @@ export default function Create() {
                   className="size-12 rounded-[16px] bg-[#E81B9D]/20 border border-[#E81B9D]/30 flex items-center justify-center hover:bg-[#E81B9D]/30 transition-colors"
                   title="Generate Name"
                 >
-                  <Wand2 size={20} className="text-[#E81B9D]" />
+                  <img src={ICONS.magicWand} alt="Generate" className="size-5 text-[#E81B9D]" />
                 </button>
               </div>
             </div>
@@ -856,7 +861,7 @@ export default function Create() {
             {/* Character Preview */}
             <div className="flex items-center gap-4 p-4 bg-white/[4%] rounded-[16px] border border-white/[6%]">
               <img
-                src={AVATAR_PLACEHOLDER}
+                src={DEFAULT_AVATAR}
                 alt={name || 'Character'}
                 className="w-24 h-24 rounded-[16px] object-cover"
               />
