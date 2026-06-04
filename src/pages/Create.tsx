@@ -2,35 +2,15 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { Sparkles, X, ChevronDown } from 'lucide-react'
 
-// Step indicator SVG icons
-const StepIcon1 = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" className="step-icon">
-    <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
-    <path d="M12 6v6l4 2" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-  </svg>
-)
-
-const StepIcon2 = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" className="step-icon">
-    <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-    <circle cx="12" cy="7" r="4" stroke="currentColor" strokeWidth="2"/>
-  </svg>
-)
-
-const StepIcon3 = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" className="step-icon">
-    <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-  </svg>
-)
-
-const StepIcon4 = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" className="step-icon">
-    <path d="M22 11.08V12a10 10 0 11-5.93-9.14" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-    <polyline points="22 4 12 14.01 9 11.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-  </svg>
-)
-
-const STEP_ICONS = [StepIcon1, StepIcon2, StepIcon3, StepIcon4]
+// Step indicator icons from original site
+const STEP_ICON_PATHS = [
+  '/icons/create/steps-icons/style.svg',
+  '/icons/create/steps-icons/general.svg',
+  '/icons/create/steps-icons/face.svg',
+  '/icons/create/steps-icons/body.svg',
+  '/icons/create/steps-icons/details.svg',
+  '/icons/create/steps-icons/result.svg',
+]
 
 const PERSONALITIES = ['Shy', 'Bold', 'Playful', 'Intense', 'Caring', 'Dominant', 'Submissive', 'Romantic', 'Kinky', 'Intellectual', 'Mysterious', 'Cheerful']
 const VOICES = ['Soft & Sweet', 'Deep & Sultry', 'Cheerful', 'Calm & Gentle', 'Playful', 'Serious', 'Exotic', 'Childlike', 'Mature']
@@ -38,10 +18,10 @@ const RELATIONSHIPS = ['Flirty Stranger', 'New Girlfriend', 'Devoted Partner', '
 const SKIN_TONES = ['#FDEBD0', '#F5CBA7', '#E0AC69', '#C68642', '#8D5524', '#4A2511']
 const HAIR_COLORS = ['#2C1B18', '#4A2518', '#8B4513', '#D4A76A', '#F5DEB3', '#FF6B6B', '#9B59B6', '#3498DB', '#2ECC71', '#1A1A1A']
 
-// Video URLs for style selection
+// Video URLs - local copies
 const VIDEO_URLS = {
-  realistic: 'https://goloveai.com/videos/app-create/style-step/realistic.mp4',
-  anime: 'https://goloveai.com/videos/app-create/style-step/anime.mp4'
+  realistic: '/videos/create/realistic.mp4',
+  anime: '/videos/create/anime.mp4'
 }
 
 export default function Create() {
@@ -91,33 +71,29 @@ export default function Create() {
           </svg>
         </button>
 
-        {/* Step Indicator with Icons */}
+        {/* Step Indicator with Icons from original site */}
         <div className="flex-1 flex items-center justify-center gap-0">
-          {[0, 1, 2, 3].map((i, idx) => {
-            const IconComponent = STEP_ICONS[i]
+          {[0, 1, 2, 3].map((i) => {
             const isActive = i <= step
             const isCurrent = i === step
 
             return (
               <div key={i} className="flex items-center">
-                {/* Progress Line (before each step except first) */}
                 {i > 0 && (
                   <div className={`w-8 h-[2px] transition-all ${
                     i <= step ? 'bg-gradient-to-r from-[#d05bf8] to-[#ff18a0]' : 'bg-white/[10%]'
                   }`} />
                 )}
-
-                {/* Circular Step Button */}
                 <button
                   onClick={() => i < step && setStep(i)}
                   disabled={i > step}
                   className={`flex items-center justify-center rounded-full transition-all ${
                     isActive
-                      ? 'h-9 w-9 bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] text-white'
-                      : 'h-9 w-9 bg-white/[6%] text-white/30'
-                  } ${isCurrent ? 'ring-2 ring-[#d05bf8]/50 ring-offset-2 ring-offset-[#0F0E0F]' : ''} ${i < step ? 'cursor-pointer hover:scale-110' : ''}`}
+                      ? 'h-9 w-9 bg-[#E81B9D] text-white'
+                      : 'h-9 w-9 bg-[#222122] text-white/30'
+                  } ${isCurrent ? 'ring-2 ring-[#E81B9D]/50 ring-offset-2 ring-offset-[#0F0E0F]' : ''} ${i < step ? 'cursor-pointer hover:scale-110' : ''}`}
                 >
-                  <IconComponent />
+                  <img src={STEP_ICON_PATHS[i]} alt="" className="h-4 w-4" />
                 </button>
               </div>
             )
@@ -134,19 +110,23 @@ export default function Create() {
         {/* Step 0: Style Selection */}
         {step === 0 && (
           <div className="space-y-6">
-            {/* Gender Buttons - Female/Trans as rounded-full */}
+            {/* Gender Buttons with original icons */}
             <div className="flex gap-3">
-              {(['female', 'trans'] as const).map(g => (
+              {([
+                { key: 'female', label: 'Female', icon: '/icons/create/gender/female.svg' },
+                { key: 'trans', label: 'Trans', icon: '/icons/create/gender/tgirl.svg' },
+              ] as const).map(({ key, label, icon }) => (
                 <button
-                  key={g}
-                  onClick={() => setGender(g)}
-                  className={`px-6 py-2.5 rounded-full text-[13px] font-semibold transition-all capitalize ${
-                    gender === g
-                      ? 'bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] text-white shadow-lg'
-                      : 'bg-white/[4%] text-white/50 border border-white/[10%] hover:border-white/[20%]'
+                  key={key}
+                  onClick={() => setGender(key)}
+                  className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-[13px] font-medium transition-all ${
+                    gender === key
+                      ? 'bg-[#E81B9D] text-white'
+                      : 'bg-white/[4%] text-white/50 border border-white/[6%]'
                   }`}
                 >
-                  {g}
+                  <img src={icon} alt="" className="h-4 w-4" />
+                  {label}
                 </button>
               ))}
             </div>
