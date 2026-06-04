@@ -568,12 +568,6 @@ export default function Create() {
                     alt="Preview"
                     className="w-full h-full object-cover"
                   />
-                  <div className="absolute top-[35%] left-1/2 -translate-x-1/2 w-20 h-4">
-                    <div
-                      className="w-full h-full rounded-full opacity-60 blur-sm"
-                      style={{ backgroundColor: eyeColor.color }}
-                    />
-                  </div>
                 </div>
               </div>
               <div className="flex flex-wrap justify-center gap-3">
