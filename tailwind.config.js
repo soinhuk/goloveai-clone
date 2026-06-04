@@ -63,6 +63,9 @@ export default {
           '100%': { backgroundPosition: '200% 50%' },
         },
       },
+      screens: {
+        'desktop': '1024px',
+      },
       maxWidth: {
         'container': '1900px',
       },
