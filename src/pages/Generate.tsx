@@ -4,24 +4,75 @@ import { characters } from '../data/characters'
 
 // Actions data - 44 actions with VIDEO preview thumbnails
 const ACTIONS = [
-  'POV Handjob Cumshot', 'Titjob Cum', 'Tongue Blowjob', 'Couch Lap Blowjob',
-  'Dildo Anal Riding', 'Foot Job', 'Shibaru Swing', 'BDSM Ass Tease',
-  'Tentacle', 'Prone Bone', 'Doggy', 'Blowjob', 'POV Missionary',
-  'Reverse Cowgirl', 'Cumshot', 'Pussy Insertion', 'Jiggle Tits',
-  'Twerk', 'Spread Pussy', 'Pussy Show', 'Fingering', 'Dildo',
-  'Shirt Lifting', 'Anal Missionary', 'Doggy Kneel', 'Drill',
-  'Zoom Out Riding', 'Sex Spoon', 'Pussy Licking', 'Handjob',
-  'Dick Kiss', 'French Kiss', 'Huge Cum', 'Mouth Cum', 'Squirt',
-  'Ahegao', 'Breast Expand', 'Bouncing Tits', 'Changing Room',
-  'Pregnant', 'Footjob', 'Stockings Feet', 'Heels Feet', 'Bare Feet'
+  { name: 'POV Handjob Cumshot', image: '/images/generate-page/video-poses/povhandjobcumshot.avif' },
+  { name: 'Titjob Cum', image: '/images/generate-page/video-poses/titjobcum.avif' },
+  { name: 'Tongue Blowjob', image: '/images/generate-page/video-poses/tongueblowjob.avif' },
+  { name: 'Couch Lap Blowjob', image: '/images/generate-page/video-poses/couchlapblowjob.avif' },
+  { name: 'Dildo Anal Riding', image: '/images/generate-page/video-poses/dildoanalriding.avif' },
+  { name: 'Foot Job', image: '/images/generate-page/video-poses/footjob.avif' },
+  { name: 'Shibaru Swing', image: '/images/generate-page/video-poses/shibaruswing.avif' },
+  { name: 'BDSM Ass Tease', image: '/images/generate-page/video-poses/bdsmbdsmasstease.avif' },
+  { name: 'Tentacle', image: '/images/generate-page/video-poses/tentacle.avif' },
+  { name: 'Prone Bone', image: '/images/generate-page/video-poses/pronebone.avif' },
+  { name: 'Doggy', image: '/images/generate-page/video-poses/doggy.avif' },
+  { name: 'Blowjob', image: '/images/generate-page/video-poses/blowjob.avif' },
+  { name: 'POV Missionary', image: '/images/generate-page/video-poses/povmissionary.avif' },
+  { name: 'Reverse Cowgirl', image: '/images/generate-page/video-poses/reversecowgirl.avif' },
+  { name: 'Cumshot', image: '/images/generate-page/video-poses/cumshot.avif' },
+  { name: 'Pussy Insertion', image: '/images/generate-page/video-poses/pussyinsertion.avif' },
+  { name: 'Jiggle Tits', image: '/images/generate-page/video-poses/jigglittits.avif' },
+  { name: 'Twerk', image: '/images/generate-page/video-poses/twerk.avif' },
+  { name: 'Spread Pussy', image: '/images/generate-page/video-poses/spreadpussy.avif' },
+  { name: 'Pussy Show', image: '/images/generate-page/video-poses/pussyshow.avif' },
+  { name: 'Fingering', image: '/images/generate-page/video-poses/fingering.avif' },
+  { name: 'Dildo', image: '/images/generate-page/video-poses/dildo.avif' },
+  { name: 'Shirt Lifting', image: '/images/generate-page/video-poses/shirtlifting.avif' },
+  { name: 'Anal Missionary', image: '/images/generate-page/video-poses/analmissionary.avif' },
+  { name: 'Doggy Kneel', image: '/images/generate-page/video-poses/doggykneel.avif' },
+  { name: 'Drill', image: '/images/generate-page/video-poses/drill.avif' },
+  { name: 'Zoom Out Riding', image: '/images/generate-page/video-poses/zoomoutriding.avif' },
+  { name: 'Sex Spoon', image: '/images/generate-page/video-poses/sexspoon.avif' },
+  { name: 'Pussy Licking', image: '/images/generate-page/video-poses/pussylicking.avif' },
+  { name: 'Handjob', image: '/images/generate-page/video-poses/handjob.avif' },
+  { name: 'Dick Kiss', image: '/images/generate-page/video-poses/dickkiss.avif' },
+  { name: 'French Kiss', image: '/images/generate-page/video-poses/frenchkiss.avif' },
+  { name: 'Huge Cum', image: '/images/generate-page/video-poses/hugecum.avif' },
+  { name: 'Mouth Cum', image: '/images/generate-page/video-poses/mouthcum.avif' },
+  { name: 'Squirt', image: '/images/generate-page/video-poses/squirt.avif' },
+  { name: 'Ahegao', image: '/images/generate-page/video-poses/ahegao.avif' },
+  { name: 'Breast Expand', image: '/images/generate-page/video-poses/breastexpand.avif' },
+  { name: 'Bouncing Tits', image: '/images/generate-page/video-poses/bouncingtits.avif' },
+  { name: 'Changing Room', image: '/images/generate-page/video-poses/changingroom.avif' },
+  { name: 'Pregnant', image: '/images/generate-page/video-poses/pregnant.avif' },
+  { name: 'Footjob', image: '/images/generate-page/video-poses/footjob2.avif' },
+  { name: 'Stockings Feet', image: '/images/generate-page/video-poses/stockingfeet.avif' },
+  { name: 'Heels Feet', image: '/images/generate-page/video-poses/heelsfeet.avif' },
+  { name: 'Bare Feet', image: '/images/generate-page/video-poses/barefeet.avif' },
 ]
 
 // Clothes data - 21 options with preview images
 const CLOTHES = [
-  'Custom', 'Sweater', 'Dress', 'Bikini', 'Naked', 'Blouse', 'T-Shirt',
-  'Tank Top', 'Crop Top', 'Bra', 'Hoodie', 'Jeans', 'Skirt', 'Pants',
-  'Hosiery', 'Footwear', 'Accessories', 'Makeup', 'Fit Details',
-  'Outerwear', 'Headwear'
+  { name: 'Custom', image: '/images/generate-page/clothes/custom.avif' },
+  { name: 'Sweater', image: '/images/generate-page/clothes/sweater.avif' },
+  { name: 'Dress', image: '/images/generate-page/clothes/dress.avif' },
+  { name: 'Bikini', image: '/images/generate-page/clothes/bikini.avif' },
+  { name: 'Naked', image: '/images/generate-page/clothes/naked.avif' },
+  { name: 'Blouse', image: '/images/generate-page/clothes/blouse.avif' },
+  { name: 'T-Shirt', image: '/images/generate-page/clothes/tshirt.avif' },
+  { name: 'Tank Top', image: '/images/generate-page/clothes/tanktop.avif' },
+  { name: 'Crop Top', image: '/images/generate-page/clothes/cropbra.avif' },
+  { name: 'Bra', image: '/images/generate-page/clothes/bra.avif' },
+  { name: 'Hoodie', image: '/images/generate-page/clothes/hoodie.avif' },
+  { name: 'Jeans', image: '/images/generate-page/clothes/jeans.avif' },
+  { name: 'Skirt', image: '/images/generate-page/clothes/skirt.avif' },
+  { name: 'Pants', image: '/images/generate-page/clothes/pants.avif' },
+  { name: 'Hosiery', image: '/images/generate-page/clothes/hosiery.avif' },
+  { name: 'Footwear', image: '/images/generate-page/clothes/footwear.avif' },
+  { name: 'Accessories', image: '/images/generate-page/clothes/accessories.avif' },
+  { name: 'Makeup', image: '/images/generate-page/clothes/makeup.avif' },
+  { name: 'Fit Details', image: '/images/generate-page/clothes/fitdetails.avif' },
+  { name: 'Outerwear', image: '/images/generate-page/clothes/outerwear.avif' },
+  { name: 'Headwear', image: '/images/generate-page/clothes/headwear.avif' },
 ]
 
 // Backgrounds data - 34 options with preview images
@@ -142,14 +193,14 @@ export default function Generate() {
     setCharSearch('')
   }
 
-  // Filter actions by search
+  // Filter actions by search (using action.name)
   const filteredActions = ACTIONS.filter(a =>
-    a.toLowerCase().includes(actionSearch.toLowerCase())
+    a.name.toLowerCase().includes(actionSearch.toLowerCase())
   )
 
-  // Filter clothes by search
+  // Filter clothes by search (using cloth.name)
   const filteredClothes = CLOTHES.filter(c =>
-    c.toLowerCase().includes(clothesSearch.toLowerCase())
+    c.name.toLowerCase().includes(clothesSearch.toLowerCase())
   )
 
   // Filter backgrounds by search
@@ -280,7 +331,7 @@ export default function Generate() {
       {/* Generation Mode Dialog */}
       {showGenModeDialog && (
         <div className="fixed inset-0 z-[200] bg-black/80 backdrop-blur-md flex items-end justify-center">
-          <div className="bg-[#181718] rounded-t-[24px] w-full max-w-lg overflow-hidden animate-in slide-in-from-bottom duration-300">
+          <div className="bg-[#181718] rounded-t-[24px] w-full max-w-2xl overflow-hidden animate-in slide-in-from-bottom duration-300">
             {/* Header */}
             <div className="flex items-center justify-between px-5 py-4 border-b border-white/[6%]">
               <h2 className="text-[17px] font-bold">Generation Mode</h2>
@@ -352,7 +403,7 @@ export default function Generate() {
       {/* Action Dialog */}
       {showActionDialog && (
         <div className="fixed inset-0 z-[200] bg-black/80 backdrop-blur-md flex items-end justify-center">
-          <div className="bg-[#181718] rounded-t-[24px] w-full max-w-lg max-h-[85vh] overflow-hidden animate-in slide-in-from-bottom duration-300 flex flex-col">
+          <div className="bg-[#181718] rounded-t-[24px] w-full max-w-2xl max-h-[85vh] overflow-hidden animate-in slide-in-from-bottom duration-300 flex flex-col">
             {/* Header */}
             <div className="flex items-center justify-between px-5 py-4 border-b border-white/[6%]">
               <h2 className="text-[17px] font-bold">Select Action</h2>
@@ -380,27 +431,27 @@ export default function Generate() {
 
             {/* Actions Grid */}
             <div className="overflow-y-auto flex-1 px-5 pb-6">
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-4 gap-2">
                 {filteredActions.map(action => (
                   <button
-                    key={action}
-                    onClick={() => { setSelectedAction(action); setShowActionDialog(false) }}
+                    key={action.name}
+                    onClick={() => { setSelectedAction(action.name); setShowActionDialog(false) }}
                     className={`relative aspect-video rounded-xl overflow-hidden border transition-all duration-200 ${
-                      selectedAction === action
+                      selectedAction === action.name
                         ? 'border-[#d05bf8] shadow-lg shadow-[#d05bf8]/20'
                         : 'border-white/[6%] hover:border-white/[15%]'
                     }`}
                   >
                     <img
-                      src={POSE_PLACEHOLDER}
-                      alt={action}
+                      src={action.image}
+                      alt={action.name}
                       className="w-full h-full object-cover"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
                     <div className="absolute bottom-1.5 left-1.5 right-1.5">
-                      <span className="text-[10px] font-medium text-white truncate block">{action}</span>
+                      <span className="text-[10px] font-medium text-white truncate block">{action.name}</span>
                     </div>
-                    {selectedAction === action && (
+                    {selectedAction === action.name && (
                       <div className="absolute top-1.5 right-1.5 size-4 rounded-full bg-white flex items-center justify-center">
                         <svg className="size-2.5 text-[#d05bf8]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
@@ -421,7 +472,7 @@ export default function Generate() {
       {/* Clothes Dialog */}
       {showClothesDialog && (
         <div className="fixed inset-0 z-[200] bg-black/80 backdrop-blur-md flex items-end justify-center">
-          <div className="bg-[#181718] rounded-t-[24px] w-full max-w-lg max-h-[85vh] overflow-hidden animate-in slide-in-from-bottom duration-300 flex flex-col">
+          <div className="bg-[#181718] rounded-t-[24px] w-full max-w-2xl max-h-[85vh] overflow-hidden animate-in slide-in-from-bottom duration-300 flex flex-col">
             {/* Header */}
             <div className="flex items-center justify-between px-5 py-4 border-b border-white/[6%]">
               <h2 className="text-[17px] font-bold">Select Clothes</h2>
@@ -449,27 +500,27 @@ export default function Generate() {
 
             {/* Clothes Grid */}
             <div className="overflow-y-auto flex-1 px-5 pb-6">
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-4 gap-2">
                 {filteredClothes.map(cloth => (
                   <button
-                    key={cloth}
-                    onClick={() => { setSelectedClothes(cloth); setShowClothesDialog(false) }}
+                    key={cloth.name}
+                    onClick={() => { setSelectedClothes(cloth.name); setShowClothesDialog(false) }}
                     className={`relative aspect-video rounded-xl overflow-hidden border transition-all duration-200 ${
-                      selectedClothes === cloth
+                      selectedClothes === cloth.name
                         ? 'border-[#d05bf8] shadow-lg shadow-[#d05bf8]/20'
                         : 'border-white/[6%] hover:border-white/[15%]'
                     }`}
                   >
                     <img
-                      src={CLOTHES_PLACEHOLDER}
-                      alt={cloth}
+                      src={cloth.image}
+                      alt={cloth.name}
                       className="w-full h-full object-cover"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
                     <div className="absolute bottom-1.5 left-1.5 right-1.5">
-                      <span className="text-[10px] font-medium text-white truncate block">{cloth}</span>
+                      <span className="text-[10px] font-medium text-white truncate block">{cloth.name}</span>
                     </div>
-                    {selectedClothes === cloth && (
+                    {selectedClothes === cloth.name && (
                       <div className="absolute top-1.5 right-1.5 size-4 rounded-full bg-white flex items-center justify-center">
                         <svg className="size-2.5 text-[#d05bf8]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
@@ -490,7 +541,7 @@ export default function Generate() {
       {/* Background Dialog */}
       {showBgDialog && (
         <div className="fixed inset-0 z-[200] bg-black/80 backdrop-blur-md flex items-end justify-center">
-          <div className="bg-[#181718] rounded-t-[24px] w-full max-w-lg max-h-[85vh] overflow-hidden animate-in slide-in-from-bottom duration-300 flex flex-col">
+          <div className="bg-[#181718] rounded-t-[24px] w-full max-w-2xl max-h-[85vh] overflow-hidden animate-in slide-in-from-bottom duration-300 flex flex-col">
             {/* Header */}
             <div className="flex items-center justify-between px-5 py-4 border-b border-white/[6%]">
               <h2 className="text-[17px] font-bold">Select Background</h2>
@@ -518,7 +569,7 @@ export default function Generate() {
 
             {/* Backgrounds Grid */}
             <div className="overflow-y-auto flex-1 px-5 pb-6">
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-4 gap-2">
                 {filteredBackgounds.map(bg => (
                   <button
                     key={bg}
@@ -559,7 +610,7 @@ export default function Generate() {
       {/* Advanced Settings Dialog */}
       {showAdvancedDialog && (
         <div className="fixed inset-0 z-[200] bg-black/80 backdrop-blur-md flex items-end justify-center">
-          <div className="bg-[#181718] rounded-t-[24px] w-full max-w-lg max-h-[85vh] overflow-hidden animate-in slide-in-from-bottom duration-300 flex flex-col">
+          <div className="bg-[#181718] rounded-t-[24px] w-full max-w-2xl max-h-[85vh] overflow-hidden animate-in slide-in-from-bottom duration-300 flex flex-col">
             {/* Header */}
             <div className="flex items-center justify-between px-5 py-4 border-b border-white/[6%]">
               <h2 className="text-[17px] font-bold">Advanced Settings</h2>
@@ -638,7 +689,7 @@ export default function Generate() {
       {/* Character Picker Modal */}
       {showCharPicker && (
         <div className="fixed inset-0 z-[200] bg-black/80 backdrop-blur-md flex items-end justify-center">
-          <div className="bg-[#181718] rounded-t-[24px] w-full max-w-lg max-h-[85vh] overflow-hidden animate-in slide-in-from-bottom duration-300 flex flex-col">
+          <div className="bg-[#181718] rounded-t-[24px] w-full max-w-2xl max-h-[85vh] overflow-hidden animate-in slide-in-from-bottom duration-300 flex flex-col">
             {/* Header */}
             <div className="flex items-center justify-between px-5 py-4 border-b border-white/[6%]">
               <h2 className="text-[17px] font-bold">Select Model</h2>
