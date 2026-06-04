@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowLeft, ChevronRight, ChevronDown, Sparkles, X } from 'lucide-react'
+import { ArrowLeft, ChevronDown, Sparkles, X } from 'lucide-react'
+import { CreateIcon } from '../components/Icons'
 
 const PERSONALITIES = ['Shy', 'Bold', 'Playful', 'Intense', 'Caring', 'Dominant', 'Submissive', 'Romantic', 'Kinky', 'Intellectual', 'Mysterious', 'Cheerful']
 const VOICES = ['Soft & Sweet', 'Deep & Sultry', 'Cheerful', 'Calm & Gentle', 'Playful', 'Serious', 'Exotic', 'Childlike', 'Mature']
@@ -9,7 +10,7 @@ const SKIN_TONES = ['#FDEBD0', '#F5CBA7', '#E0AC69', '#C68642', '#8D5524', '#4A2
 const HAIR_COLORS = ['#2C1B18', '#4A2518', '#8B4513', '#D4A76A', '#F5DEB3', '#FF6B6B', '#9B59B6', '#3498DB', '#2ECC71', '#1A1A1A']
 
 export default function Create() {
-  const [step, setStep] = useState(0) // 0=style, 1=look, 2=personality, 3=relationship
+  const [step, setStep] = useState(0)
   const [style, setStyle] = useState<'realistic' | 'anime'>('realistic')
   const [gender, setGender] = useState<'female' | 'trans'>('female')
   const [showAI, setShowAI] = useState(false)
@@ -32,7 +33,6 @@ export default function Create() {
         <button onClick={() => step > 0 ? setStep(step - 1) : null} className="flex items-center justify-center size-9 rounded-full hover:bg-white/[6%]">
           <ArrowLeft size={20} className="text-white/70" />
         </button>
-        {/* Step indicators */}
         <div className="flex-1 flex items-center gap-2">
           {[0, 1, 2, 3].map(i => (
             <div key={i} className={`h-1 flex-1 rounded-full transition-all ${i <= step ? 'bg-gradient-to-r from-[#d05bf8] to-[#ff18a0]' : 'bg-white/[6%]'}`} />
@@ -41,7 +41,6 @@ export default function Create() {
       </div>
 
       <div className="max-w-2xl mx-auto px-4 py-6">
-        {/* Title */}
         <h1 className="text-[24px] font-[700] text-white tracking-[-4%] mb-6">Create Your AI Dream GF</h1>
 
         {/* Step 0: Style Selection */}
@@ -56,18 +55,28 @@ export default function Create() {
               ))}
             </div>
 
-            {/* Style Cards */}
+            {/* Style Cards with Video */}
             <div className="grid grid-cols-2 gap-4">
               {(['realistic', 'anime'] as const).map(s => (
-                <button key={s} onClick={() => setStyle(s)} className={`relative group rounded-[22px] overflow-hidden h-[200px] border-2 transition-all ${
+                <button key={s} onClick={() => setStyle(s)} className={`relative group rounded-[22px] overflow-hidden h-[240px] border-2 transition-all ${
                   style === s ? 'border-[#d05bf8]' : 'border-white/[6%]'
                 }`}>
-                  <div className={`absolute inset-0 ${s === 'realistic' ? 'bg-gradient-to-br from-[#2d1054] to-[#0f0e0f]' : 'bg-gradient-to-br from-[#0a2d54] to-[#0f0e0f]'}`} />
-                  <div className="relative z-10 h-full flex flex-col items-center justify-center gap-3">
-                    <div className="size-16 rounded-full bg-white/10 flex items-center justify-center text-2xl">
-                      {s === 'realistic' ? '👩' : '🎌'}
-                    </div>
+                  {/* Demo Video */}
+                  <video
+                    src={`https://goloveai.com/videos/app-create/style-step/${s}.mp4`}
+                    autoPlay loop muted playsInline
+                    className="absolute inset-0 w-full h-full object-cover"
+                  />
+                  {/* Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+                  {/* Label */}
+                  <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between">
                     <span className="text-[16px] font-[600] capitalize">{s}</span>
+                    {style === s && (
+                      <span className="size-6 rounded-full bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] flex items-center justify-center">
+                        <svg className="size-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
+                      </span>
+                    )}
                   </div>
                 </button>
               ))}
