@@ -1,413 +1,234 @@
 import { useState } from 'react'
-import { ChevronRight, ChevronLeft, Sparkles, User, Palette, Heart, Mic, Briefcase, Coffee, Users, Eye } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { ArrowLeft, ChevronRight, ChevronDown, Sparkles, X } from 'lucide-react'
 
-// ========== STEP DATA ==========
-
-const GENDER_OPTIONS = ['Female', 'Trans']
-const STYLE_OPTIONS = ['Realistic', 'Anime']
-
-const ETHNICITY_OPTIONS = ['Caucasian', 'Asian', 'African', 'Latin', 'Indian', 'Middle Eastern', 'Mixed', 'Demon']
-
-const AGE_OPTIONS = ['18-22', '23-26', '27-30', '31-35', '36-40', '41+']
-
-const EYE_COLOR_OPTIONS = ['Brown', 'Blue', 'Green', 'Hazel', 'Gray', 'Amber', 'Red', 'Purple', 'Black', 'Heterochromia']
-
-const HAIR_COLOR_OPTIONS = ['Black', 'Brown', 'Blonde', 'Red', 'Pink', 'Blue', 'Purple', 'White', 'Gray', 'Rainbow']
-
-const HAIR_STYLE_OPTIONS = ['Long', 'Short', 'Medium', 'Curly', 'Straight', 'Wavy', 'Ponytail', 'Braids', 'Bun', 'Bald']
-
-const BODY_TYPE_OPTIONS = ['Slim', 'Athletic', 'Average', 'Curvy', 'Plump', 'Petite']
-
-const BREAST_SIZE_OPTIONS = ['Small', 'Medium', 'Large', 'Extra Large']
-
-const BUTT_SIZE_OPTIONS = ['Small', 'Medium', 'Large', 'Extra Large']
-
-const PERSONALITY_OPTIONS = ['Shy', 'Bold', 'Playful', 'Mysterious', 'Sweet', 'Sensual', 'Intellectual', 'Adventurous', 'Caring', 'Dominant', 'Submissive', 'Yandere']
-
-const VOICE_OPTIONS = ['Sweet', 'Mature', 'Young', 'Senpai', 'Tsundere', 'Mommy', 'Girl Next Door', 'Queen', 'Professional', 'Seductive']
-
-const OCCUPATION_OPTIONS = ['Student', 'Office Worker', 'Model', 'Nurse', 'Teacher', 'Artist', 'Streamer', 'Chef', 'Athlete', 'Doctor', 'Lawyer', 'Influencer', 'None']
-
-const RELATIONSHIP_OPTIONS = ['Girlfriend', 'Wife', 'Hookup', 'Friend', 'Sister', 'Mentee', 'Daughter', 'Colleague']
-
-const HOBBY_OPTIONS = ['Gaming', 'Reading', 'Music', 'Anime', 'Cooking', 'Sports', 'Art', 'Dancing', 'Travel', 'Photography', 'Fashion', 'Movies']
-
-const FETISH_OPTIONS = ['None', 'Cosplay', 'Uniform', 'Lingerie', 'Foot', 'Yuri', 'Futanari', 'Big Ass', 'Small Breasts', 'Petite', 'Tall', 'Muscle']
-
-// ========== COMPONENTS ==========
-
-function StepIndicator({ currentStep, totalSteps }: { currentStep: number, totalSteps: number }) {
-  return (
-    <div className="flex items-center justify-center gap-3 mb-8">
-      {Array.from({ length: totalSteps }).map((_, i) => (
-        <div key={i} className="relative">
-          <div
-            className={`w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold transition-all ${
-              i < currentStep
-                ? 'bg-gradient-to-br from-[#d05bf8] to-[#ff18a0] text-white'
-                : i === currentStep
-                ? 'bg-white/[15%] text-white border-2 border-[#d05bf8]'
-                : 'bg-white/[5%] text-white/30'
-            }`}
-          >
-            {i < currentStep ? (
-              <Sparkles size={16} />
-            ) : (
-              <span>{i + 1}</span>
-            )}
-          </div>
-          {/* Connector line */}
-          {i < totalSteps - 1 && (
-            <div className={`absolute top-1/2 -right-3 w-6 h-[2px] ${
-              i < currentStep ? 'bg-gradient-to-r from-[#d05bf8] to-[#ff18a0]' : 'bg-white/[10%]'
-            }`} />
-          )}
-        </div>
-      ))}
-    </div>
-  )
-}
-
-function OptionGrid({ options, selected, onSelect, columns = 4 }: { options: string[], selected: string, onSelect: (v: string) => void, columns?: number }) {
-  return (
-    <div className={`grid gap-2`} style={{ gridTemplateColumns: `repeat(${columns}, 1fr)` }}>
-      {options.map(opt => (
-        <button
-          key={opt}
-          onClick={() => onSelect(opt)}
-          className={`px-4 py-3 rounded-xl text-sm font-medium transition-all ${
-            selected === opt
-              ? 'bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] text-white'
-              : 'bg-white/[4%] text-white/60 hover:bg-white/[8%] hover:text-white'
-          }`}
-        >
-          {opt}
-        </button>
-      ))}
-    </div>
-  )
-}
-
-function SectionTitle({ icon: Icon, title, subtitle }: { icon: any, title: string, subtitle?: string }) {
-  return (
-    <div className="mb-6">
-      <div className="flex items-center gap-3 mb-2">
-        <div className="size-10 rounded-xl bg-gradient-to-br from-[#d05bf8]/20 to-[#ff18a0]/20 flex items-center justify-center">
-          <Icon size={20} className="text-gl-pink" />
-        </div>
-        <h3 className="text-white text-lg font-semibold">{title}</h3>
-      </div>
-      {subtitle && <p className="text-white/40 text-sm ml-[52px]">{subtitle}</p>}
-    </div>
-  )
-}
-
-// ========== MAIN COMPONENT ==========
+const PERSONALITIES = ['Shy', 'Bold', 'Playful', 'Intense', 'Caring', 'Dominant', 'Submissive', 'Romantic', 'Kinky', 'Intellectual', 'Mysterious', 'Cheerful']
+const VOICES = ['Soft & Sweet', 'Deep & Sultry', 'Cheerful', 'Calm & Gentle', 'Playful', 'Serious', 'Exotic', 'Childlike', 'Mature']
+const RELATIONSHIPS = ['Flirty Stranger', 'New Girlfriend', 'Devoted Partner', 'Best Friend', 'Secret Affair', 'Childhood Friend', 'Rival', 'Teacher', 'Roommate', 'Boss']
+const SKIN_TONES = ['#FDEBD0', '#F5CBA7', '#E0AC69', '#C68642', '#8D5524', '#4A2511']
+const HAIR_COLORS = ['#2C1B18', '#4A2518', '#8B4513', '#D4A76A', '#F5DEB3', '#FF6B6B', '#9B59B6', '#3498DB', '#2ECC71', '#1A1A1A']
 
 export default function Create() {
-  const [step, setStep] = useState(0)
-  const [gender, setGender] = useState('')
-  const [style, setStyle] = useState('')
-  
-  // Step 2
-  const [ethnicity, setEthnicity] = useState('')
-  const [age, setAge] = useState('')
-  
-  // Step 3
-  const [eyeColor, setEyeColor] = useState('')
-  const [hairColor, setHairColor] = useState('')
-  const [hairStyle, setHairStyle] = useState('')
-  
-  // Step 4
-  const [bodyType, setBodyType] = useState('')
-  const [breastSize, setBreastSize] = useState('')
-  const [buttSize, setButtSize] = useState('')
-  
-  // Step 5
-  const [charName, setCharName] = useState('')
-  const [personality, setPersonality] = useState<string[]>([])
-  const [voice, setVoice] = useState('')
-  const [occupation, setOccupation] = useState('')
-  const [relationship, setRelationship] = useState('')
-  const [hobby, setHobby] = useState('')
-  const [fetish, setFetish] = useState('')
-  
-  const totalSteps = 5
-  
-  const canContinue = () => {
-    switch (step) {
-      case 0: return gender && style
-      case 1: return ethnicity && age
-      case 2: return eyeColor && hairColor && hairStyle
-      case 3: return bodyType && breastSize && buttSize
-      case 4: return charName && personality.length > 0 && voice && relationship
-      default: return false
-    }
-  }
-  
-  const nextStep = () => {
-    if (step < totalSteps - 1 && canContinue()) {
-      setStep(step + 1)
-    }
-  }
-  
-  const prevStep = () => {
-    if (step > 0) setStep(step - 1)
-  }
-  
+  const [step, setStep] = useState(0) // 0=style, 1=look, 2=personality, 3=relationship
+  const [style, setStyle] = useState<'realistic' | 'anime'>('realistic')
+  const [gender, setGender] = useState<'female' | 'trans'>('female')
+  const [showAI, setShowAI] = useState(false)
+  const [aiPrompt, setAiPrompt] = useState('')
+  const [name, setName] = useState('')
+  const [skinTone, setSkinTone] = useState(SKIN_TONES[0])
+  const [hairColor, setHairColor] = useState(HAIR_COLORS[0])
+  const [selectedPersonality, setSelectedPersonality] = useState<string[]>([])
+  const [selectedVoice, setSelectedVoice] = useState('')
+  const [selectedRelationship, setSelectedRelationship] = useState('')
+
   const togglePersonality = (p: string) => {
-    if (personality.includes(p)) {
-      setPersonality(personality.filter(x => x !== p))
-    } else if (personality.length < 3) {
-      setPersonality([...personality, p])
-    }
+    setSelectedPersonality(prev => prev.includes(p) ? prev.filter(x => x !== p) : [...prev, p])
   }
-  
-  const handleCreate = () => {
-    const charData = {
-      name: charName,
-      gender,
-      style,
-      ethnicity,
-      age,
-      eyeColor,
-      hairColor,
-      hairStyle,
-      bodyType,
-      breastSize,
-      buttSize,
-      personality,
-      voice,
-      occupation,
-      relationship,
-      hobby,
-      fetish
-    }
-    console.log('Creating character:', charData)
-    alert(`Character "${charName}" created! Check console for full data.`)
-  }
-  
+
   return (
-    <div className="min-h-screen bg-gl-dark">
+    <div className="min-h-screen bg-[#0F0E0F] text-white pb-20">
       {/* Top Bar */}
-      <div className="border-b border-white/[5%] px-6 py-4">
-        <div className="max-w-[720px] mx-auto">
-          <h1 className="text-white font-bold text-xl">Create Your AI Dream GF</h1>
+      <div className="flex items-center gap-3 px-4 py-4 border-b border-white/[6%]">
+        <button onClick={() => step > 0 ? setStep(step - 1) : null} className="flex items-center justify-center size-9 rounded-full hover:bg-white/[6%]">
+          <ArrowLeft size={20} className="text-white/70" />
+        </button>
+        {/* Step indicators */}
+        <div className="flex-1 flex items-center gap-2">
+          {[0, 1, 2, 3].map(i => (
+            <div key={i} className={`h-1 flex-1 rounded-full transition-all ${i <= step ? 'bg-gradient-to-r from-[#d05bf8] to-[#ff18a0]' : 'bg-white/[6%]'}`} />
+          ))}
         </div>
       </div>
-      
-      {/* Content */}
-      <div className="max-w-[720px] mx-auto px-4 py-8">
-        <StepIndicator currentStep={step} totalSteps={totalSteps} />
-        
-        {/* STEP 0: Gender + Style */}
+
+      <div className="max-w-2xl mx-auto px-4 py-6">
+        {/* Title */}
+        <h1 className="text-[24px] font-[700] text-white tracking-[-4%] mb-6">Create Your AI Dream GF</h1>
+
+        {/* Step 0: Style Selection */}
         {step === 0 && (
-          <div className="space-y-8 animate-fade-in">
+          <div className="space-y-6">
             {/* Gender */}
-            <div>
-              <h2 className="text-white/60 text-sm font-medium mb-3">Choose Gender</h2>
-              <div className="flex gap-3">
-                {GENDER_OPTIONS.map(g => (
-                  <button
-                    key={g}
-                    onClick={() => setGender(g)}
-                    className={`px-6 py-3 rounded-xl font-medium transition-all ${
-                      gender === g
-                        ? 'bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] text-white'
-                        : 'bg-white/[4%] text-white/60 hover:bg-white/[8%]'
-                    }`}
-                  >
-                    {g}
-                  </button>
-                ))}
-              </div>
+            <div className="flex gap-2">
+              {(['female', 'trans'] as const).map(g => (
+                <button key={g} onClick={() => setGender(g)} className={`px-6 py-2.5 rounded-full text-[13px] font-semibold transition-all capitalize ${
+                  gender === g ? 'bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] text-white' : 'bg-white/[4%] text-white/50 border border-white/[6%]'
+                }`}>{g}</button>
+              ))}
             </div>
-            
-            {/* Style */}
-            <div>
-              <h2 className="text-white/60 text-sm font-medium mb-3">Choose Style</h2>
-              <div className="grid grid-cols-2 gap-4">
-                {STYLE_OPTIONS.map(s => (
-                  <button
-                    key={s}
-                    onClick={() => setStyle(s)}
-                    className={`relative overflow-hidden rounded-2xl transition-all ${
-                      style === s ? 'ring-2 ring-[#d05bf8]' : 'hover:ring-1 hover:ring-white/20'
-                    }`}
-                    style={{ aspectRatio: '1/1.33' }}
-                  >
-                    <div className={`absolute inset-0 ${
-                      s === 'Realistic'
-                        ? 'bg-gradient-to-br from-[#8B7355] to-[#D4A574]'
-                        : 'bg-gradient-to-br from-[#FF69B4] to-[#9370DB]'
-                    }`} />
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <span className="text-white text-xl font-bold">{s}</span>
+
+            {/* Style Cards */}
+            <div className="grid grid-cols-2 gap-4">
+              {(['realistic', 'anime'] as const).map(s => (
+                <button key={s} onClick={() => setStyle(s)} className={`relative group rounded-[22px] overflow-hidden h-[200px] border-2 transition-all ${
+                  style === s ? 'border-[#d05bf8]' : 'border-white/[6%]'
+                }`}>
+                  <div className={`absolute inset-0 ${s === 'realistic' ? 'bg-gradient-to-br from-[#2d1054] to-[#0f0e0f]' : 'bg-gradient-to-br from-[#0a2d54] to-[#0f0e0f]'}`} />
+                  <div className="relative z-10 h-full flex flex-col items-center justify-center gap-3">
+                    <div className="size-16 rounded-full bg-white/10 flex items-center justify-center text-2xl">
+                      {s === 'realistic' ? '👩' : '🎌'}
                     </div>
-                    {style === s && (
-                      <div className="absolute top-3 right-3 size-6 rounded-full bg-white/20 flex items-center justify-center">
-                        <div className="size-3 rounded-full bg-white" />
-                      </div>
-                    )}
-                  </button>
-                ))}
-              </div>
-            </div>
-            
-            {/* 3 Steps Guide */}
-            <div className="bg-white/[2%] rounded-2xl p-6 border border-white/[5%]">
-              <h3 className="text-white font-semibold mb-4">How to Create Your AI Girlfriend in 3 Steps</h3>
-              <div className="space-y-4">
-                <div className="flex items-start gap-3">
-                  <div className="size-8 rounded-full bg-[#d05bf8]/20 flex items-center justify-center shrink-0">
-                    <span className="text-gl-pink text-sm font-bold">1</span>
+                    <span className="text-[16px] font-[600] capitalize">{s}</span>
                   </div>
-                  <div>
-                    <h4 className="text-white font-medium">Design Her Look From Scratch</h4>
-                    <p className="text-white/40 text-sm mt-1">Go realistic or anime. Set her skin tone, eyes, hair, body type, and more.</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <div className="size-8 rounded-full bg-[#d05bf8]/20 flex items-center justify-center shrink-0">
-                    <span className="text-gl-pink text-sm font-bold">2</span>
-                  </div>
-                  <div>
-                    <h4 className="text-white font-medium">Shape Her Into Someone Real</h4>
-                    <p className="text-white/40 text-sm mt-1">Create AI Girlfriend with 40+ personality types or build one from scratch.</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <div className="size-8 rounded-full bg-[#d05bf8]/20 flex items-center justify-center shrink-0">
-                    <span className="text-gl-pink text-sm font-bold">3</span>
-                  </div>
-                  <div>
-                    <h4 className="text-white font-medium">Define What You Two Are</h4>
-                    <p className="text-white/40 text-sm mt-1">Choose your relationship dynamic, shared hobbies, and intimate preferences.</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-        
-        {/* STEP 1: Ethnicity + Age */}
-        {step === 1 && (
-          <div className="space-y-8 animate-fade-in">
-            <SectionTitle icon={Users} title="Ethnicity" subtitle="Choose her ethnic background" />
-            <OptionGrid options={ETHNICITY_OPTIONS} selected={ethnicity} onSelect={setEthnicity} columns={4} />
-            
-            <SectionTitle icon={Heart} title="Age" subtitle="Select age range" />
-            <OptionGrid options={AGE_OPTIONS} selected={age} onSelect={setAge} columns={3} />
-          </div>
-        )}
-        
-        {/* STEP 2: Eye/Hair */}
-        {step === 2 && (
-          <div className="space-y-8 animate-fade-in">
-            <SectionTitle icon={Eye} title="Eye Color" subtitle="Her eye color" />
-            <OptionGrid options={EYE_COLOR_OPTIONS} selected={eyeColor} onSelect={setEyeColor} columns={5} />
-            
-            <SectionTitle icon={Palette} title="Hair Color" subtitle="Her hair color" />
-            <OptionGrid options={HAIR_COLOR_OPTIONS} selected={hairColor} onSelect={setHairColor} columns={5} />
-            
-            <SectionTitle icon={Sparkles} title="Hair Style" subtitle="Her hairstyle" />
-            <OptionGrid options={HAIR_STYLE_OPTIONS} selected={hairStyle} onSelect={setHairStyle} columns={5} />
-          </div>
-        )}
-        
-        {/* STEP 3: Body */}
-        {step === 3 && (
-          <div className="space-y-8 animate-fade-in">
-            <SectionTitle icon={User} title="Body Type" subtitle="Overall body shape" />
-            <OptionGrid options={BODY_TYPE_OPTIONS} selected={bodyType} onSelect={setBodyType} columns={3} />
-            
-            <SectionTitle icon={Heart} title="Breast Size" subtitle="Breast size preference" />
-            <OptionGrid options={BREAST_SIZE_OPTIONS} selected={breastSize} onSelect={setBreastSize} columns={4} />
-            
-            <SectionTitle icon={Users} title="Butt Size" subtitle="Buttock size preference" />
-            <OptionGrid options={BUTT_SIZE_OPTIONS} selected={buttSize} onSelect={setButtSize} columns={4} />
-          </div>
-        )}
-        
-        {/* STEP 4: Personality + Details */}
-        {step === 4 && (
-          <div className="space-y-8 animate-fade-in">
-            <SectionTitle icon={User} title="Character Name" />
-            <input
-              type="text"
-              value={charName}
-              onChange={e => setCharName(e.target.value)}
-              placeholder="Enter her name..."
-              className="w-full bg-white/[4%] border border-white/[8%] rounded-xl px-4 py-3 text-white placeholder:text-white/30 focus:outline-none focus:border-[#d05bf8]/40"
-            />
-            
-            <SectionTitle icon={Heart} title="Personality" subtitle="Select up to 3 traits" />
-            <div className="flex flex-wrap gap-2">
-              {PERSONALITY_OPTIONS.map(p => (
-                <button
-                  key={p}
-                  onClick={() => togglePersonality(p)}
-                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
-                    personality.includes(p)
-                      ? 'bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] text-white'
-                      : 'bg-white/[4%] text-white/60 hover:bg-white/[8%]'
-                  }`}
-                >
-                  {p}
                 </button>
               ))}
             </div>
-            
-            <SectionTitle icon={Mic} title="Voice Style" />
-            <OptionGrid options={VOICE_OPTIONS} selected={voice} onSelect={setVoice} columns={5} />
-            
-            <SectionTitle icon={Briefcase} title="Occupation" />
-            <OptionGrid options={OCCUPATION_OPTIONS} selected={occupation} onSelect={setOccupation} columns={4} />
-            
-            <SectionTitle icon={Heart} title="Relationship" subtitle="What is she to you?" />
-            <OptionGrid options={RELATIONSHIP_OPTIONS} selected={relationship} onSelect={setRelationship} columns={4} />
-            
-            <SectionTitle icon={Coffee} title="Hobby" subtitle="What does she like to do?" />
-            <OptionGrid options={HOBBY_OPTIONS} selected={hobby} onSelect={setHobby} columns={4} />
-            
-            <SectionTitle icon={Sparkles} title="Fetish (Optional)" />
-            <OptionGrid options={FETISH_OPTIONS} selected={fetish} onSelect={setFetish} columns={4} />
-            
-            {/* Create Button */}
-            <button
-              onClick={handleCreate}
-              disabled={!canContinue()}
-              className="w-full bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] text-white font-semibold py-4 rounded-full mt-4 disabled:opacity-40 hover:opacity-90 transition-all"
-            >
-              Create Character
+
+            {/* Design with AI Button */}
+            <button onClick={() => setShowAI(true)} className="w-full py-3 rounded-[16px] bg-gradient-to-r from-[#d05bf8]/10 to-[#ff18a0]/10 border border-[#d05bf8]/20 text-white flex items-center justify-center gap-2 hover:border-[#d05bf8]/40 transition-all">
+              <Sparkles size={16} className="text-[#d05bf8]" />
+              <span className="text-[14px] font-semibold">Design with AI</span>
+              <span className="px-1.5 py-0.5 text-[10px] font-bold bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] text-white rounded">New</span>
             </button>
           </div>
         )}
-        
-        {/* Navigation Buttons */}
-        <div className="flex gap-3 mt-8">
-          {step > 0 && (
-            <button
-              onClick={prevStep}
-              className="flex items-center gap-2 px-6 py-3 rounded-full bg-white/[4%] text-white/60 hover:bg-white/[8%] transition-all"
-            >
-              <ChevronLeft size={18} />
-              Back
-            </button>
-          )}
-          {step < 4 && (
-            <button
-              onClick={nextStep}
-              disabled={!canContinue()}
-              className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] text-white font-semibold py-3 rounded-full disabled:opacity-40 hover:opacity-90 transition-all ml-auto"
-              style={{ maxWidth: 200 }}
-            >
-              Continue
-              <ChevronRight size={18} />
-            </button>
-          )}
+
+        {/* Step 1: Design Look */}
+        {step === 1 && (
+          <div className="space-y-6">
+            <div>
+              <label className="text-[12px] text-white/40 mb-2 block">Name</label>
+              <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="Give her a name..." className="w-full bg-white/[4%] border border-white/[6%] rounded-xl py-3 px-4 text-white placeholder:text-white/30 focus:outline-none focus:border-[#d05bf8]/40" />
+            </div>
+            <div>
+              <label className="text-[12px] text-white/40 mb-2 block">Skin Tone</label>
+              <div className="flex gap-2">{SKIN_TONES.map(c => <button key={c} onClick={() => setSkinTone(c)} className={`size-10 rounded-full border-2 transition-all ${skinTone === c ? 'border-[#d05bf8] scale-110' : 'border-transparent'}`} style={{ background: c }} />)}</div>
+            </div>
+            <div>
+              <label className="text-[12px] text-white/40 mb-2 block">Hair Color</label>
+              <div className="flex gap-2">{HAIR_COLORS.map(c => <button key={c} onClick={() => setHairColor(c)} className={`size-10 rounded-full border-2 transition-all ${hairColor === c ? 'border-[#d05bf8] scale-110' : 'border-transparent'}`} style={{ background: c }} />)}</div>
+            </div>
+          </div>
+        )}
+
+        {/* Step 2: Personality */}
+        {step === 2 && (
+          <div className="space-y-6">
+            <div>
+              <label className="text-[14px] font-semibold mb-3 block">Personality Types</label>
+              <div className="flex flex-wrap gap-2">
+                {PERSONALITIES.map(p => (
+                  <button key={p} onClick={() => togglePersonality(p)} className={`px-4 py-2 rounded-full text-[12px] font-medium transition-all ${
+                    selectedPersonality.includes(p) ? 'bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] text-white' : 'bg-white/[4%] text-white/50 border border-white/[6%]'
+                  }`}>{p}</button>
+                ))}
+              </div>
+            </div>
+            <div>
+              <label className="text-[14px] font-semibold mb-3 block">Voice</label>
+              <div className="flex flex-wrap gap-2">
+                {VOICES.map(v => (
+                  <button key={v} onClick={() => setSelectedVoice(v)} className={`px-4 py-2 rounded-full text-[12px] font-medium transition-all ${
+                    selectedVoice === v ? 'bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] text-white' : 'bg-white/[4%] text-white/50 border border-white/[6%]'
+                  }`}>{v}</button>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Step 3: Relationship */}
+        {step === 3 && (
+          <div className="space-y-6">
+            <div>
+              <label className="text-[14px] font-semibold mb-3 block">Relationship Type</label>
+              <div className="grid grid-cols-2 gap-2">
+                {RELATIONSHIPS.map(r => (
+                  <button key={r} onClick={() => setSelectedRelationship(r)} className={`px-4 py-3 rounded-[16px] text-[13px] font-medium transition-all text-left ${
+                    selectedRelationship === r ? 'bg-gradient-to-r from-[#d05bf8]/20 to-[#ff18a0]/20 border border-[#d05bf8]/40 text-white' : 'bg-white/[4%] text-white/50 border border-white/[6%]'
+                  }`}>{r}</button>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* How to Create Section */}
+        <div className="mt-12 space-y-8">
+          <h2 className="text-[20px] font-[700] tracking-[-4%]">How to Create Your AI Girlfriend in 3 Steps</h2>
+          <p className="text-[14px] text-white/50">Start for free — Create Your GF AI, shape every detail, and chat instantly.</p>
+          {[
+            { step: 'First Step', title: 'Design Her Look From Scratch', desc: 'Go realistic or anime. Set her skin tone, eyes, hair, body type, and style.' },
+            { step: 'Second Step', title: 'Shape Her Into Someone Real', desc: 'Create AI Girlfriend with 40+ personality types or build one from scratch. Pick from 19 voices and 135 career roles.' },
+            { step: 'Third Step', title: 'Define What You Two Are', desc: 'Choose from 29 relationship types — from a flirty stranger to a devoted partner.' },
+          ].map((s, i) => (
+            <div key={i} className="space-y-2">
+              <span className="text-[10px] font-bold text-[#d05bf8] uppercase tracking-wider">{s.step}</span>
+              <h3 className="text-[16px] font-[600]">{s.title}</h3>
+              <p className="text-[13px] text-white/50 leading-[20px]">{s.desc}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* FAQ */}
+        <div className="mt-12 space-y-4">
+          <h2 className="text-[20px] font-[700] tracking-[-4%]">FAQ</h2>
+          {[
+            { q: 'Can I Create AI Girlfriend Free?', a: 'Yes — no card needed. Build her and start chatting right now.' },
+            { q: 'How do I Create Your AI Girlfriend from scratch?', a: 'Pick her look, set her personality, choose your dynamic. Done in under 2 minutes.' },
+            { q: 'Can I Create Girlfriend AI with a custom personality?', a: 'Absolutely. Choose from 40+ types or design her personality yourself — she\'s 100% yours.' },
+            { q: 'What makes this AI GF different from other chatbots?', a: 'You Create Your AI Girlfriend your way — her face, voice, and personality are all set by you, not by default.' },
+          ].map((faq, i) => (
+            <FAQItem key={i} question={faq.q} answer={faq.a} defaultOpen={i === 0} />
+          ))}
         </div>
       </div>
+
+      {/* Bottom Bar */}
+      <div className="fixed bottom-0 left-0 right-0 z-50 flex items-center gap-3 px-4 py-3 bg-[#0F0E0F]/95 backdrop-blur-md border-t border-white/[6%]">
+        <button className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-white/[4%] border border-white/[6%] text-white/70 text-[13px] hover:bg-white/[6%]">
+          <Sparkles size={14} className="text-[#d05bf8]" />
+          Design AI
+          <span className="px-1 py-0.5 text-[9px] font-bold bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] text-white rounded">New</span>
+        </button>
+        <button onClick={() => step < 3 ? setStep(step + 1) : null} className="flex-1 py-2.5 rounded-full bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] text-white text-[14px] font-semibold hover:shadow-[0_0_20px_rgba(208,91,248,0.4)] transition-all">
+          Continue
+        </button>
+      </div>
+
+      {/* AI Design Modal */}
+      {showAI && (
+        <div className="fixed inset-0 z-[200] bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="bg-[#181718] rounded-[22px] border border-white/[10%] w-full max-w-md p-6 space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Sparkles size={16} className="text-[#d05bf8]" />
+                <h2 className="text-[18px] font-[700]">Design with AI</h2>
+              </div>
+              <button onClick={() => setShowAI(false)} className="size-8 flex items-center justify-center rounded-full hover:bg-white/[6%]"><X size={18} /></button>
+            </div>
+            <p className="text-[13px] text-white/50">Enter your custom prompt and get instant AI-powered results.</p>
+            <div className="flex gap-2">
+              <button className="px-3 py-1.5 rounded-full bg-white/[4%] border border-white/[6%] text-[12px] text-white/60">Style <span className="text-white/80">Realistic</span> <ChevronDown size={10} /></button>
+              <button className="px-3 py-1.5 rounded-full bg-white/[4%] border border-white/[6%] text-[12px] text-white/60">Gender <span className="text-white/80">Female</span> <ChevronDown size={10} /></button>
+            </div>
+            <textarea
+              value={aiPrompt}
+              onChange={e => setAiPrompt(e.target.value)}
+              placeholder='Tell us about your ideal companion ... (e.g. "Playful yet dominant, intense gaze, craving passion and electric nights.")'
+              rows={4}
+              maxLength={2000}
+              className="w-full bg-white/[4%] border border-white/[6%] rounded-xl py-3 px-4 text-[14px] text-white placeholder:text-white/30 focus:outline-none focus:border-[#d05bf8]/40 resize-none"
+            />
+            <div className="text-right text-[11px] text-white/20">{aiPrompt.length}/2000</div>
+            <button disabled={!aiPrompt.trim()} className={`w-full py-3 rounded-xl text-[14px] font-semibold transition-all ${
+              aiPrompt.trim() ? 'bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] text-white' : 'bg-white/[4%] text-white/20'
+            }`}>Create Character</button>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
+function FAQItem({ question, answer, defaultOpen }: { question: string; answer: string; defaultOpen?: boolean }) {
+  const [open, setOpen] = useState(!!defaultOpen)
+  return (
+    <div className="border border-white/[6%] rounded-[16px] overflow-hidden">
+      <button onClick={() => setOpen(!open)} className="w-full flex items-center justify-between px-4 py-3 text-left hover:bg-white/[2%] transition-all">
+        <span className="text-[14px] font-[500]">{question}</span>
+        <ChevronDown size={16} className={`text-white/40 transition-transform ${open ? 'rotate-180' : ''}`} />
+      </button>
+      {open && <div className="px-4 pb-3 text-[13px] text-white/50 leading-[20px]">{answer}</div>}
     </div>
   )
 }
