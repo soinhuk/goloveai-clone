@@ -1,0 +1,122 @@
+<main class="@container/layout-content relative z-[1] flex min-h-[100dvh] w-full min-w-0 flex-col transition-[padding] duration-500 desktop:pt-[32px] desktop:pl-[20px] pt-[68px] desktop:pb-0 pb-[66px]">
+  <div data-headlessui-state="">
+    <div class="desktop:hidden">
+      <header style="background:linear-gradient(180deg, #0F0E0F 0%, rgba(15, 14, 15, 0.00) 100%)" class="fixed right-0 left-0 z-[100] flex h-[68px] items-center justify-between gap-[16px] px-[16px] py-[12px] backdrop-blur-sm">
+        <a class="w-full max-w-[150px]" href="/"><img alt="GoLove" class="w-full max-w-[113px]" src="/logo.svg"></a>
+        <div class="flex items-center gap-[8px]">
+          <button class="bg-pink-gradient flex items-center gap-[4px] px-[16px] py-[10px] text-[14px] font-[600] rounded-full">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="size-[20px]"><path fill="currentColor" d="..."></path></svg>
+            <span>Join Free</span>
+          </button>
+          <button class="outline-none flex size-[40px] items-center justify-center rounded-full border-[0.5px] border-white/[20%]">
+            <svg><!-- menu icon --></svg>
+          </button>
+        </div>
+      </header>
+    </div>
+  </div>
+  
+  <div class="relative flex h-full flex-1 flex-col">
+    <div class="mx-auto flex w-full max-w-[920px] flex-1 flex-col">
+      <div class="mx-auto w-full max-w-[640px] px-[16px] pt-2 pb-6 sm:px-6">
+        
+        <!-- Step Indicator -->
+        <div class="flex w-full items-center">
+          <div class="flex flex-1 items-center">
+            <div class="relative z-10 flex flex-col items-center">
+              <button class="flex h-9 w-9 items-center justify-center rounded-full text-xs font-medium bg-[#E81B9D] text-white cursor-pointer">
+                <img src="/icons/create/steps-icons/style.svg" alt="" width="16" height="16" class="h-4 w-4">
+              </button>
+              <span class="mt-1 text-center text-[10px] font-medium sm:mt-2 sm:text-xs" style="color: rgb(255, 255, 255);"></span>
+            </div>
+            <div class="mx-[3px] flex-1">
+              <div class="h-0.5 w-full overflow-hidden rounded-full bg-[#222122]">
+                <div class="h-full bg-[#E81B9D]" style="transform:scaleX(0);transform-origin:0% 50% 0"></div>
+              </div>
+            </div>
+          </div>
+          <!-- More steps... -->
+        </div>
+
+        <!-- Title -->
+        <sectionheader>
+          <h1 class="text-[20px] font-[600] tracking-[-4%] text-white">Create Your AI Dream GF</h1>
+        </sectionheader>
+
+        <!-- Gender Selection -->
+        <div class="flex gap-[8px] mt-[16px]">
+          <button class="flex h-[36px] items-center justify-center rounded-full px-[16px] text-[13px] font-medium bg-white/[4%] text-white border border-white/[6%]">Female</button>
+          <button class="flex h-[36px] items-center justify-center rounded-full px-[16px] text-[13px] font-medium bg-transparent text-white/50 border border-white/[6%]">Trans</button>
+        </div>
+
+        <!-- Style Selection with Video -->
+        <div class="mt-[24px]">
+          <div class="grid grid-cols-2 gap-[12px]">
+            <!-- Realistic Card -->
+            <div class="relative cursor-pointer rounded-[16px] overflow-hidden h-[200px] border-2 border-[#E81B9D]">
+              <video src="https://goloveai.com/videos/app-create/style-step/realistic.mp4" autoplay loop muted playsinline class="absolute inset-0 w-full h-full object-cover"></video>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+              <div class="absolute bottom-4 left-4 flex items-center gap-2">
+                <span class="text-[14px] font-[600] text-white">Realistic</span>
+                <img src="/icons/create/check.svg" alt="" class="size-[16px]">
+              </div>
+            </div>
+            <!-- Anime Card -->
+            <div class="relative cursor-pointer rounded-[16px] overflow-hidden h-[200px] border-2 border-transparent">
+              <video src="https://goloveai.com/videos/app-create/style-step/anime.mp4" autoplay loop muted playsinline class="absolute inset-0 w-full h-full object-cover"></video>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+              <div class="absolute bottom-4 left-4 flex items-center gap-2">
+                <span class="text-[14px] font-[600] text-white/70">Anime</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3 Steps Section -->
+        <div class="mt-[48px]">
+          <h2 class="text-[20px] font-[700] tracking-[-4%] text-white">How to Create Your AI Girlfriend in 3 Steps</h2>
+          <p class="mt-[8px] text-[14px] text-white/50">Start for free — Create Your GF AI, shape every detail, and chat instantly.</p>
+          
+          <div class="mt-[32px] space-y-[32px]">
+            <!-- Step 1 -->
+            <div>
+              <span class="text-[10px] font-bold text-[#E81B9D] uppercase tracking-wider">First Step</span>
+              <h3 class="mt-[4px] text-[16px] font-[600] text-white">Design Her Look From Scratch</h3>
+              <p class="mt-[8px] text-[13px] text-white/50">Go realistic or anime. Set her skin tone, eyes, hair, body type, and style.</p>
+            </div>
+            <!-- Step 2 -->
+            <div>
+              <span class="text-[10px] font-bold text-[#E81B9D] uppercase tracking-wider">Second Step</span>
+              <h3 class="mt-[4px] text-[16px] font-[600] text-white">Shape Her Into Someone Real</h3>
+              <p class="mt-[8px] text-[13px] text-white/50">40+ personality types, 19 voices, 135 career roles.</p>
+            </div>
+            <!-- Step 3 -->
+            <div>
+              <span class="text-[10px] font-bold text-[#E81B9D] uppercase tracking-wider">Third Step</span>
+              <h3 class="mt-[4px] text-[16px] font-[600] text-white">Define What You Two Are</h3>
+              <p class="mt-[8px] text-[13px] text-white/50">29 relationship types — from flirty stranger to devoted partner.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- FAQ -->
+        <div class="mt-[48px]">
+          <h2 class="text-[20px] font-[700] tracking-[-4%] text-white">FAQ</h2>
+          <!-- FAQ items... -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Bar -->
+  <div class="fixed bottom-0 left-0 right-0 z-50 flex items-center gap-[12px] px-[16px] py-[12px] bg-[#0F0E0F]/95 backdrop-blur-md border-t border-white/[6%]">
+    <button class="flex items-center gap-[8px] px-[16px] py-[10px] rounded-full bg-white/[4%] border border-white/[6%] text-[13px] text-white/70">
+      <svg><!-- sparkles --></svg>
+      Design AI
+      <span class="px-1 py-0.5 text-[9px] font-bold bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] text-white rounded">New</span>
+    </button>
+    <button class="flex-1 py-[10px] rounded-full bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] text-white text-[14px] font-semibold">
+      Continue
+    </button>
+  </div>
+</main>
