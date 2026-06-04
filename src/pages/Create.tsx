@@ -519,7 +519,7 @@ export default function Create() {
                     <img
                       src={e.image}
                       alt={e.name}
-                      className="w-24 h-24 rounded-[12px] object-cover"
+                      className="w-32 h-32 rounded-[12px] object-cover"
                     />
                     <span className="text-[12px] font-medium">{e.name}</span>
                     {ethnicity === e.name && (
@@ -610,7 +610,7 @@ export default function Create() {
                     <img
                       src={h.image}
                       alt={h.name}
-                      className="w-20 h-20 rounded-[12px] object-cover"
+                      className="w-28 h-28 rounded-[12px] object-cover"
                     />
                     <span className="text-[12px] font-medium">{h.name}</span>
                     {hairColor.name === h.name && (
@@ -642,7 +642,7 @@ export default function Create() {
                     <img
                       src={h.image}
                       alt={h.name}
-                      className="w-20 h-20 rounded-[12px] object-cover"
+                      className="w-28 h-28 rounded-[12px] object-cover"
                     />
                     <span className="text-[12px] font-medium">{h.name}</span>
                     {hairStyle === h.name && (
@@ -679,7 +679,7 @@ export default function Create() {
                     <img
                       src={b.image}
                       alt={b.name}
-                      className="w-20 h-20 rounded-[12px] object-cover"
+                      className="w-28 h-28 rounded-[12px] object-cover"
                     />
                     <span className="text-[12px] font-medium">{b.name}</span>
                     {bodyType === b.name && (
@@ -711,7 +711,7 @@ export default function Create() {
                     <img
                       src={b.image}
                       alt={b.name}
-                      className="w-20 h-20 rounded-[12px] object-cover"
+                      className="w-28 h-28 rounded-[12px] object-cover"
                     />
                     <span className="text-[12px] font-medium">{b.name}</span>
                     {breastSize === b.name && (
@@ -743,7 +743,7 @@ export default function Create() {
                     <img
                       src={b.image}
                       alt={b.name}
-                      className="w-20 h-20 rounded-[12px] object-cover"
+                      className="w-28 h-28 rounded-[12px] object-cover"
                     />
                     <span className="text-[12px] font-medium">{b.name}</span>
                     {buttSize === b.name && (
@@ -864,7 +864,7 @@ export default function Create() {
               <img
                 src={DEFAULT_AVATAR}
                 alt={name || 'Character'}
-                className="w-24 h-24 rounded-[16px] object-cover"
+                className="w-32 h-32 rounded-[16px] object-cover"
               />
               <div className="flex-1">
                 <h2 className="text-[24px] font-[700]">{name || 'Unnamed Character'}</h2>
