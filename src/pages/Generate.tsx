@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { ChevronLeft, ChevronRight, ChevronDown, X, Sparkles, Image as ImageIcon, Video, Shirt, Mountain, Settings2, Wand2, Clapperboard, Upload, Search } from 'lucide-react'
+import { ChevronLeft, ChevronRight, ChevronDown, X, Sparkles, Image as ImageIcon, Video, Shirt, Mountain, Settings2, Wand2, Upload, Search, Plus } from 'lucide-react'
 import { characters } from '../data/characters'
 
 // Actions data - 44 actions with VIDEO preview thumbnails
@@ -75,7 +75,7 @@ const CLOTHES = [
   { name: 'Headwear', image: '/images/generate-page/clothes/headwear.avif' },
 ]
 
-// Backgrounds data - 34 options with preview images
+// Backgrounds data - 34 options
 const BACKGROUNDS = [
   'Custom', 'Bathroom', 'Kitchen', 'Bedroom', 'Living Room', 'Backyard',
   'Hallway', 'Red Bed', 'Carpet', 'Greenhouse', 'Rooftop', 'Poolside',
@@ -87,12 +87,7 @@ const BACKGROUNDS = [
   'Piano Lounge'
 ]
 
-// Image paths
-const POSE_PLACEHOLDER = '/images/generate-page/pose-card-placeholder.avif'
-const CLOTHES_PLACEHOLDER = '/images/generate-page/clothes-card-placeholder.avif'
-const BG_PLACEHOLDER = '/images/generate-page/background-card-placeholder.avif'
-
-// Get background image path
+// Background name to filename mapping
 const getBgImagePath = (name: string) => {
   const nameMap: Record<string, string> = {
     'Living Room': 'livingroom',
@@ -121,23 +116,21 @@ const getBgImagePath = (name: string) => {
   return `/images/generate-page/backgrounds/${key}.avif`
 }
 
-const ASPECT_RATIOS = [
-  { ratio: '1:1', desc: 'Square' },
-  { ratio: '16:9', desc: 'Landscape' },
-  { ratio: '9:16', desc: 'Portrait' },
-  { ratio: '4:3', desc: 'Standard' },
-]
+// Get action image by name
+const getActionImage = (name: string) => {
+  const action = ACTIONS.find(a => a.name === name)
+  return action ? action.image : ''
+}
 
-const QUALITIES = [
-  { name: 'Standard', desc: 'Fast generation' },
-  { name: 'HD', desc: 'Better quality' },
-  { name: 'Ultra', desc: 'Best quality' },
-]
+// Get clothes image by name
+const getClothesImage = (name: string) => {
+  const cloth = CLOTHES.find(c => c.name === name)
+  return cloth ? cloth.image : ''
+}
 
 const CHARACTER_TYPES = ['Realistic', 'Anime', 'Custom']
 
-type GenerationMode = 'presets' | 'custom' | 'i2v'
-type ContentTab = 'presets' | 'action' | 'clothes' | 'background' | 'advanced'
+type ContentTab = 'action' | 'clothes' | 'background' | 'advanced'
 
 export default function Generate() {
   const [selectedChar, setSelectedChar] = useState(characters[0])
@@ -146,14 +139,10 @@ export default function Generate() {
   const [charTypeFilter, setCharTypeFilter] = useState('Realistic')
   const [charSearch, setCharSearch] = useState('')
   const [mode, setMode] = useState<'video' | 'image'>('video')
-  const [genMode, setGenMode] = useState<GenerationMode>('presets')
-  const [showGenModeDialog, setShowGenModeDialog] = useState(false)
   const [showActionDialog, setShowActionDialog] = useState(false)
   const [showClothesDialog, setShowClothesDialog] = useState(false)
   const [showBgDialog, setShowBgDialog] = useState(false)
   const [showAdvancedDialog, setShowAdvancedDialog] = useState(false)
-  const [activeTab, setActiveTab] = useState<ContentTab>('presets')
-  const [selectedPreset, setSelectedPreset] = useState('')
   const [selectedAction, setSelectedAction] = useState('')
   const [selectedClothes, setSelectedClothes] = useState('')
   const [selectedBg, setSelectedBg] = useState('')
@@ -179,7 +168,7 @@ export default function Generate() {
     }
   }
 
-  // Filter characters by type and search
+  // Filter characters
   const filteredChars = characters.filter(c => {
     const matchesType = charTypeFilter === 'All' || c.type === charTypeFilter.toLowerCase()
     const matchesSearch = c.name.toLowerCase().includes(charSearch.toLowerCase())
@@ -193,41 +182,23 @@ export default function Generate() {
     setCharSearch('')
   }
 
-  // Filter actions by search (using action.name)
+  // Filter items by search
   const filteredActions = ACTIONS.filter(a =>
     a.name.toLowerCase().includes(actionSearch.toLowerCase())
   )
-
-  // Filter clothes by search (using cloth.name)
   const filteredClothes = CLOTHES.filter(c =>
     c.name.toLowerCase().includes(clothesSearch.toLowerCase())
   )
-
-  // Filter backgrounds by search
-  const filteredBackgounds = BACKGROUNDS.filter(b =>
+  const filteredBackgrounds = BACKGROUNDS.filter(b =>
     b.toLowerCase().includes(bgSearch.toLowerCase())
   )
 
-  // Handle tab click - open dialog
-  const handleTabClick = (tab: ContentTab) => {
-    setActiveTab(tab)
-    switch (tab) {
-      case 'presets':
-        setShowGenModeDialog(true)
-        break
-      case 'action':
-        setShowActionDialog(true)
-        break
-      case 'clothes':
-        setShowClothesDialog(true)
-        break
-      case 'background':
-        setShowBgDialog(true)
-        break
-      case 'advanced':
-        setShowAdvancedDialog(true)
-        break
-    }
+  // Check if ready to generate
+  const hasSelections = selectedAction || selectedClothes || selectedBg
+  const canGenerate = hasSelections
+
+  const handleGenerate = () => {
+    alert(`Generation started! (Demo)\n\nCharacter: ${selectedChar.name}\nAction: ${selectedAction || 'None'}\nClothes: ${selectedClothes || 'None'}\nBackground: ${selectedBg || 'None'}\nMode: ${mode}\nAspect: ${aspectRatio}\nQuality: ${quality}`)
   }
 
   return (
@@ -292,20 +263,20 @@ export default function Generate() {
       {/* Content Tabs */}
       <div className="flex gap-1.5 px-4 pb-4 overflow-x-auto no-scrollbar">
         {[
-          { key: 'presets', icon: Sparkles, label: 'Presets' },
-          { key: 'action', icon: null, label: 'Action', emoji: '🏃' },
+          { key: 'action', label: 'Action', emoji: '🏃' },
           { key: 'clothes', icon: Shirt, label: 'Clothes' },
           { key: 'background', icon: Mountain, label: 'Background' },
           { key: 'advanced', icon: Settings2, label: 'Advanced' },
         ].map(tab => (
           <button
             key={tab.key}
-            onClick={() => handleTabClick(tab.key as ContentTab)}
-            className={`shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-xl text-[12px] font-semibold transition-all duration-200 ${
-              activeTab === tab.key
-                ? 'bg-white/[10%] text-white shadow-sm'
-                : 'text-white/40 hover:text-white/70 hover:bg-white/[4%]'
-            }`}
+            onClick={() => {
+              if (tab.key === 'action') setShowActionDialog(true)
+              else if (tab.key === 'clothes') setShowClothesDialog(true)
+              else if (tab.key === 'background') setShowBgDialog(true)
+              else if (tab.key === 'advanced') setShowAdvancedDialog(true)
+            }}
+            className="shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-xl text-[12px] font-semibold transition-all duration-200 text-white/40 hover:text-white/70 hover:bg-white/[4%]"
           >
             {tab.key === 'action' ? (
               <span className="text-base">{tab.emoji}</span>
@@ -318,142 +289,169 @@ export default function Generate() {
         ))}
       </div>
 
-      {/* Select Character Button */}
-      <div className="px-4">
+      {/* 3-Slot Preview Grid - Matching Original Site Layout */}
+      <div className="px-4 space-y-3">
+        {/* Action Slot - Large */}
         <button
-          onClick={() => setShowCharPicker(true)}
-          className="w-full py-4 rounded-2xl bg-white/[5%] border border-white/[8%] hover:bg-white/[8%] hover:border-white/[15%] transition-all text-center"
+          onClick={() => setShowActionDialog(true)}
+          className="w-full h-[250px] rounded-2xl overflow-hidden border border-white/[8%] hover:border-white/[15%] transition-all relative group"
         >
-          <span className="text-[14px] font-semibold">Select Character</span>
+          {selectedAction ? (
+            <>
+              <img
+                src={getActionImage(selectedAction)}
+                alt={selectedAction}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+              <div className="absolute bottom-4 left-4 right-4">
+                <div className="text-[11px] text-white/50 mb-1">Action</div>
+                <div className="text-[16px] font-bold">{selectedAction}</div>
+              </div>
+              <button
+                onClick={(e) => { e.stopPropagation(); setSelectedAction('') }}
+                className="absolute top-3 right-3 size-8 rounded-full bg-black/50 hover:bg-black/70 flex items-center justify-center transition-colors"
+              >
+                <X size={16} />
+              </button>
+            </>
+          ) : (
+            <div className="w-full h-full flex flex-col items-center justify-center bg-white/[3%]">
+              <Plus size={32} className="text-white/20 mb-2" />
+              <span className="text-[14px] text-white/30">Select Action</span>
+            </div>
+          )}
         </button>
+
+        {/* Clothes + Background side by side */}
+        <div className="flex gap-3">
+          {/* Clothes Slot */}
+          <button
+            onClick={() => setShowClothesDialog(true)}
+            className="flex-1 h-[200px] rounded-2xl overflow-hidden border border-white/[8%] hover:border-white/[15%] transition-all relative group"
+          >
+            {selectedClothes ? (
+              <>
+                <img
+                  src={getClothesImage(selectedClothes)}
+                  alt={selectedClothes}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                <div className="absolute bottom-3 left-3 right-3">
+                  <div className="text-[11px] text-white/50 mb-1">Clothes</div>
+                  <div className="text-[14px] font-bold">{selectedClothes}</div>
+                </div>
+                <button
+                  onClick={(e) => { e.stopPropagation(); setSelectedClothes('') }}
+                  className="absolute top-2 right-2 size-7 rounded-full bg-black/50 hover:bg-black/70 flex items-center justify-center transition-colors"
+                >
+                  <X size={14} />
+                </button>
+              </>
+            ) : (
+              <div className="w-full h-full flex flex-col items-center justify-center bg-white/[3%]">
+                <Plus size={28} className="text-white/20 mb-2" />
+                <span className="text-[13px] text-white/30">Select Clothes</span>
+              </div>
+            )}
+          </button>
+
+          {/* Background Slot */}
+          <button
+            onClick={() => setShowBgDialog(true)}
+            className="flex-1 h-[200px] rounded-2xl overflow-hidden border border-white/[8%] hover:border-white/[15%] transition-all relative group"
+          >
+            {selectedBg ? (
+              <>
+                <img
+                  src={getBgImagePath(selectedBg)}
+                  alt={selectedBg}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                <div className="absolute bottom-3 left-3 right-3">
+                  <div className="text-[11px] text-white/50 mb-1">Background</div>
+                  <div className="text-[14px] font-bold">{selectedBg}</div>
+                </div>
+                <button
+                  onClick={(e) => { e.stopPropagation(); setSelectedBg('') }}
+                  className="absolute top-2 right-2 size-7 rounded-full bg-black/50 hover:bg-black/70 flex items-center justify-center transition-colors"
+                >
+                  <X size={14} />
+                </button>
+              </>
+            ) : (
+              <div className="w-full h-full flex flex-col items-center justify-center bg-white/[3%]">
+                <Plus size={28} className="text-white/20 mb-2" />
+                <span className="text-[13px] text-white/30">Select Background</span>
+              </div>
+            )}
+          </button>
+        </div>
       </div>
 
-      {/* Generation Mode Dialog */}
-      {showGenModeDialog && (
-        <div className="fixed inset-0 z-[200] bg-black/80 backdrop-blur-md flex items-end justify-center">
-          <div className="bg-[#181718] rounded-t-[24px] w-full max-w-2xl overflow-hidden animate-in slide-in-from-bottom duration-300">
-            {/* Header */}
-            <div className="flex items-center justify-between px-5 py-4 border-b border-white/[6%]">
-              <h2 className="text-[17px] font-bold">Generation Mode</h2>
-              <button
-                onClick={() => setShowGenModeDialog(false)}
-                className="size-9 flex items-center justify-center rounded-full hover:bg-white/[8%] transition-colors"
-              >
-                <X size={20} />
-              </button>
-            </div>
+      {/* Bottom Button - Generate or Select Character */}
+      <div className="px-4 mt-6">
+        {canGenerate ? (
+          <button
+            onClick={handleGenerate}
+            className="w-full py-4 rounded-2xl bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] text-white font-bold text-[16px] shadow-lg shadow-[#d05bf8]/30 hover:shadow-[#d05bf8]/50 transition-all active:scale-[0.98]"
+          >
+            Generate {mode === 'video' ? 'Video' : 'Image'}
+          </button>
+        ) : (
+          <button
+            onClick={() => setShowActionDialog(true)}
+            className="w-full py-4 rounded-2xl bg-white/[5%] border border-white/[8%] hover:bg-white/[8%] hover:border-white/[15%] transition-all text-center"
+          >
+            <span className="text-[14px] font-semibold">Select Action, Clothes, or Background</span>
+          </button>
+        )}
+      </div>
 
-            {/* Mode Options */}
-            <div className="p-4 space-y-3">
-              {/* Presets Mode */}
-              <button
-                onClick={() => { setGenMode('presets'); setShowGenModeDialog(false) }}
-                className="w-full p-4 rounded-[18px] bg-white/[5%] border border-white/[8%] hover:bg-white/[8%] hover:border-white/[15%] transition-all text-left group"
-              >
-                <div className="flex items-start gap-4">
-                  <div className="size-12 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
-                    <Sparkles size={22} />
-                  </div>
-                  <div className="flex-1">
-                    <div className="text-[15px] font-semibold mb-1">Presets</div>
-                    <div className="text-[12px] text-white/40">Ready-made presets for quick generation</div>
-                  </div>
-                </div>
-              </button>
-
-              {/* Custom Video Mode */}
-              <button
-                onClick={() => { setGenMode('custom'); setShowGenModeDialog(false) }}
-                className="w-full p-4 rounded-[18px] bg-white/[5%] border border-white/[8%] hover:bg-white/[8%] hover:border-white/[15%] transition-all text-left group"
-              >
-                <div className="flex items-start gap-4">
-                  <div className="size-12 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
-                    <Wand2 size={22} />
-                  </div>
-                  <div className="flex-1">
-                    <div className="text-[15px] font-semibold mb-1">Custom Video</div>
-                    <div className="text-[12px] text-white/40">Write custom prompts for unique content</div>
-                  </div>
-                </div>
-              </button>
-
-              {/* Image to Video */}
-              <button
-                onClick={() => { setGenMode('i2v'); setShowGenModeDialog(false) }}
-                className="w-full p-4 rounded-[18px] bg-white/[5%] border border-white/[8%] hover:bg-white/[8%] hover:border-white/[15%] transition-all text-left group"
-              >
-                <div className="flex items-start gap-4">
-                  <div className="size-12 rounded-xl bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
-                    <Upload size={22} />
-                  </div>
-                  <div className="flex-1">
-                    <div className="text-[15px] font-semibold mb-1">Image to Video</div>
-                    <div className="text-[12px] text-white/40">Animate uploaded images into videos</div>
-                  </div>
-                </div>
-              </button>
-            </div>
-
-            {/* Safe Area Bottom */}
-            <div className="h-6" />
-          </div>
-        </div>
-      )}
+      {/* ============ DIALOGS ============ */}
 
       {/* Action Dialog */}
       {showActionDialog && (
-        <div className="fixed inset-0 z-[200] bg-black/80 backdrop-blur-md flex items-end justify-center">
-          <div className="bg-[#181718] rounded-t-[24px] w-full max-w-2xl max-h-[85vh] overflow-hidden animate-in slide-in-from-bottom duration-300 flex flex-col">
-            {/* Header */}
+        <div className="fixed inset-0 z-[200] bg-black/80 backdrop-blur-md flex items-end justify-center" onClick={(e) => { if (e.target === e.currentTarget) setShowActionDialog(false) }}>
+          <div className="bg-[#181718] rounded-t-[24px] w-full max-w-2xl max-h-[85vh] overflow-hidden flex flex-col">
             <div className="flex items-center justify-between px-5 py-4 border-b border-white/[6%]">
               <h2 className="text-[17px] font-bold">Select Action</h2>
-              <button
-                onClick={() => setShowActionDialog(false)}
-                className="size-9 flex items-center justify-center rounded-full hover:bg-white/[8%] transition-colors"
-              >
+              <button onClick={() => setShowActionDialog(false)} className="size-9 flex items-center justify-center rounded-full hover:bg-white/[8%] transition-colors">
                 <X size={20} />
               </button>
             </div>
-
-            {/* Search */}
             <div className="px-5 py-4">
               <div className="relative">
                 <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/40" />
                 <input
-                  type="text"
-                  value={actionSearch}
-                  onChange={e => setActionSearch(e.target.value)}
+                  type="text" value={actionSearch} onChange={e => setActionSearch(e.target.value)}
                   placeholder="Search actions..."
                   className="w-full bg-white/[5%] border border-white/[8%] rounded-xl py-3 pl-10 pr-4 text-[14px] text-white placeholder:text-white/30 focus:outline-none focus:border-[#d05bf8]/40 transition-colors"
                 />
               </div>
             </div>
-
-            {/* Actions Grid */}
             <div className="overflow-y-auto flex-1 px-5 pb-6">
-              <div className="grid grid-cols-4 gap-2">
+              <div className="flex flex-wrap gap-2 justify-center">
                 {filteredActions.map(action => (
                   <button
                     key={action.name}
                     onClick={() => { setSelectedAction(action.name); setShowActionDialog(false) }}
-                    className={`relative aspect-video rounded-xl overflow-hidden border transition-all duration-200 ${
+                    className={`relative w-[220px] h-[250px] rounded-xl overflow-hidden border transition-all duration-200 hover:scale-[1.02] ${
                       selectedAction === action.name
                         ? 'border-[#d05bf8] shadow-lg shadow-[#d05bf8]/20'
                         : 'border-white/[6%] hover:border-white/[15%]'
                     }`}
                   >
-                    <img
-                      src={action.image}
-                      alt={action.name}
-                      className="w-full h-full object-cover"
-                    />
+                    <img src={action.image} alt={action.name} className="w-full h-full object-cover" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-                    <div className="absolute bottom-1.5 left-1.5 right-1.5">
-                      <span className="text-[10px] font-medium text-white truncate block">{action.name}</span>
+                    <div className="absolute bottom-2 left-2 right-2">
+                      <span className="text-[11px] font-medium text-white truncate block">{action.name}</span>
                     </div>
                     {selectedAction === action.name && (
-                      <div className="absolute top-1.5 right-1.5 size-4 rounded-full bg-white flex items-center justify-center">
-                        <svg className="size-2.5 text-[#d05bf8]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <div className="absolute top-2 right-2 size-5 rounded-full bg-white flex items-center justify-center">
+                        <svg className="size-3 text-[#d05bf8]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                         </svg>
                       </div>
@@ -462,8 +460,6 @@ export default function Generate() {
                 ))}
               </div>
             </div>
-
-            {/* Safe Area Bottom */}
             <div className="h-6" />
           </div>
         </div>
@@ -471,58 +467,44 @@ export default function Generate() {
 
       {/* Clothes Dialog */}
       {showClothesDialog && (
-        <div className="fixed inset-0 z-[200] bg-black/80 backdrop-blur-md flex items-end justify-center">
-          <div className="bg-[#181718] rounded-t-[24px] w-full max-w-2xl max-h-[85vh] overflow-hidden animate-in slide-in-from-bottom duration-300 flex flex-col">
-            {/* Header */}
+        <div className="fixed inset-0 z-[200] bg-black/80 backdrop-blur-md flex items-end justify-center" onClick={(e) => { if (e.target === e.currentTarget) setShowClothesDialog(false) }}>
+          <div className="bg-[#181718] rounded-t-[24px] w-full max-w-2xl max-h-[85vh] overflow-hidden flex flex-col">
             <div className="flex items-center justify-between px-5 py-4 border-b border-white/[6%]">
               <h2 className="text-[17px] font-bold">Select Clothes</h2>
-              <button
-                onClick={() => setShowClothesDialog(false)}
-                className="size-9 flex items-center justify-center rounded-full hover:bg-white/[8%] transition-colors"
-              >
+              <button onClick={() => setShowClothesDialog(false)} className="size-9 flex items-center justify-center rounded-full hover:bg-white/[8%] transition-colors">
                 <X size={20} />
               </button>
             </div>
-
-            {/* Search */}
             <div className="px-5 py-4">
               <div className="relative">
                 <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/40" />
                 <input
-                  type="text"
-                  value={clothesSearch}
-                  onChange={e => setClothesSearch(e.target.value)}
+                  type="text" value={clothesSearch} onChange={e => setClothesSearch(e.target.value)}
                   placeholder="Search clothes..."
                   className="w-full bg-white/[5%] border border-white/[8%] rounded-xl py-3 pl-10 pr-4 text-[14px] text-white placeholder:text-white/30 focus:outline-none focus:border-[#d05bf8]/40 transition-colors"
                 />
               </div>
             </div>
-
-            {/* Clothes Grid */}
             <div className="overflow-y-auto flex-1 px-5 pb-6">
-              <div className="grid grid-cols-4 gap-2">
+              <div className="flex flex-wrap gap-2 justify-center">
                 {filteredClothes.map(cloth => (
                   <button
                     key={cloth.name}
                     onClick={() => { setSelectedClothes(cloth.name); setShowClothesDialog(false) }}
-                    className={`relative aspect-video rounded-xl overflow-hidden border transition-all duration-200 ${
+                    className={`relative w-[220px] h-[250px] rounded-xl overflow-hidden border transition-all duration-200 hover:scale-[1.02] ${
                       selectedClothes === cloth.name
                         ? 'border-[#d05bf8] shadow-lg shadow-[#d05bf8]/20'
                         : 'border-white/[6%] hover:border-white/[15%]'
                     }`}
                   >
-                    <img
-                      src={cloth.image}
-                      alt={cloth.name}
-                      className="w-full h-full object-cover"
-                    />
+                    <img src={cloth.image} alt={cloth.name} className="w-full h-full object-cover" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-                    <div className="absolute bottom-1.5 left-1.5 right-1.5">
-                      <span className="text-[10px] font-medium text-white truncate block">{cloth.name}</span>
+                    <div className="absolute bottom-2 left-2 right-2">
+                      <span className="text-[11px] font-medium text-white truncate block">{cloth.name}</span>
                     </div>
                     {selectedClothes === cloth.name && (
-                      <div className="absolute top-1.5 right-1.5 size-4 rounded-full bg-white flex items-center justify-center">
-                        <svg className="size-2.5 text-[#d05bf8]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <div className="absolute top-2 right-2 size-5 rounded-full bg-white flex items-center justify-center">
+                        <svg className="size-3 text-[#d05bf8]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                         </svg>
                       </div>
@@ -531,8 +513,6 @@ export default function Generate() {
                 ))}
               </div>
             </div>
-
-            {/* Safe Area Bottom */}
             <div className="h-6" />
           </div>
         </div>
@@ -540,58 +520,44 @@ export default function Generate() {
 
       {/* Background Dialog */}
       {showBgDialog && (
-        <div className="fixed inset-0 z-[200] bg-black/80 backdrop-blur-md flex items-end justify-center">
-          <div className="bg-[#181718] rounded-t-[24px] w-full max-w-2xl max-h-[85vh] overflow-hidden animate-in slide-in-from-bottom duration-300 flex flex-col">
-            {/* Header */}
+        <div className="fixed inset-0 z-[200] bg-black/80 backdrop-blur-md flex items-end justify-center" onClick={(e) => { if (e.target === e.currentTarget) setShowBgDialog(false) }}>
+          <div className="bg-[#181718] rounded-t-[24px] w-full max-w-2xl max-h-[85vh] overflow-hidden flex flex-col">
             <div className="flex items-center justify-between px-5 py-4 border-b border-white/[6%]">
               <h2 className="text-[17px] font-bold">Select Background</h2>
-              <button
-                onClick={() => setShowBgDialog(false)}
-                className="size-9 flex items-center justify-center rounded-full hover:bg-white/[8%] transition-colors"
-              >
+              <button onClick={() => setShowBgDialog(false)} className="size-9 flex items-center justify-center rounded-full hover:bg-white/[8%] transition-colors">
                 <X size={20} />
               </button>
             </div>
-
-            {/* Search */}
             <div className="px-5 py-4">
               <div className="relative">
                 <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/40" />
                 <input
-                  type="text"
-                  value={bgSearch}
-                  onChange={e => setBgSearch(e.target.value)}
+                  type="text" value={bgSearch} onChange={e => setBgSearch(e.target.value)}
                   placeholder="Search backgrounds..."
                   className="w-full bg-white/[5%] border border-white/[8%] rounded-xl py-3 pl-10 pr-4 text-[14px] text-white placeholder:text-white/30 focus:outline-none focus:border-[#d05bf8]/40 transition-colors"
                 />
               </div>
             </div>
-
-            {/* Backgrounds Grid */}
             <div className="overflow-y-auto flex-1 px-5 pb-6">
-              <div className="grid grid-cols-4 gap-2">
-                {filteredBackgounds.map(bg => (
+              <div className="flex flex-wrap gap-2 justify-center">
+                {filteredBackgrounds.map(bg => (
                   <button
                     key={bg}
                     onClick={() => { setSelectedBg(bg); setShowBgDialog(false) }}
-                    className={`relative aspect-video rounded-xl overflow-hidden border transition-all duration-200 ${
+                    className={`relative w-[220px] h-[250px] rounded-xl overflow-hidden border transition-all duration-200 hover:scale-[1.02] ${
                       selectedBg === bg
                         ? 'border-[#d05bf8] shadow-lg shadow-[#d05bf8]/20'
                         : 'border-white/[6%] hover:border-white/[15%]'
                     }`}
                   >
-                    <img
-                      src={getBgImagePath(bg)}
-                      alt={bg}
-                      className="w-full h-full object-cover"
-                    />
+                    <img src={getBgImagePath(bg)} alt={bg} className="w-full h-full object-cover" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-                    <div className="absolute bottom-1.5 left-1.5 right-1.5">
-                      <span className="text-[10px] font-medium text-white truncate block">{bg}</span>
+                    <div className="absolute bottom-2 left-2 right-2">
+                      <span className="text-[11px] font-medium text-white truncate block">{bg}</span>
                     </div>
                     {selectedBg === bg && (
-                      <div className="absolute top-1.5 right-1.5 size-4 rounded-full bg-white flex items-center justify-center">
-                        <svg className="size-2.5 text-[#d05bf8]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <div className="absolute top-2 right-2 size-5 rounded-full bg-white flex items-center justify-center">
+                        <svg className="size-3 text-[#d05bf8]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                         </svg>
                       </div>
@@ -600,8 +566,6 @@ export default function Generate() {
                 ))}
               </div>
             </div>
-
-            {/* Safe Area Bottom */}
             <div className="h-6" />
           </div>
         </div>
@@ -609,43 +573,35 @@ export default function Generate() {
 
       {/* Advanced Settings Dialog */}
       {showAdvancedDialog && (
-        <div className="fixed inset-0 z-[200] bg-black/80 backdrop-blur-md flex items-end justify-center">
-          <div className="bg-[#181718] rounded-t-[24px] w-full max-w-2xl max-h-[85vh] overflow-hidden animate-in slide-in-from-bottom duration-300 flex flex-col">
-            {/* Header */}
+        <div className="fixed inset-0 z-[200] bg-black/80 backdrop-blur-md flex items-end justify-center" onClick={(e) => { if (e.target === e.currentTarget) setShowAdvancedDialog(false) }}>
+          <div className="bg-[#181718] rounded-t-[24px] w-full max-w-2xl max-h-[85vh] overflow-hidden flex flex-col">
             <div className="flex items-center justify-between px-5 py-4 border-b border-white/[6%]">
               <h2 className="text-[17px] font-bold">Advanced Settings</h2>
-              <button
-                onClick={() => setShowAdvancedDialog(false)}
-                className="size-9 flex items-center justify-center rounded-full hover:bg-white/[8%] transition-colors"
-              >
+              <button onClick={() => setShowAdvancedDialog(false)} className="size-9 flex items-center justify-center rounded-full hover:bg-white/[8%] transition-colors">
                 <X size={20} />
               </button>
             </div>
-
-            {/* Content */}
             <div className="overflow-y-auto flex-1 px-5 py-4 space-y-6">
-              {/* Custom Prompt */}
               <div className="space-y-2">
                 <label className="text-[12px] text-white/50 font-medium">Custom Prompt</label>
                 <textarea
-                  value={customPrompt}
-                  onChange={e => setCustomPrompt(e.target.value)}
+                  value={customPrompt} onChange={e => setCustomPrompt(e.target.value)}
                   placeholder="Describe the scene, mood, and actions in detail..."
-                  rows={4}
-                  maxLength={1000}
+                  rows={4} maxLength={1000}
                   className="w-full bg-white/[4%] border border-white/[8%] rounded-xl py-3.5 px-4 text-[14px] text-white placeholder:text-white/25 focus:outline-none focus:border-[#d05bf8]/40 resize-none transition-colors"
                 />
                 <div className="text-right text-[11px] text-white/20">{customPrompt.length}/1000</div>
               </div>
-
-              {/* Aspect Ratio */}
               <div className="space-y-3">
                 <label className="text-[12px] text-white/50 font-medium">Aspect Ratio</label>
                 <div className="grid grid-cols-4 gap-2">
-                  {ASPECT_RATIOS.map(r => (
-                    <button
-                      key={r.ratio}
-                      onClick={() => setAspectRatio(r.ratio)}
+                  {[
+                    { ratio: '1:1', desc: 'Square' },
+                    { ratio: '16:9', desc: 'Landscape' },
+                    { ratio: '9:16', desc: 'Portrait' },
+                    { ratio: '4:3', desc: 'Standard' },
+                  ].map(r => (
+                    <button key={r.ratio} onClick={() => setAspectRatio(r.ratio)}
                       className={`px-3 py-3 rounded-xl text-[13px] font-medium transition-all duration-200 ${
                         aspectRatio === r.ratio
                           ? 'bg-gradient-to-r from-[#d05bf8]/30 to-[#ff18a0]/30 border border-[#d05bf8]/50 text-white'
@@ -658,29 +614,23 @@ export default function Generate() {
                   ))}
                 </div>
               </div>
-
-              {/* Quality */}
               <div className="space-y-3">
                 <label className="text-[12px] text-white/50 font-medium">Quality</label>
                 <div className="flex gap-2">
-                  {QUALITIES.map(q => (
-                    <button
-                      key={q.name}
-                      onClick={() => setQuality(q.name)}
+                  {['Standard', 'HD', 'Ultra'].map(q => (
+                    <button key={q} onClick={() => setQuality(q)}
                       className={`flex-1 px-4 py-3 rounded-xl text-[12px] font-semibold transition-all duration-200 ${
-                        quality === q.name
+                        quality === q
                           ? 'bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] text-white shadow-lg'
                           : 'bg-white/[4%] border border-white/[8%] text-white/50 hover:text-white/70'
                       }`}
                     >
-                      {q.name}
+                      {q}
                     </button>
                   ))}
                 </div>
               </div>
             </div>
-
-            {/* Safe Area Bottom */}
             <div className="h-6" />
           </div>
         </div>
@@ -688,25 +638,17 @@ export default function Generate() {
 
       {/* Character Picker Modal */}
       {showCharPicker && (
-        <div className="fixed inset-0 z-[200] bg-black/80 backdrop-blur-md flex items-end justify-center">
-          <div className="bg-[#181718] rounded-t-[24px] w-full max-w-2xl max-h-[85vh] overflow-hidden animate-in slide-in-from-bottom duration-300 flex flex-col">
-            {/* Header */}
+        <div className="fixed inset-0 z-[200] bg-black/80 backdrop-blur-md flex items-end justify-center" onClick={(e) => { if (e.target === e.currentTarget) setShowCharPicker(false) }}>
+          <div className="bg-[#181718] rounded-t-[24px] w-full max-w-2xl max-h-[85vh] overflow-hidden flex flex-col">
             <div className="flex items-center justify-between px-5 py-4 border-b border-white/[6%]">
               <h2 className="text-[17px] font-bold">Select Model</h2>
-              <button
-                onClick={() => setShowCharPicker(false)}
-                className="size-9 flex items-center justify-center rounded-full hover:bg-white/[8%] transition-colors"
-              >
+              <button onClick={() => setShowCharPicker(false)} className="size-9 flex items-center justify-center rounded-full hover:bg-white/[8%] transition-colors">
                 <X size={20} />
               </button>
             </div>
-
-            {/* Type Filter Tabs */}
             <div className="flex gap-2 px-5 py-4 overflow-x-auto no-scrollbar">
               {['All', ...CHARACTER_TYPES].map(type => (
-                <button
-                  key={type}
-                  onClick={() => setCharTypeFilter(type)}
+                <button key={type} onClick={() => setCharTypeFilter(type)}
                   className={`shrink-0 px-4 py-2 rounded-full text-[12px] font-semibold transition-all ${
                     charTypeFilter === type
                       ? 'bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] text-white'
@@ -717,29 +659,18 @@ export default function Generate() {
                 </button>
               ))}
             </div>
-
-            {/* Search Input */}
             <div className="px-5 pb-4">
-              <input
-                type="text"
-                value={charSearch}
-                onChange={e => setCharSearch(e.target.value)}
+              <input type="text" value={charSearch} onChange={e => setCharSearch(e.target.value)}
                 placeholder="Search models..."
                 className="w-full bg-white/[5%] border border-white/[8%] rounded-xl py-3 px-4 text-[14px] text-white placeholder:text-white/30 focus:outline-none focus:border-[#d05bf8]/40 transition-colors"
               />
             </div>
-
-            {/* Character List */}
             <div className="overflow-y-auto flex-1 px-5 pb-6 space-y-1">
               {filteredChars.length === 0 ? (
-                <div className="text-center py-8 text-white/40 text-[14px]">
-                  No models found
-                </div>
+                <div className="text-center py-8 text-white/40 text-[14px]">No models found</div>
               ) : (
                 filteredChars.map(char => (
-                  <button
-                    key={char.id}
-                    onClick={() => handleCharSelect(char)}
+                  <button key={char.id} onClick={() => handleCharSelect(char)}
                     className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl hover:bg-white/[6%] transition-all ${
                       selectedChar.id === char.id ? 'bg-white/[8%] ring-1 ring-[#d05bf8]/30' : ''
                     }`}
@@ -762,8 +693,6 @@ export default function Generate() {
                 ))
               )}
             </div>
-
-            {/* Safe Area Bottom */}
             <div className="h-6" />
           </div>
         </div>
