@@ -3,74 +3,74 @@ import { ChevronLeft, ChevronRight, ChevronDown, X, Image as ImageIcon, Video, S
 import { characters } from '../data/characters'
 
 const ACTIONS = [
-  { name: 'POV Handjob Cumshot', image: '/images/generate-page/video-poses/povhandjobcumshot.avif', video: '/videos/generate/actions/pov_handjob_cumshot.mp4' },
-  { name: 'Titjob Cum', image: '/images/generate-page/video-poses/titjobcum.avif', video: '/videos/generate/actions/titjob_cum.mp4' },
-  { name: 'Tongue Blowjob', image: '/images/generate-page/video-poses/tongueblowjob.avif', video: '' },
-  { name: 'Couch Lap Blowjob', image: '/images/generate-page/video-poses/couchlapblowjob.avif', video: '/videos/generate/actions/couch_lap_blowjob.mp4' },
-  { name: 'Dildo Anal Riding', image: '/images/generate-page/video-poses/dildoanalriding.avif', video: '/videos/generate/actions/dildo_anal_riding.mp4' },
-  { name: 'Foot Job #1', image: '/images/generate-page/video-poses/footjob.avif', video: '/videos/generate/actions/footjob.mp4' },
-  { name: 'Shibaru Swing', image: '/images/generate-page/video-poses/shibaruswing.avif', video: '/videos/generate/actions/shibaruswing.mp4' },
-  { name: 'BDSM Ass Tease', image: '/images/generate-page/video-poses/bdsmasstease.avif', video: '/videos/generate/actions/bdsm_ass_tease.mp4' },
-  { name: 'Tentacle', image: '/images/generate-page/video-poses/tentacle.avif', video: '/videos/generate/actions/tentacle.mp4' },
-  { name: 'Prone Bone', image: '/images/generate-page/video-poses/pronebone.avif', video: '/videos/generate/actions/prone_bone.mp4' },
-  { name: 'Doggy', image: '/images/generate-page/video-poses/doggy.avif', video: '/videos/generate/actions/doggy.mp4' },
-  { name: 'Blowjob', image: '/images/generate-page/video-poses/blowjob.avif', video: '/videos/generate/actions/blowjob.mp4' },
-  { name: 'POV Missionary', image: '/images/generate-page/video-poses/povmissionary.avif', video: '/videos/generate/actions/pov_missionary.mp4' },
-  { name: 'Reverse Cowgirl', image: '/images/generate-page/video-poses/reversecowgirl.avif', video: '/videos/generate/actions/reverse_cowgirl.mp4' },
-  { name: 'Cumshot', image: '/images/generate-page/video-poses/cumshot.avif', video: '/videos/generate/actions/cumshot.mp4' },
-  { name: 'Pussy Insertion', image: '/images/generate-page/video-poses/pussyinsertion.avif', video: '/videos/generate/actions/pussy_insertion.mp4' },
-  { name: 'Jiggle Tits', image: '/images/generate-page/video-poses/jigglittits.avif', video: '/videos/generate/actions/jiggletits.mp4' },
-  { name: 'Twerk', image: '/images/generate-page/video-poses/twerk.avif', video: '/videos/generate/actions/twerk.mp4' },
-  { name: 'Spread Pussy', image: '/images/generate-page/video-poses/spreadpussy.avif', video: '/videos/generate/actions/spread_pussy.mp4' },
-  { name: 'Pussy Show', image: '/images/generate-page/video-poses/pussyshow.avif', video: '/videos/generate/actions/pussy_show.mp4' },
-  { name: 'Fingering', image: '/images/generate-page/video-poses/fingering.avif', video: '/videos/generate/actions/fingering.mp4' },
-  { name: 'Dildo', image: '/images/generate-page/video-poses/dildo.avif', video: '/videos/generate/actions/dildo.mp4' },
-  { name: 'Shirt Lifting', image: '/images/generate-page/video-poses/shirtlifting.avif', video: '/videos/generate/actions/shirt_lifting.mp4' },
-  { name: 'Anal Missionary', image: '/images/generate-page/video-poses/analmissionary.avif', video: '/videos/generate/actions/anal_missionary.mp4' },
-  { name: 'Doggy Kneel', image: '/images/generate-page/video-poses/doggykneel.avif', video: '/videos/generate/actions/doggy_kneel.mp4' },
-  { name: 'Drill', image: '/images/generate-page/video-poses/drill.avif', video: '/videos/generate/actions/drill.mp4' },
-  { name: 'Zoom Out Riding', image: '/images/generate-page/video-poses/zoomoutriding.avif', video: '/videos/generate/actions/zoomoutriding.mp4' },
-  { name: 'Sex Spoon', image: '/images/generate-page/video-poses/sexspoon.avif', video: '/videos/generate/actions/sex_spoon.mp4' },
-  { name: 'Pussy Licking', image: '/images/generate-page/video-poses/pussylicking.avif', video: '/videos/generate/actions/pussy_licking.mp4' },
-  { name: 'Handjob', image: '/images/generate-page/video-poses/handjob.avif', video: '/videos/generate/actions/handjob.mp4' },
-  { name: 'Dick Kiss', image: '/images/generate-page/video-poses/dickkiss.avif', video: '/videos/generate/actions/dick_kiss.mp4' },
-  { name: 'French Kiss', image: '/images/generate-page/video-poses/frenchkiss.avif', video: '/videos/generate/actions/french_kiss.mp4' },
-  { name: 'Huge Cum', image: '/images/generate-page/video-poses/hugecum.avif', video: '/videos/generate/actions/huge_cum.mp4' },
-  { name: 'Mouth Cum', image: '/images/generate-page/video-poses/mouthcum.avif', video: '/videos/generate/actions/mouth_cum.mp4' },
-  { name: 'Squirt', image: '/images/generate-page/video-poses/squirt.avif', video: '/videos/generate/actions/squirt.mp4' },
-  { name: 'Ahegao', image: '/images/generate-page/video-poses/ahegao.avif', video: '/videos/generate/actions/ahegao.mp4' },
-  { name: 'Breast Expand', image: '/images/generate-page/video-poses/breastexpand.avif', video: '/videos/generate/actions/breast_expand.mp4' },
-  { name: 'Bouncing Tits', image: '/images/generate-page/video-poses/bouncingtits.avif', video: '/videos/generate/actions/bouncingtits.mp4' },
-  { name: 'Changing Room', image: '/images/generate-page/video-poses/changingroom.avif', video: '/videos/generate/actions/changing_room.mp4' },
-  { name: 'Pregnant', image: '/images/generate-page/video-poses/pregnant.avif', video: '/videos/generate/actions/pregnant.mp4' },
-  { name: 'Footjob', image: '/images/generate-page/video-poses/footjob2.avif', video: '/videos/generate/actions/footjob.mp4' },
-  { name: 'Stockings Feet', image: '/images/generate-page/video-poses/stockingfeet.avif', video: '/videos/generate/actions/stockingfeet.mp4' },
-  { name: 'Heels Feet', image: '/images/generate-page/video-poses/heelsfeet.avif', video: '/videos/generate/actions/heelsfeet.mp4' },
-  { name: 'Bare Feet', image: '/images/generate-page/video-poses/barefeet.avif', video: '/videos/generate/actions/barefeet.mp4' },
+  { name: 'POV Handjob Cumshot', image: '/images/generate-page/video-poses/povhandjobcumshot.webp', video: '/videos/generate/actions/pov_handjob_cumshot.mp4' },
+  { name: 'Titjob Cum', image: '/images/generate-page/video-poses/titjobcum.webp', video: '/videos/generate/actions/titjob_cum.mp4' },
+  { name: 'Tongue Blowjob', image: '/images/generate-page/video-poses/tongueblowjob.webp', video: '' },
+  { name: 'Couch Lap Blowjob', image: '/images/generate-page/video-poses/couchlapblowjob.webp', video: '/videos/generate/actions/couch_lap_blowjob.mp4' },
+  { name: 'Dildo Anal Riding', image: '/images/generate-page/video-poses/dildoanalriding.webp', video: '/videos/generate/actions/dildo_anal_riding.mp4' },
+  { name: 'Foot Job #1', image: '/images/generate-page/video-poses/footjob.webp', video: '/videos/generate/actions/footjob.mp4' },
+  { name: 'Shibaru Swing', image: '/images/generate-page/video-poses/shibaruswing.webp', video: '/videos/generate/actions/shibaruswing.mp4' },
+  { name: 'BDSM Ass Tease', image: '/images/generate-page/video-poses/bdsmasstease.webp', video: '/videos/generate/actions/bdsm_ass_tease.mp4' },
+  { name: 'Tentacle', image: '/images/generate-page/video-poses/tentacle.webp', video: '/videos/generate/actions/tentacle.mp4' },
+  { name: 'Prone Bone', image: '/images/generate-page/video-poses/pronebone.webp', video: '/videos/generate/actions/prone_bone.mp4' },
+  { name: 'Doggy', image: '/images/generate-page/video-poses/doggy.webp', video: '/videos/generate/actions/doggy.mp4' },
+  { name: 'Blowjob', image: '/images/generate-page/video-poses/blowjob.webp', video: '/videos/generate/actions/blowjob.mp4' },
+  { name: 'POV Missionary', image: '/images/generate-page/video-poses/povmissionary.webp', video: '/videos/generate/actions/pov_missionary.mp4' },
+  { name: 'Reverse Cowgirl', image: '/images/generate-page/video-poses/reversecowgirl.webp', video: '/videos/generate/actions/reverse_cowgirl.mp4' },
+  { name: 'Cumshot', image: '/images/generate-page/video-poses/cumshot.webp', video: '/videos/generate/actions/cumshot.mp4' },
+  { name: 'Pussy Insertion', image: '/images/generate-page/video-poses/pussyinsertion.webp', video: '/videos/generate/actions/pussy_insertion.mp4' },
+  { name: 'Jiggle Tits', image: '/images/generate-page/video-poses/jigglittits.webp', video: '/videos/generate/actions/jiggletits.mp4' },
+  { name: 'Twerk', image: '/images/generate-page/video-poses/twerk.webp', video: '/videos/generate/actions/twerk.mp4' },
+  { name: 'Spread Pussy', image: '/images/generate-page/video-poses/spreadpussy.webp', video: '/videos/generate/actions/spread_pussy.mp4' },
+  { name: 'Pussy Show', image: '/images/generate-page/video-poses/pussyshow.webp', video: '/videos/generate/actions/pussy_show.mp4' },
+  { name: 'Fingering', image: '/images/generate-page/video-poses/fingering.webp', video: '/videos/generate/actions/fingering.mp4' },
+  { name: 'Dildo', image: '/images/generate-page/video-poses/dildo.webp', video: '/videos/generate/actions/dildo.mp4' },
+  { name: 'Shirt Lifting', image: '/images/generate-page/video-poses/shirtlifting.webp', video: '/videos/generate/actions/shirt_lifting.mp4' },
+  { name: 'Anal Missionary', image: '/images/generate-page/video-poses/analmissionary.webp', video: '/videos/generate/actions/anal_missionary.mp4' },
+  { name: 'Doggy Kneel', image: '/images/generate-page/video-poses/doggykneel.webp', video: '/videos/generate/actions/doggy_kneel.mp4' },
+  { name: 'Drill', image: '/images/generate-page/video-poses/drill.webp', video: '/videos/generate/actions/drill.mp4' },
+  { name: 'Zoom Out Riding', image: '/images/generate-page/video-poses/zoomoutriding.webp', video: '/videos/generate/actions/zoomoutriding.mp4' },
+  { name: 'Sex Spoon', image: '/images/generate-page/video-poses/sexspoon.webp', video: '/videos/generate/actions/sex_spoon.mp4' },
+  { name: 'Pussy Licking', image: '/images/generate-page/video-poses/pussylicking.webp', video: '/videos/generate/actions/pussy_licking.mp4' },
+  { name: 'Handjob', image: '/images/generate-page/video-poses/handjob.webp', video: '/videos/generate/actions/handjob.mp4' },
+  { name: 'Dick Kiss', image: '/images/generate-page/video-poses/dickkiss.webp', video: '/videos/generate/actions/dick_kiss.mp4' },
+  { name: 'French Kiss', image: '/images/generate-page/video-poses/frenchkiss.webp', video: '/videos/generate/actions/french_kiss.mp4' },
+  { name: 'Huge Cum', image: '/images/generate-page/video-poses/hugecum.webp', video: '/videos/generate/actions/huge_cum.mp4' },
+  { name: 'Mouth Cum', image: '/images/generate-page/video-poses/mouthcum.webp', video: '/videos/generate/actions/mouth_cum.mp4' },
+  { name: 'Squirt', image: '/images/generate-page/video-poses/squirt.webp', video: '/videos/generate/actions/squirt.mp4' },
+  { name: 'Ahegao', image: '/images/generate-page/video-poses/ahegao.webp', video: '/videos/generate/actions/ahegao.mp4' },
+  { name: 'Breast Expand', image: '/images/generate-page/video-poses/breastexpand.webp', video: '/videos/generate/actions/breast_expand.mp4' },
+  { name: 'Bouncing Tits', image: '/images/generate-page/video-poses/bouncingtits.webp', video: '/videos/generate/actions/bouncingtits.mp4' },
+  { name: 'Changing Room', image: '/images/generate-page/video-poses/changingroom.webp', video: '/videos/generate/actions/changing_room.mp4' },
+  { name: 'Pregnant', image: '/images/generate-page/video-poses/pregnant.webp', video: '/videos/generate/actions/pregnant.mp4' },
+  { name: 'Footjob', image: '/images/generate-page/video-poses/footjob2.webp', video: '/videos/generate/actions/footjob.mp4' },
+  { name: 'Stockings Feet', image: '/images/generate-page/video-poses/stockingfeet.webp', video: '/videos/generate/actions/stockingfeet.mp4' },
+  { name: 'Heels Feet', image: '/images/generate-page/video-poses/heelsfeet.webp', video: '/videos/generate/actions/heelsfeet.mp4' },
+  { name: 'Bare Feet', image: '/images/generate-page/video-poses/barefeet.webp', video: '/videos/generate/actions/barefeet.mp4' },
 ]
 
 const CLOTHES = [
-  { name: 'Custom', image: '/images/generate-page/clothes/custom.avif' },
-  { name: 'Sweater', image: '/images/generate-page/clothes/sweater.avif' },
-  { name: 'Dress', image: '/images/generate-page/clothes/dress.avif' },
-  { name: 'Bikini', image: '/images/generate-page/clothes/bikini.avif' },
-  { name: 'Naked', image: '/images/generate-page/clothes/naked.avif' },
-  { name: 'Blouse', image: '/images/generate-page/clothes/blouse.avif' },
-  { name: 'T-Shirt', image: '/images/generate-page/clothes/tshirt.avif' },
-  { name: 'Tank Top', image: '/images/generate-page/clothes/tanktop.avif' },
-  { name: 'Crop Top', image: '/images/generate-page/clothes/cropbra.avif' },
-  { name: 'Bra', image: '/images/generate-page/clothes/bra.avif' },
-  { name: 'Hoodie', image: '/images/generate-page/clothes/hoodie.avif' },
-  { name: 'Jeans', image: '/images/generate-page/clothes/jeans.avif' },
-  { name: 'Skirt', image: '/images/generate-page/clothes/skirt.avif' },
-  { name: 'Pants', image: '/images/generate-page/clothes/pants.avif' },
-  { name: 'Hosiery', image: '/images/generate-page/clothes/hosiery.avif' },
-  { name: 'Footwear', image: '/images/generate-page/clothes/footwear.avif' },
-  { name: 'Accessories', image: '/images/generate-page/clothes/accessories.avif' },
-  { name: 'Makeup', image: '/images/generate-page/clothes/makeup.avif' },
-  { name: 'Fit Details', image: '/images/generate-page/clothes/fitdetails.avif' },
-  { name: 'Outerwear', image: '/images/generate-page/clothes/outerwear.avif' },
-  { name: 'Headwear', image: '/images/generate-page/clothes/headwear.avif' },
+  { name: 'Custom', image: '/images/generate-page/clothes/custom.webp' },
+  { name: 'Sweater', image: '/images/generate-page/clothes/sweater.webp' },
+  { name: 'Dress', image: '/images/generate-page/clothes/dress.webp' },
+  { name: 'Bikini', image: '/images/generate-page/clothes/bikini.webp' },
+  { name: 'Naked', image: '/images/generate-page/clothes/naked.webp' },
+  { name: 'Blouse', image: '/images/generate-page/clothes/blouse.webp' },
+  { name: 'T-Shirt', image: '/images/generate-page/clothes/tshirt.webp' },
+  { name: 'Tank Top', image: '/images/generate-page/clothes/tanktop.webp' },
+  { name: 'Crop Top', image: '/images/generate-page/clothes/cropbra.webp' },
+  { name: 'Bra', image: '/images/generate-page/clothes/bra.webp' },
+  { name: 'Hoodie', image: '/images/generate-page/clothes/hoodie.webp' },
+  { name: 'Jeans', image: '/images/generate-page/clothes/jeans.webp' },
+  { name: 'Skirt', image: '/images/generate-page/clothes/skirt.webp' },
+  { name: 'Pants', image: '/images/generate-page/clothes/pants.webp' },
+  { name: 'Hosiery', image: '/images/generate-page/clothes/hosiery.webp' },
+  { name: 'Footwear', image: '/images/generate-page/clothes/footwear.webp' },
+  { name: 'Accessories', image: '/images/generate-page/clothes/accessories.webp' },
+  { name: 'Makeup', image: '/images/generate-page/clothes/makeup.webp' },
+  { name: 'Fit Details', image: '/images/generate-page/clothes/fitdetails.webp' },
+  { name: 'Outerwear', image: '/images/generate-page/clothes/outerwear.webp' },
+  { name: 'Headwear', image: '/images/generate-page/clothes/headwear.webp' },
 ]
 
 const BACKGROUNDS = [
@@ -98,7 +98,7 @@ const getBgImagePath = (name: string) => {
     'Piano Lounge': 'pianolounge'
   }
   const key = nameMap[name] || name.toLowerCase().replace(/\s+/g, '')
-  return `/images/generate-page/backgrounds/${key}.avif`
+  return `/images/generate-page/backgrounds/${key}.webp`
 }
 
 const getActionImage = (name: string) => ACTIONS.find(a => a.name === name)?.image || ''
@@ -167,7 +167,7 @@ export default function Generate() {
             </div>
           </div>
           <div className="overflow-y-auto flex-1 px-5 pb-6">
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-4 gap-3">
               {filteredActions.map(action => (
                 <div key={action.name}
                   data-action={action.name}
@@ -221,12 +221,12 @@ export default function Generate() {
             </div>
           </div>
           <div className="overflow-y-auto flex-1 px-5 pb-6">
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-4 gap-3">
               {filteredClothes.map(cloth => (
                 <div key={cloth.name}
                   onClick={() => { setSelectedClothes(cloth.name); closeDialog() }}
                   role="button" tabIndex={0}
-                  className={`cursor-pointer relative rounded-xl overflow-hidden border transition-all duration-200 hover:scale-[1.02] w-[220px] h-[250px] ${
+                  className={`cursor-pointer relative rounded-xl overflow-hidden border transition-all duration-200 hover:scale-[1.02] aspect-[3/4] ${
                     selectedClothes === cloth.name ? 'border-[#d05bf8] shadow-lg shadow-[#d05bf8]/20' : 'border-white/[6%] hover:border-white/[15%]'
                   }`}
                 >
@@ -259,12 +259,12 @@ export default function Generate() {
             </div>
           </div>
           <div className="overflow-y-auto flex-1 px-5 pb-6">
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-4 gap-3">
               {filteredBgs.map(bg => (
                 <div key={bg}
                   onClick={() => { setSelectedBg(bg); closeDialog() }}
                   role="button" tabIndex={0}
-                  className={`cursor-pointer relative rounded-xl overflow-hidden border transition-all duration-200 hover:scale-[1.02] w-[220px] h-[250px] ${
+                  className={`cursor-pointer relative rounded-xl overflow-hidden border transition-all duration-200 hover:scale-[1.02] aspect-[3/4] ${
                     selectedBg === bg ? 'border-[#d05bf8] shadow-lg shadow-[#d05bf8]/20' : 'border-white/[6%] hover:border-white/[15%]'
                   }`}
                 >
@@ -353,7 +353,7 @@ export default function Generate() {
         <div className="absolute inset-0 bg-black/80 backdrop-blur-md" onClick={closeDialog} />
         {/* Dialog content - positioned at bottom */}
         <div className="absolute bottom-0 left-0 right-0 max-h-[85vh] flex flex-col items-center">
-          <div className="bg-[#181718] rounded-t-[24px] w-full max-w-2xl overflow-hidden flex flex-col max-h-[85vh]" style={{ pointerEvents: 'auto' }}>
+          <div className="bg-[#181718] rounded-t-[24px] w-full max-w-3xl overflow-hidden flex flex-col max-h-[85vh]" style={{ pointerEvents: 'auto' }}>
             <div className="flex items-center justify-between px-5 py-4 border-b border-white/[6%] shrink-0">
               <h2 className="text-[17px] font-bold">{title}</h2>
               <button onClick={closeDialog} className="size-9 flex items-center justify-center rounded-full hover:bg-white/[8%] transition-colors">
@@ -375,7 +375,7 @@ export default function Generate() {
       <div className="fixed inset-0 z-[200] flex flex-col">
         <div className="absolute inset-0 bg-black/80 backdrop-blur-md" onClick={() => setShowCharPicker(false)} />
         <div className="absolute bottom-0 left-0 right-0 max-h-[85vh] flex flex-col items-center">
-          <div className="bg-[#181718] rounded-t-[24px] w-full max-w-2xl overflow-hidden flex flex-col max-h-[85vh]">
+          <div className="bg-[#181718] rounded-t-[24px] w-full max-w-3xl overflow-hidden flex flex-col max-h-[85vh]">
             <div className="flex items-center justify-between px-5 py-4 border-b border-white/[6%] shrink-0">
               <h2 className="text-[17px] font-bold">Select Model</h2>
               <button onClick={() => setShowCharPicker(false)} className="size-9 flex items-center justify-center rounded-full hover:bg-white/[8%]">
@@ -563,15 +563,15 @@ export default function Generate() {
       </div>
 
       {/* Generate Button */}
-      <div className="px-4 mt-6">
+      <div className="flex justify-center px-4 mt-6">
         {canGenerate ? (
           <button onClick={() => alert(`Generation started! (Demo)\n\nCharacter: ${selectedChar.name}\nAction: ${selectedAction || 'None'}\nClothes: ${selectedClothes || 'None'}\nBackground: ${selectedBg || 'None'}\nMode: ${mode}\nAspect: ${aspectRatio}\nQuality: ${quality}`)}
-            className="w-full py-4 rounded-2xl bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] text-white font-bold text-[16px] shadow-lg shadow-[#d05bf8]/30 hover:shadow-[#d05bf8]/50 transition-all active:scale-[0.98]">
+            className="w-1/4 py-3.5 rounded-2xl bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] text-white font-bold text-[14px] shadow-lg shadow-[#d05bf8]/30 hover:shadow-[#d05bf8]/50 transition-all active:scale-[0.98]">
             Generate {mode === 'video' ? 'Video' : 'Image'}
           </button>
         ) : (
-          <div className="w-full py-4 rounded-2xl bg-white/[5%] border border-white/[8%] text-center">
-            <span className="text-[14px] font-semibold text-white/40">Select Action, Clothes, or Background</span>
+          <div className="w-1/4 py-3.5 rounded-2xl bg-white/[5%] border border-white/[8%] text-center">
+            <span className="text-[12px] font-semibold text-white/40">Select Options</span>
           </div>
         )}
       </div>
