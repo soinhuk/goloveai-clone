@@ -519,7 +519,7 @@ export default function Create() {
                     <img
                       src={e.image}
                       alt={e.name}
-                      className="w-16 h-16 rounded-[12px] object-cover"
+                      className="w-24 h-24 rounded-[12px] object-cover"
                     />
                     <span className="text-[12px] font-medium">{e.name}</span>
                     {ethnicity === e.name && (
@@ -607,9 +607,10 @@ export default function Create() {
                         : 'border-white/[6%] hover:border-white/[15%]'
                     }`}
                   >
-                    <div
-                      className="w-14 h-14 rounded-[12px]"
-                      style={{ backgroundColor: h.color }}
+                    <img
+                      src={h.image}
+                      alt={h.name}
+                      className="w-20 h-20 rounded-[12px] object-cover"
                     />
                     <span className="text-[12px] font-medium">{h.name}</span>
                     {hairColor.name === h.name && (
@@ -641,7 +642,7 @@ export default function Create() {
                     <img
                       src={h.image}
                       alt={h.name}
-                      className="w-14 h-14 rounded-[12px] object-cover"
+                      className="w-20 h-20 rounded-[12px] object-cover"
                     />
                     <span className="text-[12px] font-medium">{h.name}</span>
                     {hairStyle === h.name && (
@@ -678,7 +679,7 @@ export default function Create() {
                     <img
                       src={b.image}
                       alt={b.name}
-                      className="w-14 h-14 rounded-[12px] object-cover"
+                      className="w-20 h-20 rounded-[12px] object-cover"
                     />
                     <span className="text-[12px] font-medium">{b.name}</span>
                     {bodyType === b.name && (
@@ -710,7 +711,7 @@ export default function Create() {
                     <img
                       src={b.image}
                       alt={b.name}
-                      className="w-14 h-14 rounded-[12px] object-cover"
+                      className="w-20 h-20 rounded-[12px] object-cover"
                     />
                     <span className="text-[12px] font-medium">{b.name}</span>
                     {breastSize === b.name && (
@@ -742,7 +743,7 @@ export default function Create() {
                     <img
                       src={b.image}
                       alt={b.name}
-                      className="w-14 h-14 rounded-[12px] object-cover"
+                      className="w-20 h-20 rounded-[12px] object-cover"
                     />
                     <span className="text-[12px] font-medium">{b.name}</span>
                     {buttSize === b.name && (
