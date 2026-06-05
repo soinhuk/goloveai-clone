@@ -15,25 +15,27 @@ const QUICK_REPLIES = [
 ]
 
 const QUICK_QUESTIONS = [
-  { icon: '💬', text: "How's your day going?", desc: "Start a casual chat" },
-  { icon: '😍', text: "You look amazing today", desc: "Give a compliment" },
-  { icon: '🎭', text: "Let's roleplay", desc: "Start an adventure" },
-  { icon: '🌙', text: "What are you doing tonight?", desc: "Set the mood" },
-  { icon: '🔥', text: "Tell me something naughty", desc: "Get spicy" },
-  { icon: '💕', text: "I miss you", desc: "Show affection" },
-  { icon: '📸', text: "Send me a photo", desc: "Request a pic" },
-  { icon: '🎵', text: "Sing me a song", desc: "Be creative" },
+  { icon: '💬', text: "今天过得怎么样？", desc: "开始轻松聊天" },
+  { icon: '😍', text: "你今天看起来真美", desc: "给个赞美" },
+  { icon: '🎭', text: "我们来角色扮演吧", desc: "开始冒险" },
+  { icon: '🌙', text: "今晚在做什么呢？", desc: "营造氛围" },
+  { icon: '🔥', text: "说点撩人的话", desc: "升温互动" },
+  { icon: '💕', text: "我想你了", desc: "表达爱意" },
+  { icon: '📸', text: "发张照片给我看看", desc: "请求自拍" },
+  { icon: '🎵', text: "给我唱首歌吧", desc: "创意互动" },
+  { icon: '💭', text: "你最喜欢什么？", desc: "了解她" },
+  { icon: '🌹', text: "约会的话你想去哪里？", desc: "浪漫话题" },
 ]
 
 const GIFTS = [
-  { icon: '🌹', name: 'Rose', price: 'Free', color: 'from-red-500/20 to-pink-500/20' },
-  { icon: '💎', name: 'Diamond', price: '50', color: 'from-blue-500/20 to-cyan-500/20' },
-  { icon: '🎁', name: 'Mystery', price: '100', color: 'from-purple-500/20 to-pink-500/20' },
-  { icon: '👑', name: 'Crown', price: '200', color: 'from-yellow-500/20 to-amber-500/20' },
-  { icon: '🍫', name: 'Chocolate', price: 'Free', color: 'from-amber-600/20 to-orange-500/20' },
-  { icon: '🥂', name: 'Champagne', price: '150', color: 'from-yellow-400/20 to-orange-400/20' },
-  { icon: '💍', name: 'Ring', price: '500', color: 'from-pink-500/20 to-rose-500/20' },
-  { icon: '🏖️', name: 'Vacation', price: '1000', color: 'from-teal-500/20 to-blue-500/20' },
+  { icon: '🌹', name: 'Rose', price: 0, color: 'from-red-500/20 to-pink-500/20' },
+  { icon: '💎', name: 'Diamond', price: 50, color: 'from-blue-500/20 to-cyan-500/20' },
+  { icon: '🎁', name: 'Mystery', price: 100, color: 'from-purple-500/20 to-pink-500/20' },
+  { icon: '👑', name: 'Crown', price: 200, color: 'from-yellow-500/20 to-amber-500/20' },
+  { icon: '🍫', name: 'Chocolate', price: 0, color: 'from-amber-600/20 to-orange-500/20' },
+  { icon: '🥂', name: 'Champagne', price: 150, color: 'from-yellow-400/20 to-orange-400/20' },
+  { icon: '💍', name: 'Ring', price: 500, color: 'from-pink-500/20 to-rose-500/20' },
+  { icon: '🏖️', name: 'Vacation', price: 1000, color: 'from-teal-500/20 to-blue-500/20' },
 ]
 
 export default function Chat() {
@@ -146,7 +148,7 @@ export default function Chat() {
       </div>
 
       {/* ═══════ CENTER PANEL ═══════ */}
-      <div className="flex-1 flex flex-col relative max-w-2xl mx-auto">
+      <div className="flex-1 flex flex-col relative min-w-0">
         {/* Dreamy Background */}
         {videoAvatar && (
           <video src={videoAvatar} autoPlay loop muted playsInline className="absolute inset-0 w-full h-full object-cover opacity-[0.08] blur-[30px] z-0" />
@@ -342,7 +344,9 @@ export default function Chat() {
                   >
                     <span className="text-2xl">{gift.icon}</span>
                     <span className="text-[9px] text-white/40 truncate w-full text-center">{gift.name}</span>
-                    <span className="text-[8px] text-[#d05bf8]/50">{gift.price}</span>
+                    <span className={`text-[8px] font-medium ${gift.price === 0 ? 'text-emerald-400/60' : 'text-[#d05bf8]/60'}`}>
+                      {gift.price === 0 ? 'Free' : `¥${gift.price}`}
+                    </span>
                   </button>
                 ))}
               </div>
@@ -368,7 +372,7 @@ export default function Chat() {
                 value={message}
                 onChange={e => setMessage(e.target.value)}
                 onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); } }}
-                placeholder="输入消息..."
+                placeholder={`给 ${char.name} 发消息...`}
                 rows={1}
                 className="w-full bg-white/[3%] border border-white/[5%] rounded-2xl py-3 px-5 text-[16px] text-white placeholder:text-white/20 focus:outline-none focus:border-[#d05bf8]/25 focus:bg-white/[4%] focus:shadow-[0_0_15px_rgba(208,91,248,0.08)] transition-all resize-none min-h-[46px] max-h-[120px]"
               />
@@ -376,12 +380,10 @@ export default function Chat() {
 
             <button
               onClick={() => { setShowGifts(!showGifts); setShowQuickQuestions(false); }}
-              className="flex items-center gap-1.5 px-4 py-2.5 rounded-full bg-gradient-to-r from-[#d05bf8]/[0.12] to-[#ff18a0]/[0.08] border border-[#d05bf8]/15 hover:border-[#d05bf8]/30 hover:shadow-[0_0_12px_rgba(208,91,248,0.15)] text-[15px] transition-all shrink-0"
+              className="flex items-center gap-1.5 px-4 py-2.5 rounded-full bg-[#1a1a24] border border-[#d05bf8]/15 hover:border-[#d05bf8]/30 hover:shadow-[0_0_12px_rgba(208,91,248,0.15)] text-[15px] transition-all shrink-0"
             >
               <Gift size={15} className="text-[#d05bf8]" />
-              <span className="text-[#d05bf8]">礼物</span>
-              <Sparkles size={11} className="text-[#ff18a0]" />
-              <span className="text-[10px] text-[#ff18a0]/70">实时镜头</span>
+              <span className="text-[#d05bf8] font-medium">¥18</span>
               <ChevronDown size={11} className="text-white/25" />
             </button>
 
@@ -423,13 +425,35 @@ export default function Chat() {
               <div className="absolute bottom-5 left-5 right-5">
                 <h2 className="text-2xl font-bold text-white drop-shadow-lg">{char.name}, {char.age}</h2>
                 <p className="text-sm text-white/50 mt-1.5 line-clamp-2 drop-shadow">{char.bio}</p>
-                {/* Tags */}
+                {/* Tags with icons */}
                 <div className="flex flex-wrap gap-1.5 mt-3">
-                  {char.tags.map(tag => (
-                    <span key={tag} className="px-2.5 py-0.5 text-[10px] font-medium bg-white/[10%] backdrop-blur-sm text-white/70 rounded-full border border-white/[10%]">
-                      {tag}
-                    </span>
-                  ))}
+                  {char.tags.map(tag => {
+                    const tagIcons: Record<string, string> = {
+                      'Blonde': '👱‍♀️', 'Brunette': '👩', 'Redhead': '👩‍🦰', 'Black': '🖤',
+                      'Romantic': '💕', 'Flirty': '😏', 'Seductive': '🔥', 'Sweet': '🍬',
+                      'Caring': '💗', 'Shy': '😊', 'Bold': '💪', 'Confident': '👑',
+                      'Busty': '✨', 'Petite': '🌸', 'Curvy': '💋', 'Athletic': '🏃‍♀️',
+                      'Teen': '🎀', 'Milf': '🍷', 'Mature': '🌙',
+                      'Asian': '🏮', 'Caucasian': '🌸', 'Exotic': '🌺', 'Cultural': '🌍',
+                      'Gamer': '🎮', 'Nerdy': '📚', 'Cosplayer': '🎭', 'Kawaii': '🌸',
+                      'Elegant': '💎', 'Glamorous': '✨', 'Mysterious': '🌙', 'Intense': '🔥',
+                      'Southern': '🤠', 'Traditional': '🎋', 'Innocent': '🦋',
+                      'Dominant': '👑', 'Sophisticated': '🍷', 'Warm': '☀️',
+                      'Outdoor': '🏖️', 'Sporty': '⚡', 'Energetic': '⚡',
+                      'Funny': '😄', 'Sassy': '💅', 'Cute': '🥰',
+                      'French': '🇫🇷', 'Korean': '🇰🇷', 'Japanese': '🇯🇵', 'Brazilian': '🇧🇷',
+                      'Teacher': '📖', 'K-pop': '🎤', 'Fitness': '💪', 'Boss': '💼',
+                      'Nurse': '💉', 'Passionate': '🔥', 'Wild': '🌿', 'Free-spirited': '🦋',
+                      'Beautiful': '💎', 'Smart': '🧠', 'Gentle': '🕊️',
+                    }
+                    const icon = tagIcons[tag] || '✦'
+                    return (
+                      <span key={tag} className="px-2.5 py-1 text-[10px] font-medium bg-white/[10%] backdrop-blur-sm text-white/70 rounded-full border border-white/[10%] flex items-center gap-1">
+                        <span className="text-[10px]">{icon}</span>
+                        {tag}
+                      </span>
+                    )
+                  })}
                 </div>
               </div>
               {/* Nav arrows */}
@@ -451,7 +475,7 @@ export default function Chat() {
           {/* Action Buttons */}
           <div className="px-5 pb-3 flex gap-2">
             <button className="flex-1 py-3 rounded-xl bg-emerald-500/10 text-emerald-400 text-sm font-semibold flex items-center justify-center gap-2 hover:bg-emerald-500/20 transition-all border border-emerald-500/10 hover:shadow-[0_0_12px_rgba(52,211,153,0.15)]">
-              <Phone size={15} /> 打电话
+              <Phone size={15} /> 给我打电话
             </button>
             <button className="flex-1 py-3 rounded-xl bg-[#d05bf8]/10 text-[#d05bf8] text-sm font-semibold flex items-center justify-center gap-2 hover:bg-[#d05bf8]/20 transition-all border border-[#d05bf8]/10 hover:shadow-[0_0_12px_rgba(208,91,248,0.15)]">
               <Video size={15} /> 视频通话
@@ -459,10 +483,30 @@ export default function Chat() {
           </div>
 
           {/* Generate Media */}
-          <div className="px-5 pb-4">
-            <Link to="/generate" className="flex items-center justify-center gap-2.5 w-full py-3.5 rounded-xl bg-gradient-to-r from-[#d05bf8]/[0.12] to-[#ff18a0]/[0.08] border border-[#d05bf8]/[0.12] text-sm font-bold text-[#d05bf8] hover:border-[#d05bf8]/25 hover:shadow-[0_0_20px_rgba(208,91,248,0.1)] transition-all">
-              <Wand2 size={16} /> 生成媒体
+          <div className="px-5 pb-3">
+            <Link to="/generate" className="flex items-center justify-center gap-2.5 w-full py-3.5 rounded-xl bg-[#1a1a24] border border-[#d05bf8]/[0.15] text-sm font-bold text-[#d05bf8] hover:border-[#d05bf8]/30 hover:shadow-[0_0_20px_rgba(208,91,248,0.1)] transition-all">
+              <ImageIcon size={16} /> 生成媒体
             </Link>
+          </div>
+
+          {/* Voice Preview */}
+          <div className="px-5 pb-4">
+            <button className="flex items-center justify-center gap-2.5 w-full py-3.5 rounded-xl bg-[#1a1a24] border border-[#d05bf8]/[0.15] text-sm font-bold text-[#d05bf8] hover:border-[#d05bf8]/30 hover:shadow-[0_0_20px_rgba(208,91,248,0.1)] transition-all">
+              <Music size={16} /> 播放语音预览 · 听听我的声音
+            </button>
+          </div>
+
+          {/* Character Self-Introduction */}
+          <div className="px-5 pb-4">
+            <div className="p-4 rounded-2xl bg-gradient-to-br from-[#d05bf8]/[0.06] to-[#ff18a0]/[0.04] border border-[#d05bf8]/[0.1]">
+              <p className="text-[14px] text-white/60 leading-relaxed">
+                {char.name}是一个{char.personality?.split(',')[0]?.trim()?.toLowerCase() || '迷人'}的灵魂。
+                {char.occupation ? ` 她是一位${char.occupation}，` : ''}
+                {char.bio}
+                {char.fantasy ? ` 在她的幻想中，${char.fantasy.toLowerCase()}。` : ''}
+                {char.greeting ? ` 她想对你说：「${char.greeting}」` : ''}
+              </p>
+            </div>
           </div>
 
           {/* About Her */}
