@@ -16,13 +16,32 @@ export default function Chat() {
   const nsfwAvatar = char.avatar?.replace('_avatar.avif', '_avatar_nsfw.avif')
 
   // Simulated initial messages
-  const [messages] = useState([
+  const [messages, setMessages] = useState([
     { id: 1, sender: 'ai' as const, text: `I love it when a conversation starts with something interesting... so, where do we begin? 😈`, time: '2:09 PM', photos: [nsfwAvatar, char.avatar] },
   ])
 
+  const handleSend = () => {
+    if (!message.trim()) return
+    const userMsg = { id: Date.now(), sender: 'user' as const, text: message.trim(), time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), photos: undefined as string[] | undefined }
+    setMessages(prev => [...prev, userMsg])
+    setMessage('')
+    // Simulate AI reply after 1.5s
+    setTimeout(() => {
+      const replies = [
+        "Mmm, I like where this is going... tell me more 😘",
+        "You're so sweet! What else is on your mind? 💕",
+        "Oh really? That's interesting... I want to know more about you 😊",
+        "Haha, you're funny! Keep talking to me 💋",
+        "I love that! You have great taste 😉",
+      ]
+      const aiMsg = { id: Date.now() + 1, sender: 'ai' as const, text: replies[Math.floor(Math.random() * replies.length)], time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), photos: undefined as string[] | undefined }
+      setMessages(prev => [...prev, aiMsg])
+    }, 1500)
+  }
+
   useEffect(() => {
     messagesRef.current?.scrollTo({ top: messagesRef.current.scrollHeight, behavior: 'smooth' })
-  }, [])
+  }, [messages])
 
   return (
     <div className="flex flex-col h-[calc(100dvh-32px)] bg-[#0F0E0F] relative">
@@ -118,11 +137,13 @@ export default function Chat() {
             type="text"
             value={message}
             onChange={e => setMessage(e.target.value)}
+            onKeyDown={e => e.key === 'Enter' && handleSend()}
             placeholder="Message"
             className="w-full bg-white/[5%] border border-white/[6%] rounded-full py-2.5 px-4 text-[14px] text-white placeholder:text-white/30 focus:outline-none focus:border-[#d05bf8]/30 transition-all"
           />
         </div>
         <button
+          onClick={handleSend}
           disabled={!message.trim()}
           className={`flex items-center justify-center size-9 rounded-full transition-all ${
             message.trim() ? 'bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] text-white' : 'bg-white/[4%] text-white/20'

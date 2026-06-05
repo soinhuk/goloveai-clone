@@ -17,13 +17,13 @@ function App() {
           <Route index element={<Explore />} />
           <Route path="app/explore" element={<Explore />} />
           <Route path="app/characters" element={<Characters />} />
-          <Route path="app/chats" element={<Chat />} />
+          <Route path="app/chats" element={<Chats />} />
           <Route path="app/search" element={<Search />} />
           <Route path="app/premium" element={<Premium />} />
           <Route path="create" element={<Create />} />
           <Route path="generate" element={<Generate />} />
+          <Route path="chat/:username" element={<Chat />} />
         </Route>
-        <Route path="chat/:username" element={<Chat />} />
       </Routes>
     </BrowserRouter>
   )
