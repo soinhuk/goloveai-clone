@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Layout from './components/Layout'
+import Home from './pages/Home'
 import Explore from './pages/Explore'
 import Chat from './pages/Chat'
 import Create from './pages/Create'
@@ -14,7 +15,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Layout />}>
-          <Route index element={<Explore />} />
+          <Route index element={<Home />} />
           <Route path="app/explore" element={<Explore />} />
           <Route path="app/characters" element={<Characters />} />
           <Route path="app/chats" element={<Chats />} />
