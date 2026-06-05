@@ -1,295 +1,172 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
-import { ChevronLeft, ChevronRight, Search, Play, Heart, MessageCircle, Users, Star, Flame, Sparkles, Crown } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Search, ChevronDown, SlidersHorizontal } from 'lucide-react'
+import CharacterCard from '../components/CharacterCard'
 import { characters } from '../data/characters'
 import { Character } from '../types'
 
-// 3个分类
-type Category = 'girls' | 'anime' | 'male'
+const TAGS = ['MILF', 'Asian', 'Teen', 'Busty', 'Blonde', 'Goth', 'Ebony', 'Latina', 'Brunette', 'Athletic', 'Redhead', 'Kinky', 'Petite', 'Dominant', 'Submissive']
 
-const CATEGORIES: { key: Category; label: string; icon: React.ReactNode }[] = [
-  { key: 'girls', label: 'Girls', icon: <Flame size={14} /> },
-  { key: 'anime', label: 'Anime', icon: <Sparkles size={14} /> },
-  { key: 'male', label: 'Male', icon: <Crown size={14} /> },
+const BANNERS = [
+  { title: 'REGISTER GET BONUS!', subtitle: 'Limited-time bonus for new users.', cta: '-70% Register', href: '/app/premium', bg: 'from-[#1a0a2e] via-[#2d1054] to-[#0f0e0f]', accent: '#D05BF8' },
+  { title: 'CREATE YOUR AI GIRLFRIEND', subtitle: 'Your fantasy. Your rules. No limits.', cta: 'Bring Her to Life', href: '/create', bg: 'from-[#0f1a2e] via-[#0a2d54] to-[#0f0e0f]', accent: '#18A8FF' },
+  { title: 'SHE ALWAYS PICKS UP', subtitle: 'Always ready for a spicy conversation.', cta: 'Try Calls', href: '#', bg: 'from-[#2d1054] via-[#1a0a2e] to-[#0f0e0f]', accent: '#ff18a0' },
 ]
 
-const LIVE_COLORS = ['#FF6B6B', '#FF8E53', '#FF6B9D', '#C44AFF', '#6BFFB8', '#6B9DFF']
-
 export default function Explore() {
-  const [category, setCategory] = useState<Category>('girls')
+  const [bannerIdx, setBannerIdx] = useState(0)
   const [searchQuery, setSearchQuery] = useState('')
+  const [activeTag, setActiveTag] = useState<string | null>(null)
+  const [genderFilter, setGenderFilter] = useState('Female')
+  const [styleFilter, setStyleFilter] = useState('Realistic')
+  const [ageFilter, setAgeFilter] = useState('Any')
+  const [sortBy, setSortBy] = useState('Characters')
   const liveRef = useRef<HTMLDivElement>(null)
-  
-  // 分类筛选角色
-  const filteredByCategory = characters.filter(c => {
-    if (category === 'girls') return c.type === 'realistic' && c.gender !== 'Male'
-    if (category === 'anime') return c.type === 'anime'
-    if (category === 'male') return c.type === 'realistic' && c.gender === 'Male'
-    return true
-  })
-  
-  // Live角色
-  const liveChars = characters.filter(c => c.isLive)
-  
-  // 搜索筛选
-  const searchedChars = filteredByCategory.filter(c => {
+
+  useEffect(() => {
+    const t = setInterval(() => setBannerIdx(i => (i + 1) % BANNERS.length), 5000)
+    return () => clearInterval(t)
+  }, [])
+
+  const liveChars = characters.filter(c => c.isLive).slice(0, 8)
+  const filteredChars: Character[] = characters.filter(c => {
     if (searchQuery && !c.name.toLowerCase().includes(searchQuery.toLowerCase())) return false
+    if (activeTag && !c.tags?.some(t => t.toLowerCase().includes(activeTag.toLowerCase()))) return false
     return true
   })
-  
-  const scrollLive = (d: 'l' | 'r') => liveRef.current?.scrollBy({ left: d === 'l' ? -260 : 260, behavior: 'smooth' })
-  
-  // 获取角色互动数（模拟）
-  const getInteractions = (char: Character) => {
-    const seed = (char.name.charCodeAt(0) + char.id) % 1000000
-    if (seed > 1000) return `${(seed / 1000).toFixed(1)}B`
-    return `${seed}M`
-  }
-  
+
+  const banner = BANNERS[bannerIdx]
+  const scrollLive = (d: 'l' | 'r') => liveRef.current?.scrollBy({ left: d === 'l' ? -200 : 200, behavior: 'smooth' })
+
   return (
-    <div className="min-h-screen bg-[#0F0E0F] text-white pb-8">
-      {/* ====== 顶部导航（3个分类按钮）====== */}
-      <div className="sticky top-0 z-30 bg-[#0F0E0F]/95 backdrop-blur-md border-b border-white/[6%]">
-        <div className="flex items-center justify-center gap-2 px-4 py-3">
-          {CATEGORIES.map(cat => (
-            <button
-              key={cat.key}
-              onClick={() => setCategory(cat.key)}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-[13px] font-bold transition-all ${
-                category === cat.key
-                  ? 'bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] text-white shadow-lg shadow-[#d05bf8]/25'
-                  : 'bg-white/[5%] text-white/50 hover:bg-white/[8%]'
-              }`}
-            >
-              {cat.icon}
-              {cat.label}
+    <div className="pb-8">
+      {/* ====== HERO BANNER + LIVE ====== */}
+      <section className="relative overflow-hidden">
+        <div className="flex">
+          {/* Banner */}
+          <div className="flex-1 relative">
+            <div className={`relative h-[200px] desktop:h-[260px] bg-gradient-to-br ${banner.bg} flex items-center px-8 desktop:px-12 overflow-hidden`}>
+              <div className="absolute w-[300px] h-[300px] rounded-full blur-[80px] opacity-20" style={{ background: banner.accent, left: '40%', top: '50%', transform: 'translate(-50%, -50%)' }} />
+              <div className="relative z-10">
+                <h1 className="text-2xl desktop:text-4xl font-bold text-white leading-tight tracking-[-4%]">{banner.title}</h1>
+                <p className="mt-2 text-white/60 text-sm desktop:text-base tracking-[-4%]">{banner.subtitle}</p>
+                <Link to={banner.href} className="mt-4 inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold rounded-full bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] text-white shadow-[0_0_15px_rgba(208,91,248,0.4)] hover:shadow-[0_0_25px_rgba(208,91,248,0.6)] transition-all">
+                  {banner.cta} <ChevronRight size={16} />
+                </Link>
+              </div>
+            </div>
+            <button onClick={() => setBannerIdx(i => (i - 1 + BANNERS.length) % BANNERS.length)} className="absolute left-3 top-1/2 -translate-y-1/2 size-8 flex items-center justify-center rounded-full bg-black/40 text-white hover:bg-black/60 z-20"><ChevronLeft size={16} /></button>
+            <button onClick={() => setBannerIdx(i => (i + 1) % BANNERS.length)} className="absolute right-3 top-1/2 -translate-y-1/2 size-8 flex items-center justify-center rounded-full bg-black/40 text-white hover:bg-black/60 z-20"><ChevronRight size={16} /></button>
+            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-20">
+              {BANNERS.map((_, i) => <button key={i} onClick={() => setBannerIdx(i)} className={`h-1.5 rounded-full transition-all ${i === bannerIdx ? 'w-6 bg-white' : 'w-1.5 bg-white/30'}`} />)}
+            </div>
+          </div>
+
+          {/* Live Models */}
+          {liveChars.length > 0 && (
+            <div className="hidden desktop:flex w-[280px] shrink-0 flex-col justify-center px-4 bg-white/[2%] border-l border-white/[5%]">
+              <div className="flex items-center gap-2 mb-3">
+                <h2 className="text-[14px] font-[600] text-white">Join In</h2>
+                <span className="flex items-center gap-1 px-2 py-0.5 text-[10px] font-bold text-white bg-red-500 rounded-full"><span className="size-1.5 rounded-full bg-white animate-pulse" />Live</span>
+              </div>
+              <p className="text-[11px] text-white/40 mb-3">Models are Live — interaction to the next level</p>
+              <div ref={liveRef} className="flex gap-2 overflow-x-auto no-scrollbar py-1">
+                {liveChars.map(c => (
+                  <Link key={c.id} to={`/chat/${c.username}`} className="relative shrink-0 flex flex-col items-center gap-1">
+                    <div className="size-[68px] rounded-full overflow-hidden ring-2 ring-[#d05bf8]/60" style={{ boxShadow: '0 0 10px rgba(208,91,248,0.3)' }}>
+                      <img src={c.avatar} alt={c.name} className="w-full h-full object-cover" />
+                    </div>
+                    <span className="text-[10px] text-white/50 truncate w-[68px] text-center">{c.name}</span>
+                    <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 px-1.5 py-0.5 text-[9px] font-bold bg-red-500 text-white rounded-full animate-pulse">LIVE</span>
+                  </Link>
+                ))}
+              </div>
+              <button onClick={() => scrollLive('r')} className="mt-2 flex items-center justify-center size-6 rounded-full bg-black/60 text-white mx-auto"><ChevronRight size={12} /></button>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* ====== SEARCH + FILTERS ====== */}
+      <div className="px-4 desktop:px-8 py-4">
+        <div className="flex items-center gap-3 flex-wrap">
+          <div className="relative flex-1 min-w-[200px] max-w-[400px]">
+            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30" />
+            <input type="text" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="e.g. petite Asian, thick Latina, dom MILF" className="w-full bg-[#181718] border border-white/[6%] rounded-xl py-2.5 pl-10 pr-4 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-[#d05bf8]/40 transition-all tracking-[-4%]" />
+          </div>
+          <Dropdown label="Gender" value={genderFilter} options={['Female', 'Male', 'Trans']} onChange={setGenderFilter} />
+          <Dropdown label="Style" value={styleFilter} options={['Realistic', 'Anime', 'All']} onChange={setStyleFilter} />
+          <Dropdown label="Age" value={ageFilter} options={['Any', '18-20', '21-25', '26-30', '31-40', '40+']} onChange={setAgeFilter} />
+          <Dropdown label="" value={sortBy} options={['Characters', 'Newest', 'Popular']} onChange={setSortBy} />
+          <button className="flex items-center gap-1.5 px-3 py-2.5 text-sm text-white/50 bg-[#181718] border border-white/[6%] rounded-xl hover:text-white transition-all"><SlidersHorizontal size={14} /></button>
+        </div>
+      </div>
+
+      {/* ====== TAG PILLS ====== */}
+      <div className="px-4 desktop:px-8 pb-4">
+        <div className="flex gap-2 overflow-x-auto no-scrollbar">
+          {TAGS.map(tag => (
+            <button key={tag} onClick={() => setActiveTag(activeTag === tag ? null : tag)} className={`shrink-0 px-4 py-1.5 rounded-full text-[12px] font-[400] tracking-[-4%] capitalize transition-all ${activeTag === tag ? 'bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] text-white' : 'bg-[#181718] text-white/50 hover:text-white border border-white/[6%]'}`}>
+              {tag}
             </button>
           ))}
         </div>
       </div>
-      
-      {/* ====== HERO 区域 ====== */}
-      <section className="relative overflow-hidden px-4 py-8">
-        <div className="relative max-w-3xl mx-auto text-center">
-          {/* 背景光效 */}
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <div className="w-[400px] h-[400px] rounded-full blur-[120px] bg-gradient-to-r from-[#d05bf8]/30 to-[#ff18a0]/30" />
+
+      {/* ====== CHARACTER GRID ====== */}
+      <section className="px-4 desktop:px-8">
+        {/* CTA: Create Your Own */}
+        <Link to="/create" className="group relative flex items-center justify-between h-[120px] desktop:h-[140px] rounded-[22px] overflow-hidden bg-gradient-to-r from-[#1a0a2e] via-[#2d1054] to-[#0f0e0f] border border-white/[6%] hover:border-[#d05bf8]/30 transition-all mb-6">
+          <div className="px-6 desktop:px-8">
+            <h2 className="text-lg desktop:text-xl font-bold text-white tracking-[-4%]">CREATE YOUR OWN AI GIRLFRIEND</h2>
+            <button className="mt-2 px-4 py-1.5 text-xs font-semibold bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] text-white rounded-full">Create Now</button>
           </div>
-          
-          <div className="relative z-10">
-            <h1 className="text-3xl desktop:text-5xl font-bold tracking-tight">
-              Your Perfect <span className="bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] bg-clip-text text-transparent">AI Companion</span>
-            </h1>
-            <p className="mt-3 text-white/50 text-[15px] desktop:text-[17px] max-w-xl mx-auto leading-relaxed">
-              Design your dream companion—no limits, no filters. Shape her face, body, voice & wild personality exactly how you imagine. Uncensored Chat, Sexy Voice & Sizzling Visual! 🔥
-            </p>
-            <div className="mt-6 flex items-center justify-center gap-3">
-              <Link 
-                to="/create"
-                className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] text-white font-bold text-[14px] shadow-lg shadow-[#d05bf8]/30 hover:shadow-[#d05bf8]/50 transition-all"
-              >
-                <Sparkles size={16} />
-                CREATE YOUR AI COMPANION
-              </Link>
+          <div className="absolute right-0 top-0 bottom-0 w-1/3 bg-gradient-to-l from-[#d05bf8]/10 to-transparent" />
+        </Link>
+
+        {/* Grid */}
+        <div className="grid grid-cols-2 desktop:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 desktop:gap-4">
+          {filteredChars.slice(0, 3).map(c => <CharacterCard key={c.id} character={c} />)}
+
+          {/* Premium CTA Card */}
+          <Link to="/app/premium" className="group relative flex flex-col justify-end overflow-hidden rounded-[22px] h-[320px] desktop:h-[420px] bg-gradient-to-br from-[#2d1054] via-[#1a0a2e] to-[#0f0e0f] border border-[#d05bf8]/20 hover:border-[#d05bf8]/40 transition-all">
+            <div className="absolute inset-0 bg-gradient-to-t from-[#d05bf8]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="relative z-[3] mt-auto p-[16px]">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-[10px] font-bold text-[#d05bf8]">LIMITED OFFER</span>
+              </div>
+              <h3 className="text-[16px] font-[600] text-white tracking-[-4%] mb-1">FIRST SUBSCRIPTION!</h3>
+              <div className="flex items-center gap-2 text-[#ff18a0] font-mono text-sm mb-3">
+                <span className="bg-black/40 px-1.5 py-0.5 rounded">00</span>:<span className="bg-black/40 px-1.5 py-0.5 rounded">29</span>:<span className="bg-black/40 px-1.5 py-0.5 rounded">58</span>
+              </div>
+              <button className="w-full py-2 text-sm font-semibold bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] text-white rounded-xl">Upgrade PRO</button>
             </div>
-          </div>
+          </Link>
+
+          {filteredChars.slice(3).map(c => <CharacterCard key={c.id} character={c} />)}
         </div>
       </section>
-      
-      {/* ====== 火辣女孩现场直播（Live Cam） ====== */}
-      {liveChars.length > 0 && (
-        <section className="px-4 mb-6">
-          <div className="flex items-center gap-2 mb-3">
-            <Flame size={18} className="text-[#ff6b6b]" />
-            <h2 className="text-[16px] font-bold">Hot Girls LIVE</h2>
-            <span className="flex items-center gap-1 px-2 py-0.5 text-[10px] font-bold bg-red-500 rounded-full animate-pulse">
-              <span className="size-1.5 rounded-full bg-white" />
-              LIVE
-            </span>
+    </div>
+  )
+}
+
+function Dropdown({ label, value, options, onChange }: { label: string; value: string; options: string[]; onChange: (v: string) => void }) {
+  const [open, setOpen] = useState(false)
+  return (
+    <div className="relative">
+      <button onClick={() => setOpen(!open)} className="flex items-center gap-1.5 px-3 py-2.5 text-[12px] bg-[#181718] border border-white/[6%] rounded-xl hover:border-white/10 transition-all tracking-[-4%]">
+        {label && <span className="text-white/40">{label}</span>}
+        <span className="text-white/80">{value}</span>
+        <ChevronDown size={12} className="text-white/40" />
+      </button>
+      {open && (
+        <>
+          <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
+          <div className="absolute top-full left-0 mt-1 z-50 bg-[#181718] border border-white/[10%] rounded-xl overflow-hidden shadow-xl min-w-[120px]">
+            {options.map(o => <button key={o} onClick={() => { onChange(o); setOpen(false) }} className={`w-full px-3 py-2 text-[12px] text-left transition-all ${o === value ? 'text-white bg-white/[8%]' : 'text-white/50 hover:text-white hover:bg-white/[4%]'}`}>{o}</button>)}
           </div>
-          
-          <div className="relative">
-            <button 
-              onClick={() => scrollLive('l')}
-              className="absolute left-0 top-1/2 -translate-y-1/2 size-9 flex items-center justify-center rounded-full bg-black/60 text-white z-10 hover:bg-black/80"
-            >
-              <ChevronLeft size={18} />
-            </button>
-            
-            <div ref={liveRef} className="flex gap-3 overflow-x-auto no-scrollbar pl-9 pr-9">
-              {liveChars.map((char, idx) => (
-                <Link 
-                  key={char.id} 
-                  to={`/chat/${char.username}`}
-                  className="shrink-0 group"
-                >
-                  <div className="relative w-[160px] h-[200px] rounded-2xl overflow-hidden border-2 border-transparent group-hover:border-[#d05bf8]/50 transition-all">
-                    <img 
-                      src={char.avatar} 
-                      alt={char.name} 
-                      className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-300" 
-                    />
-                    {/* 渐变遮罩 */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
-                    
-                    {/* LIVE 标签 */}
-                    <div className="absolute top-2 left-2 px-2 py-0.5 text-[9px] font-bold bg-red-500 rounded-full animate-pulse flex items-center gap-1">
-                      <span className="size-1 rounded-full bg-white" />
-                      LIVE
-                    </div>
-                    
-                    {/* 用户信息 */}
-                    <div className="absolute bottom-0 left-0 right-0 p-3">
-                      <div className="flex items-center gap-1">
-                        <span className="text-[13px] font-bold">{char.name}</span>
-                        <span className="text-[11px] text-white/50">({char.age || '22'})</span>
-                      </div>
-                      <div className="flex items-center gap-1 mt-1">
-                        {LIVE_COLORS.map((color, i) => (
-                          <span key={i} className="size-1.5 rounded-full" style={{ background: color }} />
-                        ))}
-                        <span className="text-[10px] text-white/40 ml-1">watching</span>
-                      </div>
-                    </div>
-                    
-                    {/* 播放按钮 */}
-                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/30">
-                      <div className="size-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
-                        <Play size={20} className="text-white ml-1" />
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
-            
-            <button 
-              onClick={() => scrollLive('r')}
-              className="absolute right-0 top-1/2 -translate-y-1/2 size-9 flex items-center justify-center rounded-full bg-black/60 text-white z-10 hover:bg-black/80"
-            >
-              <ChevronRight size={18} />
-            </button>
-          </div>
-        </section>
+        </>
       )}
-      
-      {/* ====== 搜索 ====== */}
-      <div className="px-4 mb-4">
-        <div className="relative max-w-md mx-auto">
-          <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30" />
-          <input 
-            type="text" 
-            value={searchQuery} 
-            onChange={e => setSearchQuery(e.target.value)} 
-            placeholder={`Search ${category === 'girls' ? 'girls' : category === 'anime' ? 'anime' : 'male'} companions...`}
-            className="w-full bg-white/[4%] border border-white/[8%] rounded-2xl py-3.5 pl-11 pr-4 text-[14px] text-white placeholder:text-white/30 focus:outline-none focus:border-[#d05bf8]/40 transition-all"
-          />
-        </div>
-      </div>
-      
-      {/* ====== 角色探索列表 ====== */}
-      <section className="px-4">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-[16px] font-bold flex items-center gap-2">
-            <Users size={18} className="text-[#d05bf8]" />
-            Explore Companions
-            <span className="text-[12px] text-white/40 font-normal">({searchedChars.length})</span>
-          </h2>
-        </div>
-        
-        <div className="grid grid-cols-2 desktop:grid-cols-3 desktop-lg:grid-cols-4 gap-3">
-          {searchedChars.slice(0, 24).map((char, idx) => {
-            const interactions = getInteractions(char)
-            return (
-              <Link 
-                key={char.id} 
-                to={`/chat/${char.username}`}
-                className="group relative rounded-2xl overflow-hidden bg-[#181718] border border-white/[6%] hover:border-[#d05bf8]/30 transition-all"
-              >
-                {/* 头像 */}
-                <div className="relative aspect-[3/4] overflow-hidden">
-                  <img 
-                    src={char.avatar} 
-                    alt={char.name} 
-                    className="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-300" 
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-                  
-                  {/* 标签 */}
-                  {char.isLive && (
-                    <div className="absolute top-2 left-2 px-2 py-0.5 text-[9px] font-bold bg-red-500 rounded-full animate-pulse flex items-center gap-1">
-                      <span className="size-1 rounded-full bg-white" />
-                      LIVE
-                    </div>
-                  )}
-                  
-                  {/* 互动按钮 */}
-                  <div className="absolute bottom-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button 
-                      onClick={(e) => { e.preventDefault(); e.stopPropagation() }}
-                      className="size-8 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center hover:bg-white/30 transition-colors"
-                    >
-                      <Heart size={14} className="text-white" />
-                    </button>
-                    <button 
-                      onClick={(e) => { e.preventDefault(); e.stopPropagation() }}
-                      className="size-8 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center hover:bg-white/30 transition-colors"
-                    >
-                      <MessageCircle size={14} className="text-white" />
-                    </button>
-                  </div>
-                </div>
-                
-                {/* 信息 */}
-                <div className="p-3">
-                  <div className="flex items-center gap-1">
-                    <span className="text-[13px] font-semibold truncate">{char.name}</span>
-                    <span className="text-[11px] text-white/40">{char.age || '22'}</span>
-                  </div>
-                  <div className="flex items-center gap-2 mt-1.5">
-                    <div className="flex items-center gap-1 text-[11px] text-white/40">
-                      <MessageCircle size={11} />
-                      {interactions > 1 ? `${interactions.toFixed(1)}B` : `${(interactions * 1000).toFixed(0)}M`}
-                    </div>
-                    <div className="flex items-center gap-1 text-[11px] text-yellow-400">
-                      <Star size={11} fill="currentColor" />
-                      4.{8 + (char.id % 3)}
-                    </div>
-                  </div>
-                  {/* 描述 */}
-                  {char.description && (
-                    <p className="mt-2 text-[11px] text-white/40 line-clamp-2">{char.description}</p>
-                  )}
-                </div>
-              </Link>
-            )
-          })}
-        </div>
-        
-        {searchedChars.length === 0 && (
-          <div className="text-center py-12">
-            <div className="size-16 rounded-full bg-white/[5%] flex items-center justify-center mx-auto mb-3">
-              <Search size={24} className="text-white/30" />
-            </div>
-            <p className="text-white/40 text-[14px]">No companions found</p>
-            <button 
-              onClick={() => setSearchQuery('')}
-              className="mt-2 text-[#d05bf8] text-[13px] hover:underline"
-            >
-              Clear search
-            </button>
-          </div>
-        )}
-        
-        {/* Load More */}
-        {searchedChars.length > 24 && (
-          <div className="mt-6 text-center">
-            <button className="px-6 py-3 rounded-2xl bg-white/[5%] text-white/60 text-[13px] font-medium hover:bg-white/[8%] transition-colors">
-              Load More
-            </button>
-          </div>
-        )}
-      </section>
     </div>
   )
 }
