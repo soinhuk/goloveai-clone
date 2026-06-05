@@ -4,14 +4,14 @@ import { ArrowLeft, Phone, Video, MoreHorizontal, Send, Smile, Image as ImageIco
 import { characters } from '../data/characters'
 
 const QUICK_REPLIES = [
-  { text: "Hey, what are you wearing? 😏", icon: "😏" },
-  { text: "Tell me about yourself 💕", icon: "💕" },
-  { text: "What's your biggest fantasy?", icon: "🔥" },
-  { text: "Send me a selfie 📸", icon: "📸" },
-  { text: "Let's play a game 🎮", icon: "🎮" },
-  { text: "What turns you on? 🔥", icon: "💋" },
-  { text: "Describe your ideal date 💋", icon: "🌙" },
-  { text: "I can't stop thinking about you...", icon: "💭" },
+  { text: "嘿，你穿的是什么？😏", icon: "😏" },
+  { text: "请介绍一下你自己 💖", icon: "💖" },
+  { text: "你最大的幻想是什么？", icon: "🔥" },
+  { text: "给我发个自拍 📸", icon: "📸" },
+  { text: "我们来玩个游戏吧 🎮", icon: "🎮" },
+  { text: "什么能让你兴奋？🔥", icon: "💋" },
+  { text: "描述一下你理想的约会", icon: "🌙" },
+  { text: "我一直在想你...", icon: "💭" },
 ]
 
 const QUICK_QUESTIONS = [
@@ -28,14 +28,14 @@ const QUICK_QUESTIONS = [
 ]
 
 const GIFTS = [
-  { icon: '🌹', name: 'Rose', price: 0, color: 'from-red-500/20 to-pink-500/20' },
-  { icon: '💎', name: 'Diamond', price: 50, color: 'from-blue-500/20 to-cyan-500/20' },
-  { icon: '🎁', name: 'Mystery', price: 100, color: 'from-purple-500/20 to-pink-500/20' },
-  { icon: '👑', name: 'Crown', price: 200, color: 'from-yellow-500/20 to-amber-500/20' },
-  { icon: '🍫', name: 'Chocolate', price: 0, color: 'from-amber-600/20 to-orange-500/20' },
-  { icon: '🥂', name: 'Champagne', price: 150, color: 'from-yellow-400/20 to-orange-400/20' },
-  { icon: '💍', name: 'Ring', price: 500, color: 'from-pink-500/20 to-rose-500/20' },
-  { icon: '🏖️', name: 'Vacation', price: 1000, color: 'from-teal-500/20 to-blue-500/20' },
+  { icon: '🌹', name: '玫瑰', price: 'Free', priceColor: 'text-emerald-400' },
+  { icon: '💎', name: '钻石', price: '+50', priceColor: 'text-[#d05bf8]' },
+  { icon: '💐', name: '鲜花', price: '+400', priceColor: 'text-[#d05bf8]' },
+  { icon: '👑', name: '冠冕', price: '200元红包', priceColor: 'text-red-400' },
+  { icon: '🍫', name: '巧克力', price: 'Free', priceColor: 'text-emerald-400' },
+  { icon: '🥂', name: '香槟', price: '+150', priceColor: 'text-[#d05bf8]' },
+  { icon: '💍', name: '戒指', price: '500元红包', priceColor: 'text-red-400' },
+  { icon: '🎪', name: '锦旗', price: '+1000', priceColor: 'text-[#d05bf8]' },
 ]
 
 export default function Chat() {
@@ -201,7 +201,7 @@ export default function Chat() {
         {/* Hint Banner */}
         <div className="relative z-10 mx-5 mt-4 px-5 py-3.5 rounded-2xl bg-gradient-to-r from-[#d05bf8]/[0.08] to-[#ff18a0]/[0.06] border border-[#d05bf8]/[0.1] shadow-[0_0_20px_rgba(208,91,248,0.05)]">
           <p className="text-[15px] text-[#d05bf8]/70 leading-relaxed">
-            ✨ <span className="font-semibold text-[#d05bf8]/90">This is an AI character.</span> Feel free to chat about anything! Your conversation is private and uncensored.
+            ✨ <span className="font-semibold text-[#d05bf8]/90">这是一个AI角色。</span> 欢迎随便聊聊任何事情！你的对话是私密且无审查的。
           </p>
         </div>
 
@@ -270,11 +270,11 @@ export default function Chat() {
             <div className="relative">
               <div className="absolute inset-0 bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] rounded-full blur-xl opacity-30" />
               <button className="relative px-10 py-3.5 rounded-full bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] text-white text-[15px] font-bold shadow-[0_4px_25px_rgba(208,91,248,0.4)] hover:shadow-[0_4px_35px_rgba(208,91,248,0.6)] hover:scale-105 transition-all">
-                Sign Up to Chat More
+                注册以查看更多聊天
               </button>
             </div>
             <p className="text-center text-white/25 text-[15px] leading-relaxed max-w-[340px]">
-              Meet <span className="text-white/50 font-semibold">{char.name}</span>, an AI Girlfriend<br />with no filter.<br /><span className="bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] bg-clip-text text-transparent font-semibold">Dare to ask anything?</span>
+              认识一下<span className="text-white/50 font-semibold">{char.name}</span>，一个毫无过滤的AI女友。<br /><span className="bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] bg-clip-text text-transparent font-semibold">敢问什么吗？</span>
             </p>
           </div>
         </div>
@@ -298,7 +298,7 @@ export default function Chat() {
         <div className="relative z-10 px-5 pb-3">
           <button className="w-full py-3 rounded-full border border-[#FF18A0]/20 bg-gradient-to-r from-[#FF18A0]/5 to-[#d05bf8]/5 text-[#FF18A0] text-[15px] font-medium hover:from-[#FF18A0]/10 hover:to-[#d05bf8]/10 hover:border-[#FF18A0]/30 hover:shadow-[0_0_15px_rgba(255,24,160,0.1)] transition-all flex items-center justify-center gap-2">
             <ImageIcon size={16} />
-            Send me spicy photos
+            给我发些辣味照片
           </button>
         </div>
 
@@ -306,47 +306,47 @@ export default function Chat() {
         <div className="relative z-10 border-t border-white/[4%] bg-[#0a0a0f]/90 backdrop-blur-2xl">
           {/* Dropdowns */}
           {showQuickQuestions && (
-            <div className="absolute bottom-full left-5 mb-2 w-[320px] bg-[#13131a]/95 backdrop-blur-2xl border border-white/[8%] rounded-2xl shadow-[0_-10px_40px_rgba(0,0,0,0.4)] overflow-hidden z-20">
+            <div className="absolute bottom-full left-5 mb-2 w-[340px] bg-[#13131a]/95 backdrop-blur-2xl border border-white/[8%] rounded-2xl shadow-[0_-10px_40px_rgba(0,0,0,0.4)] overflow-hidden z-20">
               <div className="px-5 py-3.5 border-b border-white/[5%] flex items-center gap-2">
-                <Sparkles size={14} className="text-[#d05bf8]" />
-                <span className="text-sm font-semibold text-white/50">快速提问</span>
+                <span className="text-sm">✨</span>
+                <span className="text-sm font-bold text-white/60">快速提问</span>
               </div>
-              {QUICK_QUESTIONS.map((q, i) => (
-                <button
-                  key={i}
-                  onClick={() => { handleSend(q.text); setShowQuickQuestions(false); }}
-                  className="w-full flex items-center gap-3 px-5 py-3 hover:bg-white/[3%] transition-all text-left border-b border-white/[3%] last:border-0 group"
-                >
-                  <span className="text-xl">{q.icon}</span>
-                  <div className="flex-1">
-                    <span className="text-[15px] text-white/60 group-hover:text-white/80 transition-colors">{q.text}</span>
-                    <p className="text-[11px] text-white/20 mt-0.5">{q.desc}</p>
-                  </div>
-                </button>
-              ))}
+              <div className="p-2 max-h-[360px] overflow-y-auto scrollbar-hide">
+                {QUICK_QUESTIONS.map((q, i) => (
+                  <button
+                    key={i}
+                    onClick={() => { handleSend(q.text); setShowQuickQuestions(false); }}
+                    className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/[4%] transition-all text-left group"
+                  >
+                    <span className="text-xl shrink-0 w-8 text-center">{q.icon}</span>
+                    <div className="flex-1 min-w-0">
+                      <span className="text-[14px] text-white/65 group-hover:text-white/90 transition-colors font-medium">{q.text}</span>
+                      <p className="text-[11px] text-white/25 mt-0.5">{q.desc}</p>
+                    </div>
+                  </button>
+                ))}
+              </div>
             </div>
           )}
           {showGifts && (
-            <div className="absolute bottom-full right-5 mb-2 w-[280px] bg-[#13131a]/95 backdrop-blur-2xl border border-white/[8%] rounded-2xl shadow-[0_-10px_40px_rgba(0,0,0,0.4)] overflow-hidden z-20">
+            <div className="absolute bottom-full right-5 mb-2 w-[260px] bg-[#13131a]/95 backdrop-blur-2xl border border-white/[8%] rounded-2xl shadow-[0_-10px_40px_rgba(0,0,0,0.4)] overflow-hidden z-20">
               <div className="px-5 py-3.5 border-b border-white/[5%] flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Gift size={14} className="text-[#d05bf8]" />
-                  <span className="text-sm font-semibold text-white/50">发送礼物</span>
+                  <span className="text-sm font-bold text-white/60">发送礼物</span>
                 </div>
                 <span className="text-[10px] px-2 py-0.5 bg-gradient-to-r from-[#d05bf8]/20 to-[#ff18a0]/20 text-[#d05bf8] rounded-full font-medium">✨ 实时镜头</span>
               </div>
-              <div className="p-3 grid grid-cols-4 gap-1.5">
+              <div className="py-1">
                 {GIFTS.map((gift, i) => (
                   <button
                     key={i}
-                    onClick={() => { handleSend(`I sent you a ${gift.name}! ${gift.icon}`); setShowGifts(false); }}
-                    className={`flex flex-col items-center gap-1 py-3 px-1 rounded-xl bg-gradient-to-b ${gift.color} hover:scale-105 transition-all border border-white/[3%]`}
+                    onClick={() => { handleSend(`送你一个${gift.name}！${gift.icon}`); setShowGifts(false); }}
+                    className="w-full flex items-center gap-3 px-5 py-3 hover:bg-white/[4%] transition-all group"
                   >
-                    <span className="text-2xl">{gift.icon}</span>
-                    <span className="text-[9px] text-white/40 truncate w-full text-center">{gift.name}</span>
-                    <span className={`text-[8px] font-medium ${gift.price === 0 ? 'text-emerald-400/60' : 'text-[#d05bf8]/60'}`}>
-                      {gift.price === 0 ? 'Free' : `¥${gift.price}`}
-                    </span>
+                    <span className="text-2xl shrink-0">{gift.icon}</span>
+                    <span className="text-[14px] text-white/60 group-hover:text-white/80 transition-colors flex-1">{gift.name}</span>
+                    <span className={`text-[13px] font-semibold ${gift.priceColor}`}>{gift.price}</span>
                   </button>
                 ))}
               </div>
@@ -380,11 +380,10 @@ export default function Chat() {
 
             <button
               onClick={() => { setShowGifts(!showGifts); setShowQuickQuestions(false); }}
-              className="flex items-center gap-1.5 px-4 py-2.5 rounded-full bg-[#1a1a24] border border-[#d05bf8]/15 hover:border-[#d05bf8]/30 hover:shadow-[0_0_12px_rgba(208,91,248,0.15)] text-[15px] transition-all shrink-0"
+              className="relative flex items-center justify-center size-10 rounded-full bg-gradient-to-br from-[#d05bf8]/20 to-[#ff18a0]/20 border border-[#d05bf8]/20 hover:border-[#d05bf8]/40 hover:shadow-[0_0_20px_rgba(208,91,248,0.2)] transition-all shrink-0 group"
             >
-              <Gift size={15} className="text-[#d05bf8]" />
-              <span className="text-[#d05bf8] font-medium">¥18</span>
-              <ChevronDown size={11} className="text-white/25" />
+              <Gift size={18} className="text-[#d05bf8] group-hover:text-[#e87bff] transition-colors" />
+              <Sparkles size={8} className="absolute -top-0.5 -right-0.5 text-[#ff18a0] animate-pulse" />
             </button>
 
             <button
@@ -416,46 +415,10 @@ export default function Chat() {
             </button>
           </div>
 
-          {/* Photo Slideshow */}
+          {/* Photo Slideshow - IMAGE ONLY */}
           <div className="px-5 pb-4">
             <div className="relative w-full aspect-[3/4] rounded-2xl overflow-hidden group shadow-[0_8px_30px_rgba(0,0,0,0.4)]">
               <img src={galleryImages[photoIndex]} alt={char.name} className="w-full h-full object-cover transition-all duration-500" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
-              {/* Name overlay */}
-              <div className="absolute bottom-5 left-5 right-5">
-                <h2 className="text-2xl font-bold text-white drop-shadow-lg">{char.name}, {char.age}</h2>
-                <p className="text-sm text-white/50 mt-1.5 line-clamp-2 drop-shadow">{char.bio}</p>
-                {/* Tags with icons */}
-                <div className="flex flex-wrap gap-1.5 mt-3">
-                  {char.tags.map(tag => {
-                    const tagIcons: Record<string, string> = {
-                      'Blonde': '👱‍♀️', 'Brunette': '👩', 'Redhead': '👩‍🦰', 'Black': '🖤',
-                      'Romantic': '💕', 'Flirty': '😏', 'Seductive': '🔥', 'Sweet': '🍬',
-                      'Caring': '💗', 'Shy': '😊', 'Bold': '💪', 'Confident': '👑',
-                      'Busty': '✨', 'Petite': '🌸', 'Curvy': '💋', 'Athletic': '🏃‍♀️',
-                      'Teen': '🎀', 'Milf': '🍷', 'Mature': '🌙',
-                      'Asian': '🏮', 'Caucasian': '🌸', 'Exotic': '🌺', 'Cultural': '🌍',
-                      'Gamer': '🎮', 'Nerdy': '📚', 'Cosplayer': '🎭', 'Kawaii': '🌸',
-                      'Elegant': '💎', 'Glamorous': '✨', 'Mysterious': '🌙', 'Intense': '🔥',
-                      'Southern': '🤠', 'Traditional': '🎋', 'Innocent': '🦋',
-                      'Dominant': '👑', 'Sophisticated': '🍷', 'Warm': '☀️',
-                      'Outdoor': '🏖️', 'Sporty': '⚡', 'Energetic': '⚡',
-                      'Funny': '😄', 'Sassy': '💅', 'Cute': '🥰',
-                      'French': '🇫🇷', 'Korean': '🇰🇷', 'Japanese': '🇯🇵', 'Brazilian': '🇧🇷',
-                      'Teacher': '📖', 'K-pop': '🎤', 'Fitness': '💪', 'Boss': '💼',
-                      'Nurse': '💉', 'Passionate': '🔥', 'Wild': '🌿', 'Free-spirited': '🦋',
-                      'Beautiful': '💎', 'Smart': '🧠', 'Gentle': '🕊️',
-                    }
-                    const icon = tagIcons[tag] || '✦'
-                    return (
-                      <span key={tag} className="px-2.5 py-1 text-[10px] font-medium bg-white/[10%] backdrop-blur-sm text-white/70 rounded-full border border-white/[10%] flex items-center gap-1">
-                        <span className="text-[10px]">{icon}</span>
-                        {tag}
-                      </span>
-                    )
-                  })}
-                </div>
-              </div>
               {/* Nav arrows */}
               <button onClick={() => setPhotoIndex(i => (i - 1 + galleryImages.length) % galleryImages.length)} className="absolute left-3 top-1/2 -translate-y-1/2 size-9 rounded-full bg-black/30 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:bg-black/50">
                 <ChevronLeft size={18} className="text-white" />
@@ -464,11 +427,28 @@ export default function Chat() {
                 <ChevronRight size={18} className="text-white" />
               </button>
               {/* Dots */}
-              <div className="absolute bottom-16 left-1/2 -translate-x-1/2 flex gap-2">
+              <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2">
                 {galleryImages.map((_, i) => (
                   <button key={i} onClick={() => setPhotoIndex(i)} className={`h-1.5 rounded-full transition-all duration-300 ${i === photoIndex ? 'bg-white w-6' : 'bg-white/30 w-1.5'}`} />
                 ))}
               </div>
+            </div>
+          </div>
+
+          {/* Character Self-Introduction - ABOVE call buttons */}
+          <div className="px-5 pb-4">
+            <div className="p-4 rounded-2xl bg-[#1a1a24] border border-white/[5%]">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-sm">💬</span>
+                <span className="text-xs font-bold text-white/40">{char.name}的个人简介</span>
+              </div>
+              <p className="text-[13px] text-white/55 leading-relaxed">
+                {char.name}是一个{char.personality?.split(',')[0]?.trim()?.toLowerCase() || '迷人'}的灵魂。
+                {char.occupation ? ` 她是一位${char.occupation}，` : ''}
+                {char.bio}
+                {char.fantasy ? ` 在她的幻想中，${char.fantasy.toLowerCase()}。` : ''}
+                {char.greeting ? ` 她想对你说：「${char.greeting}」` : ''}
+              </p>
             </div>
           </div>
 
@@ -482,31 +462,14 @@ export default function Chat() {
             </button>
           </div>
 
-          {/* Generate Media */}
-          <div className="px-5 pb-3">
-            <Link to="/generate" className="flex items-center justify-center gap-2.5 w-full py-3.5 rounded-xl bg-[#1a1a24] border border-[#d05bf8]/[0.15] text-sm font-bold text-[#d05bf8] hover:border-[#d05bf8]/30 hover:shadow-[0_0_20px_rgba(208,91,248,0.1)] transition-all">
-              <ImageIcon size={16} /> 生成媒体
+          {/* Generate + Voice */}
+          <div className="px-5 pb-3 flex gap-2">
+            <Link to="/generate" className="flex-1 py-3 rounded-xl bg-[#1a1a24] border border-white/[5%] text-sm font-bold text-[#d05bf8] hover:border-[#d05bf8]/30 transition-all flex items-center justify-center gap-2">
+              <ImageIcon size={15} /> 生成媒体
             </Link>
-          </div>
-
-          {/* Voice Preview */}
-          <div className="px-5 pb-4">
-            <button className="flex items-center justify-center gap-2.5 w-full py-3.5 rounded-xl bg-[#1a1a24] border border-[#d05bf8]/[0.15] text-sm font-bold text-[#d05bf8] hover:border-[#d05bf8]/30 hover:shadow-[0_0_20px_rgba(208,91,248,0.1)] transition-all">
-              <Music size={16} /> 播放语音预览 · 听听我的声音
+            <button className="flex-1 py-3 rounded-xl bg-[#1a1a24] border border-white/[5%] text-sm font-bold text-[#d05bf8] hover:border-[#d05bf8]/30 transition-all flex items-center justify-center gap-2">
+              <Music size={15} /> 语音预览
             </button>
-          </div>
-
-          {/* Character Self-Introduction */}
-          <div className="px-5 pb-4">
-            <div className="p-4 rounded-2xl bg-gradient-to-br from-[#d05bf8]/[0.06] to-[#ff18a0]/[0.04] border border-[#d05bf8]/[0.1]">
-              <p className="text-[14px] text-white/60 leading-relaxed">
-                {char.name}是一个{char.personality?.split(',')[0]?.trim()?.toLowerCase() || '迷人'}的灵魂。
-                {char.occupation ? ` 她是一位${char.occupation}，` : ''}
-                {char.bio}
-                {char.fantasy ? ` 在她的幻想中，${char.fantasy.toLowerCase()}。` : ''}
-                {char.greeting ? ` 她想对你说：「${char.greeting}」` : ''}
-              </p>
-            </div>
           </div>
 
           {/* About Her */}
@@ -517,18 +480,21 @@ export default function Chat() {
             </div>
             <div className="space-y-0">
               {[
-                ['性格', char.personality || char.tags.join(', ')],
-                ['职业', char.occupation || '—'],
-                ['爱好', char.hobbies?.join(', ') || '—'],
-                ['关系', char.relationship || '—'],
-                ['幻想', char.fantasy || '—'],
-                ['年龄', `${char.age || '—'}`],
-                ['状态', char.isOnline ? '🟢 在线' : '⚪ 离线'],
-                ['语言', 'English'],
-              ].map(([label, value]) => (
+                ['💗', '性格', char.personality || char.tags.join(', ')],
+                ['💼', '职业', char.occupation || '—'],
+                ['🎯', '爱好', char.hobbies?.join(', ') || '—'],
+                ['💕', '关系', char.relationship || '—'],
+                ['✨', '幻想', char.fantasy || '—'],
+                ['🎂', '年龄', `${char.age || '—'}`],
+                ['🟢', '状态', char.isOnline ? '在线' : '离线'],
+                ['🌐', '语言', 'English'],
+              ].map(([icon, label, value]) => (
                 <div key={label} className="flex items-start justify-between py-2.5 border-b border-white/[3%] gap-3">
-                  <span className="text-[13px] text-white/30 shrink-0">{label}</span>
-                  <span className="text-[13px] text-white/60 font-medium text-right">{value}</span>
+                  <span className="text-[13px] text-white/35 shrink-0 flex items-center gap-1.5">
+                    <span className="text-[11px]">{icon}</span>
+                    {label}
+                  </span>
+                  <span className="text-[13px] text-white/55 font-medium text-right">{value}</span>
                 </div>
               ))}
             </div>
@@ -542,19 +508,22 @@ export default function Chat() {
             </div>
             <div className="grid grid-cols-2 gap-x-4 gap-y-3">
               {[
-                ['种族', char.ethnicity || '—'],
-                ['年龄', `${char.age || '—'}`],
-                ['体型', char.bodyType || '—'],
-                ['眼睛', char.eyeColor || '—'],
-                ['发型', char.hairStyle || '—'],
-                ['发色', char.hairColor || '—'],
-                ['胸部', char.chest || '—'],
-                ['臀部', char.butt || '—'],
-                ['服装', char.outfit || '—'],
-                ['特征', char.specialFeature || '—'],
-              ].map(([label, value]) => (
+                ['🌍', '种族', char.ethnicity || '—'],
+                ['🎂', '年龄', `${char.age || '—'}`],
+                ['💃', '体型', char.bodyType || '—'],
+                ['👁', '眼睛', char.eyeColor || '—'],
+                ['💇', '发型', char.hairStyle || '—'],
+                ['🎨', '发色', char.hairColor || '—'],
+                ['✨', '胸部', char.chest || '—'],
+                ['🍑', '臀部', char.butt || '—'],
+                ['👗', '服装', char.outfit || '—'],
+                ['⭐', '特征', char.specialFeature || '—'],
+              ].map(([icon, label, value]) => (
                 <div key={label} className="flex flex-col">
-                  <span className="text-[10px] text-white/20 uppercase tracking-wider">{label}</span>
+                  <span className="text-[10px] text-white/25 flex items-center gap-1">
+                    <span className="text-[10px]">{icon}</span>
+                    {label}
+                  </span>
                   <span className="text-[13px] text-white/50 mt-0.5">{value}</span>
                 </div>
               ))}
