@@ -14,6 +14,22 @@ export type Character = {
   isPremium?: boolean;
   isFavorite?: boolean;
   age?: number;
+  // Extended profile fields
+  personality?: string;
+  occupation?: string;
+  hobbies?: string[];
+  relationship?: string;
+  ethnicity?: string;
+  bodyType?: string;
+  eyeColor?: string;
+  hairStyle?: string;
+  hairColor?: string;
+  chest?: string;
+  butt?: string;
+  outfit?: string;
+  specialFeature?: string;
+  greeting?: string;
+  fantasy?: string;
 };
 
 export type NavItem = {
