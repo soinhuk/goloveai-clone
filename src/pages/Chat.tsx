@@ -43,6 +43,8 @@ const INPUT_SUGGESTIONS = {
 export default function Chat() {
   const { username } = useParams()
   const navigate = useNavigate()
+  const char = characters.find(c => c.username === username || c.id === username)
+
   const [message, setMessage] = useState('')
   const messagesRef = useRef<HTMLDivElement>(null)
   const [showDetails, setShowDetails] = useState(true)
@@ -56,8 +58,60 @@ export default function Chat() {
   const [isEditingName, setIsEditingName] = useState(false)
   const [showMoreMenu, setShowMoreMenu] = useState(false)
   const [isDeleted, setIsDeleted] = useState(false)
+  const [activeChats, setActiveChats] = useState<Array<{id: string; username: string; name: string; avatar: string; lastMsg: string; time: string; customName?: string}>>([])
   const nameInputRef = useRef<HTMLInputElement>(null)
   const moreMenuRef = useRef<HTMLDivElement>(null)
+  const quickQuestionsRef = useRef<HTMLDivElement>(null)
+  const giftsRef = useRef<HTMLDivElement>(null)
+
+  // Load active chats from localStorage on mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('golove_active_chats')
+      if (saved) setActiveChats(JSON.parse(saved))
+    } catch { /* ignore */ }
+  }, [])
+
+  // Save active chats to localStorage whenever it changes
+  useEffect(() => {
+    try {
+      localStorage.setItem('golove_active_chats', JSON.stringify(activeChats))
+    } catch { /* ignore */ }
+  }, [activeChats])
+
+  // Register or update this character in active chats
+  useEffect(() => {
+    if (!char) return
+    const chatEntry = {
+      id: char.id,
+      username: char.username,
+      name: char.name,
+      avatar: char.avatar,
+      lastMsg: char.bio || '',
+      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      customName: customName || '',
+    }
+    setActiveChats(prev => {
+      const filtered = prev.filter(c => c.id !== char.id)
+      return [chatEntry, ...filtered]
+    })
+  }, [char?.id, customName])
+
+  // Close quick questions and gifts on outside click
+  useEffect(() => {
+    if (!showQuickQuestions && !showGifts) return
+    const handleOutside = (e: MouseEvent) => {
+      const target = e.target as HTMLElement
+      if (quickQuestionsRef.current && !quickQuestionsRef.current.contains(target)) {
+        if (!target.closest('[data-quick-questions-toggle]')) setShowQuickQuestions(false)
+      }
+      if (giftsRef.current && !giftsRef.current.contains(target)) {
+        if (!target.closest('[data-gifts-toggle]')) setShowGifts(false)
+      }
+    }
+    document.addEventListener('mousedown', handleOutside)
+    return () => document.removeEventListener('mousedown', handleOutside)
+  }, [showQuickQuestions, showGifts])
 
   // Close more menu when clicking outside
   useEffect(() => {
@@ -76,8 +130,6 @@ export default function Chat() {
       document.removeEventListener('click', handleClick)
     }
   }, [showMoreMenu])
-
-  const char = characters.find(c => c.username === username || c.id === username)
 
   const videoAvatar = char?.avatar?.replace('/images_avif_q50_720/', '/video_avatar/').replace('_avatar.avif', '_video_avatar_nsfw.mp4')
   const nsfwAvatar = char?.avatar?.replace('_avatar.avif', '_avatar_nsfw.avif')
@@ -159,30 +211,43 @@ export default function Chat() {
         <div className="px-4 pb-2">
           <span className="text-[11px] font-bold text-white/30 uppercase tracking-widest">活跃对话</span>
         </div>
-        <div className="px-3 pb-2">
-          <Link to={`/chat/${char.username}`} className="flex items-center gap-3 px-3 py-3 rounded-2xl bg-gradient-to-r from-[#d05bf8]/[0.08] to-[#ff18a0]/[0.05] border border-[#d05bf8]/10 hover:border-[#d05bf8]/20 transition-all">
-            <div className="relative shrink-0">
-              <div className="size-12 rounded-full overflow-hidden ring-2 ring-[#d05bf8]/30 shadow-[0_0_12px_rgba(208,91,248,0.2)]">
-                <img src={char.avatar} alt={char.name} className="w-full h-full object-cover" />
+        <div className="px-3 pb-2 overflow-y-auto scrollbar-hide space-y-0.5 max-h-[40vh]">
+          {activeChats.length === 0 && (
+            <p className="text-xs text-white/20 px-3 py-2">还没有聊天记录</p>
+          )}
+          {activeChats.map(chat => (
+            <Link key={chat.id} to={`/chat/${chat.username}`}
+              className={`flex items-center gap-3 px-3 py-3 rounded-2xl transition-all group ${chat.id === char?.id ? 'bg-gradient-to-r from-[#d05bf8]/[0.08] to-[#ff18a0]/[0.05] border border-[#d05bf8]/10' : 'hover:bg-white/[3%]'}`}>
+              <div className="relative shrink-0">
+                <div className="size-12 rounded-full overflow-hidden ring-2 ring-[#d05bf8]/30 shadow-[0_0_12px_rgba(208,91,248,0.2)]">
+                  <img src={chat.avatar} alt={chat.name} className="w-full h-full object-cover" />
+                </div>
+                {characters.find(c => c.id === chat.id)?.isOnline && (
+                  <span className="absolute bottom-0 right-0 size-3 rounded-full bg-emerald-400 border-2 border-[#0d0d14] shadow-[0_0_6px_rgba(52,211,153,0.5)]" />
+                )}
               </div>
-              {char.isOnline && <span className="absolute bottom-0 right-0 size-3 rounded-full bg-emerald-400 border-2 border-[#0d0d14] shadow-[0_0_6px_rgba(52,211,153,0.5)]" />}
-            </div>
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center justify-between mb-0.5">
-                <span className="text-sm font-bold text-white">{char.name}</span>
-                <span className="text-[11px] text-white/25">2:09 PM</span>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center justify-between mb-0.5">
+                  <span className="text-sm font-bold text-white">{chat.customName || chat.name}</span>
+                  <span className="text-[11px] text-white/25">{chat.time}</span>
+                </div>
+                <p className="text-xs text-white/35 truncate leading-relaxed">{chat.lastMsg}</p>
               </div>
-              <p className="text-xs text-white/35 truncate leading-relaxed">{char.bio}</p>
-            </div>
-            <button className="shrink-0 p-1.5 rounded-lg hover:bg-white/[4%] transition-all"><MoreHorizontal size={14} className="text-white/20" /></button>
-          </Link>
+              <button
+                onClick={(e) => { e.preventDefault(); e.stopPropagation(); setActiveChats(prev => prev.filter(c => c.id !== chat.id)) }}
+                className="shrink-0 p-1.5 rounded-lg hover:bg-white/[5%] opacity-0 group-hover:opacity-100 transition-all"
+              >
+                <X size={12} className="text-white/25" />
+              </button>
+            </Link>
+          ))}
         </div>
 
         <div className="px-4 pt-3 pb-2">
           <span className="text-[11px] font-bold text-white/30 uppercase tracking-widest">推荐对话</span>
         </div>
-        <div className="flex-1 overflow-y-auto px-3 space-y-0.5 scrollbar-hide">
-          {otherChars.map(c => (
+        <div className="px-3 flex-1 overflow-y-auto scrollbar-hide space-y-0.5">
+          {otherChars.filter(c => !activeChats.find(ac => ac.id === c.id)).slice(0, 8).map(c => (
             <Link key={c.id} to={`/chat/${c.username}`} className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/[3%] transition-all group">
               <div className="relative shrink-0">
                 <div className="size-11 rounded-full overflow-hidden group-hover:ring-2 group-hover:ring-[#d05bf8]/20 transition-all">
@@ -257,7 +322,7 @@ export default function Chat() {
                     <span className="text-[13px] text-white/60 hover:text-white/90 transition-colors">重置对话</span>
                   </button>
                   <div className="mx-3 border-t border-white/[4%]" />
-                  <button onClick={() => { setShowMoreMenu(false); window.location.href = '/app/chats' }}
+                  <button onClick={() => { setActiveChats(prev => prev.filter(c => c.id !== char.id)); setShowMoreMenu(false); window.location.href = '/app/chats' }}
                     className="w-full flex items-center gap-2.5 px-3.5 py-2.5 hover:bg-red-500/[5%] transition-all text-left">
                     <span className="text-sm">🗑️</span>
                     <span className="text-[13px] text-red-400/60 hover:text-red-400 transition-colors">删除女友</span>
@@ -350,7 +415,7 @@ export default function Chat() {
         <div className="relative z-10 px-5 pb-3">
           <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
             {INPUT_SUGGESTIONS.text.map((s, i) => (
-              <button key={i} onClick={() => handleSend(s.text)}
+              <button key={i} onClick={() => { setMessage(s.text); setShowQuickQuestions(false) }}
                 className="shrink-0 flex items-center gap-1.5 px-4 py-2.5 rounded-full border border-white/[6%] bg-white/[3%] text-[13px] text-white/45 hover:bg-gradient-to-r hover:from-[#d05bf8]/10 hover:to-[#ff18a0]/10 hover:text-white/70 hover:border-[#d05bf8]/20 transition-all whitespace-nowrap hover:shadow-[0_0_10px_rgba(208,91,248,0.1)]">
                 <span>{s.icon}</span> {s.text}
               </button>
@@ -362,7 +427,7 @@ export default function Chat() {
         <div className="relative z-10 border-t border-white/[4%] bg-[#0a0a0f]/90 backdrop-blur-2xl">
           {/* Dropdowns */}
           {showQuickQuestions && (
-            <div data-dropdown className="absolute bottom-full left-0 mb-2 w-full bg-[#13131a]/95 backdrop-blur-2xl border border-white/[8%] rounded-2xl shadow-[0_-10px_40px_rgba(0,0,0,0.4)] overflow-hidden z-20">
+            <div ref={quickQuestionsRef} data-dropdown className="absolute bottom-full left-0 mb-2 w-full bg-[#13131a]/95 backdrop-blur-2xl border border-white/[8%] rounded-2xl shadow-[0_-10px_40px_rgba(0,0,0,0.4)] overflow-hidden z-20">
               <div className="p-3 space-y-3">
                 {/* Section 1: Text suggestions */}
                 <div>
@@ -372,7 +437,7 @@ export default function Chat() {
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {INPUT_SUGGESTIONS.text.map((s, i) => (
-                      <button key={i} onClick={() => { handleSend(s.text); setShowQuickQuestions(false); }}
+                      <button key={i} onClick={() => { setMessage(s.text); setShowQuickQuestions(false) }}
                         className="flex items-center gap-1.5 px-3 py-2 rounded-full border border-white/[6%] bg-white/[3%] text-[13px] text-white/50 hover:bg-[#d05bf8]/10 hover:text-white/80 hover:border-[#d05bf8]/20 transition-all">
                         <span className="text-sm">{s.icon}</span> {s.text}
                       </button>
@@ -388,7 +453,7 @@ export default function Chat() {
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {INPUT_SUGGESTIONS.video.map((s, i) => (
-                      <button key={i} onClick={() => { handleSend(s.text); setShowQuickQuestions(false); }}
+                      <button key={i} onClick={() => { setMessage(s.text); setShowQuickQuestions(false) }}
                         className="flex items-center gap-1.5 px-3 py-2 rounded-full border border-[#d05bf8]/10 bg-[#d05bf8]/[3%] text-[13px] text-[#d05bf8]/60 hover:bg-[#d05bf8]/10 hover:text-[#d05bf8] hover:border-[#d05bf8]/25 transition-all">
                         <span className="text-sm">{s.icon}</span> {s.text}
                       </button>
@@ -403,7 +468,7 @@ export default function Chat() {
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {INPUT_SUGGESTIONS.hot.map((s, i) => (
-                      <button key={i} onClick={() => { handleSend(s.text); setShowQuickQuestions(false); }}
+                      <button key={i} onClick={() => { setMessage(s.text); setShowQuickQuestions(false) }}
                         className="flex items-center gap-1.5 px-3 py-2 rounded-full border border-red-500/10 bg-red-500/[3%] text-[13px] text-red-400/50 hover:bg-red-500/10 hover:text-red-400 hover:border-red-500/25 transition-all">
                         <span className="text-sm">{s.icon}</span> {s.text}
                       </button>
@@ -414,7 +479,7 @@ export default function Chat() {
             </div>
           )}
           {showGifts && (
-            <div data-dropdown className="absolute bottom-full right-0 mb-2 w-[380px] bg-[#13131a]/95 backdrop-blur-2xl border border-white/[8%] rounded-2xl shadow-[0_-10px_40px_rgba(0,0,0,0.4)] overflow-hidden z-20">
+            <div ref={giftsRef} data-dropdown className="absolute bottom-full right-0 mb-2 w-[380px] bg-[#13131a]/95 backdrop-blur-2xl border border-white/[8%] rounded-2xl shadow-[0_-10px_40px_rgba(0,0,0,0.4)] overflow-hidden z-20">
               <div className="px-5 py-3.5 border-b border-white/[5%] flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Gift size={14} className="text-[#d05bf8]" />
@@ -449,7 +514,7 @@ export default function Chat() {
           )}
 
           <div className="flex items-end gap-2 px-5 py-3.5">
-            <button data-dropdown-toggle
+            <button data-quick-questions-toggle
               onClick={() => { setShowQuickQuestions(!showQuickQuestions); setShowGifts(false); }}
               className="flex items-center gap-1.5 px-4 py-2.5 rounded-full bg-white/[3%] hover:bg-white/[5%] border border-white/[5%] hover:border-[#d05bf8]/20 text-white/45 text-[15px] transition-all shrink-0"
             >
@@ -473,7 +538,7 @@ export default function Chat() {
               />
             </div>
 
-            <button data-dropdown-toggle
+            <button data-gifts-toggle
               onClick={() => { setShowGifts(!showGifts); setShowQuickQuestions(false); }}
               className="relative flex items-center justify-center size-10 rounded-full bg-gradient-to-br from-[#d05bf8]/20 to-[#ff18a0]/20 border border-[#d05bf8]/20 hover:border-[#d05bf8]/40 hover:shadow-[0_0_20px_rgba(208,91,248,0.2)] transition-all shrink-0 group"
             >
