@@ -512,12 +512,12 @@ export default function Generate() {
           <ChevronLeft size={22} className="text-white/60" />
         </button>
         
-        {/* 90x90 圆形模型选择器 */}
+        {/* 223x268 模型选择框架 */}
         <button 
           onClick={() => setShowCharPicker(true)}
           className="flex flex-col items-center gap-1"
         >
-          <div className="w-[90px] h-[90px] rounded-full overflow-hidden ring-2 ring-[#c939c9]/50 hover:ring-[#d05bf8] transition-all cursor-pointer">
+          <div className="w-[223px] h-[268px] rounded-[15px] overflow-hidden ring-2 ring-[#c939c9]/50 hover:ring-[#d05bf8] transition-all cursor-pointer">
             <img src={selectedChar.avatar} alt={selectedChar.name} className="w-full h-full object-cover" />
           </div>
           <div className="text-center">
