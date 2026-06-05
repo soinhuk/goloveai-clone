@@ -2,7 +2,7 @@ import { NavLink } from 'react-router-dom'
 import { ExploreIcon, ChatIcon, CreateIcon, GenerateIcon, MyAIIcon } from './Icons'
 
 const items = [
-  { to: '/', Icon: ExploreIcon, label: 'Explore' },
+  { to: '/app/explore', Icon: ExploreIcon, label: 'Explore' },
   { to: '/app/chats', Icon: ChatIcon, label: 'Chat' },
   { to: '/create', Icon: CreateIcon, label: 'Create' },
   { to: '/generate', Icon: GenerateIcon, label: 'Generate' },
