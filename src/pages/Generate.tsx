@@ -466,7 +466,7 @@ export default function Generate() {
     )
   }
   
-  // 衣服/背景卡片
+  // 衣服/背景卡片（横向280x150）
   const SmallCard = ({ onClick, selected, onClear, label, img }: {
     onClick: () => void,
     selected: string,
@@ -476,7 +476,7 @@ export default function Generate() {
   }) => (
     <div
       onClick={onClick}
-      className="w-[150px] h-[280px] shrink-0 cursor-pointer rounded-[15px] overflow-hidden border border-white/10 hover:border-pink-start transition-all relative group"
+      className="w-[280px] h-[150px] shrink-0 cursor-pointer rounded-[15px] overflow-hidden border border-white/10 hover:border-pink-start transition-all relative group"
     >
       {selected ? (
         <>
@@ -563,7 +563,7 @@ export default function Generate() {
                 label={mode === 'model-video' ? 'Action' : 'Pose'}
               />
               
-              {/* 右侧 - 衣服 + 背景（垂直堆叠） */}
+              {/* 右侧 - 衣服 + 背景（横向并排，280x150） */}
               <div className="flex flex-col gap-2">
                 <SmallCard 
                   onClick={() => setActiveDialog('clothes')}
