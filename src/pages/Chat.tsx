@@ -48,15 +48,18 @@ export default function Chat() {
   const [showDetails, setShowDetails] = useState(true)
   const [showQuickQuestions, setShowQuickQuestions] = useState(false)
   const [showGifts, setShowGifts] = useState(false)
-  const [photoIndex, setPhotoIndex] = useState(0)
   const [isTyping, setIsTyping] = useState(false)
+  const [unlockedGallery, setUnlockedGallery] = useState<Set<number>>(new Set([0]))
+  const [liveUnlocked, setLiveUnlocked] = useState(false)
+  const dropdownRef = useRef<HTMLDivElement>(null)
 
   const char = characters.find(c => c.username === username || c.id === username)
   if (!char) return <div className="flex items-center justify-center h-screen bg-[#0a0a0f] text-white/40 text-lg">Character not found</div>
 
   const videoAvatar = char.avatar?.replace('/images_avif_q50_720/', '/video_avatar/').replace('_avatar.avif', '_video_avatar_nsfw.mp4')
   const nsfwAvatar = char.avatar?.replace('_avatar.avif', '_avatar_nsfw.avif')
-  const galleryImages = [char.avatar, nsfwAvatar, char.avatar, char.avatar].filter(Boolean)
+  // Gallery: nsfw + avatar + 2 extras (avoid duplicating main photo which is nsfwAvatar)
+  const galleryImages = [nsfwAvatar, char.avatar, char.avatar?.replace('_avatar.avif', '_avatar_2.avif'), char.avatar?.replace('_avatar.avif', '_avatar_3.avif')].filter(Boolean)
 
   const [messages, setMessages] = useState([
     { id: 1, sender: 'ai' as const, text: char.greeting || `I love it when a conversation starts with something interesting... so, where do we begin? 😈`, time: '2:09 PM', photos: [nsfwAvatar, char.avatar] },
@@ -93,6 +96,20 @@ export default function Chat() {
   useEffect(() => {
     messagesRef.current?.scrollTo({ top: messagesRef.current.scrollHeight, behavior: 'smooth' })
   }, [messages, isTyping])
+
+  // Close dropdowns on outside click
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setShowQuickQuestions(false)
+        setShowGifts(false)
+      }
+    }
+    if (showQuickQuestions || showGifts) {
+      document.addEventListener('mousedown', handleClickOutside)
+    }
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [showQuickQuestions, showGifts])
 
   const otherChars = characters.filter(c => c.id !== char.id).slice(0, 12)
 
@@ -302,7 +319,7 @@ export default function Chat() {
         </div>
 
         {/* Input Area */}
-        <div className="relative z-10 border-t border-white/[4%] bg-[#0a0a0f]/90 backdrop-blur-2xl">
+        <div ref={dropdownRef} className="relative z-10 border-t border-white/[4%] bg-[#0a0a0f]/90 backdrop-blur-2xl">
           {/* Dropdowns */}
           {showQuickQuestions && (
             <div className="absolute bottom-full left-0 mb-2 w-full bg-[#13131a]/95 backdrop-blur-2xl border border-white/[8%] rounded-2xl shadow-[0_-10px_40px_rgba(0,0,0,0.4)] overflow-hidden z-20">
@@ -453,23 +470,10 @@ export default function Chat() {
             </button>
           </div>
 
-          {/* Photo Slideshow - IMAGE ONLY */}
+          {/* Main Photo - SINGLE IMAGE */}
           <div className="px-5 pb-4">
-            <div className="relative w-full aspect-[3/4] rounded-2xl overflow-hidden group shadow-[0_8px_30px_rgba(0,0,0,0.4)]">
-              <img src={galleryImages[photoIndex]} alt={char.name} className="w-full h-full object-cover transition-all duration-500" />
-              {/* Nav arrows */}
-              <button onClick={() => setPhotoIndex(i => (i - 1 + galleryImages.length) % galleryImages.length)} className="absolute left-3 top-1/2 -translate-y-1/2 size-9 rounded-full bg-black/30 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:bg-black/50">
-                <ChevronLeft size={18} className="text-white" />
-              </button>
-              <button onClick={() => setPhotoIndex(i => (i + 1) % galleryImages.length)} className="absolute right-3 top-1/2 -translate-y-1/2 size-9 rounded-full bg-black/30 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:bg-black/50">
-                <ChevronRight size={18} className="text-white" />
-              </button>
-              {/* Dots */}
-              <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2">
-                {galleryImages.map((_, i) => (
-                  <button key={i} onClick={() => setPhotoIndex(i)} className={`h-1.5 rounded-full transition-all duration-300 ${i === photoIndex ? 'bg-white w-6' : 'bg-white/30 w-1.5'}`} />
-                ))}
-              </div>
+            <div className="relative w-full aspect-[3/4] rounded-2xl overflow-hidden shadow-[0_8px_30px_rgba(0,0,0,0.4)]">
+              <img src={nsfwAvatar || char.avatar} alt={char.name} className="w-full h-full object-cover" />
             </div>
           </div>
 
@@ -568,22 +572,36 @@ export default function Chat() {
             </div>
           </div>
 
-          {/* Gallery */}
+          {/* Gallery - 1 free + 3 locked */}
           <div className="px-5 pb-4">
             <div className="flex items-center gap-2 mb-3">
               <ImageIcon size={14} className="text-white/35" />
               <h3 className="text-sm font-bold text-white/80">作品集</h3>
+              <span className="text-[10px] text-white/25">1/{galleryImages.length} 已解锁</span>
             </div>
             <div className="grid grid-cols-4 gap-2">
-              {galleryImages.map((img, i) => (
-                <div key={i} onClick={() => setPhotoIndex(i)} className={`aspect-[3/4] rounded-xl overflow-hidden cursor-pointer hover:scale-105 transition-all border-2 ${i === photoIndex ? 'border-[#d05bf8]/40 shadow-[0_0_8px_rgba(208,91,248,0.2)]' : 'border-transparent hover:border-white/10'}`}>
-                  <img src={img} alt={`gallery ${i + 1}`} className="w-full h-full object-cover" />
-                </div>
-              ))}
+              {galleryImages.map((img, i) => {
+                const isUnlocked = unlockedGallery.has(i)
+                return (
+                  <div key={i} className="relative aspect-[3/4] rounded-xl overflow-hidden cursor-pointer hover:scale-105 transition-all border border-white/[5%]">
+                    {isUnlocked ? (
+                      <img src={img} alt={`gallery ${i + 1}`} className="w-full h-full object-cover" />
+                    ) : (
+                      <>
+                        <img src={img} alt={`gallery ${i + 1}`} className="w-full h-full object-cover blur-md opacity-40" />
+                        <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center gap-1" onClick={() => setUnlockedGallery(prev => new Set([...prev, i]))}>
+                          <span className="text-lg">🔒</span>
+                          <span className="text-[10px] font-bold text-[#d05bf8]">2 💎</span>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                )
+              })}
             </div>
           </div>
 
-          {/* Live Camera */}
+          {/* Live Camera - 20💎 to unlock */}
           <div className="px-5 pb-6">
             <div className="flex items-center gap-2 mb-3">
               <MonitorPlay size={14} className="text-[#ff18a0]" />
@@ -591,23 +609,27 @@ export default function Chat() {
               <span className="text-[9px] px-2 py-0.5 bg-gradient-to-r from-red-500/20 to-[#ff18a0]/20 text-red-400 rounded-full font-bold border border-red-500/10">🔴 LIVE</span>
             </div>
             <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-white/[3%] border border-white/[5%] shadow-[0_4px_15px_rgba(0,0,0,0.3)]">
-              {videoAvatar ? (
-                <video src={videoAvatar} autoPlay loop muted playsInline className="w-full h-full object-cover" />
+              {liveUnlocked && videoAvatar ? (
+                <>
+                  <video src={videoAvatar} autoPlay loop muted playsInline className="w-full h-full object-cover" />
+                  <div className="absolute top-3 left-3 flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-500/80 backdrop-blur-sm shadow-[0_0_10px_rgba(239,68,68,0.3)]">
+                    <span className="size-2 rounded-full bg-white animate-pulse" />
+                    <span className="text-[10px] text-white font-bold">LIVE</span>
+                  </div>
+                </>
               ) : (
-                <div className="flex items-center justify-center h-full">
-                  <div className="text-center">
-                    <div className="relative">
-                      <MonitorPlay size={36} className="text-white/10 mx-auto mb-2" />
-                      <div className="absolute inset-0 bg-[#d05bf8]/20 blur-xl rounded-full" />
-                    </div>
-                    <p className="text-sm text-white/20">实时预览</p>
+                <div className="flex flex-col items-center justify-center h-full cursor-pointer" onClick={() => setLiveUnlocked(true)}>
+                  <div className="relative">
+                    <MonitorPlay size={40} className="text-white/15 mx-auto mb-2" />
+                    <div className="absolute inset-0 bg-[#d05bf8]/20 blur-xl rounded-full" />
+                  </div>
+                  <p className="text-sm text-white/30 mb-2">实时预览</p>
+                  <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-[#d05bf8]/15 border border-[#d05bf8]/20">
+                    <span className="text-sm">🔒</span>
+                    <span className="text-[13px] font-bold text-[#d05bf8]">20 💎 解锁观看</span>
                   </div>
                 </div>
               )}
-              <div className="absolute top-3 left-3 flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-500/80 backdrop-blur-sm shadow-[0_0_10px_rgba(239,68,68,0.3)]">
-                <span className="size-2 rounded-full bg-white animate-pulse" />
-                <span className="text-[10px] text-white font-bold">LIVE</span>
-              </div>
             </div>
           </div>
         </div>
