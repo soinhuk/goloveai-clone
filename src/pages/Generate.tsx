@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import {
-  ChevronRight, Wand2, User, Video, Image,
-  Sparkles, Download, Heart, Share2, Check, RefreshCw,
+import { 
+  ChevronRight, ChevronLeft, Wand2, User, Video, Image, 
+  Sparkles, Download, Heart, Share2, Check, RefreshCw, 
   Eye, Play, X, Upload, Star, Sliders
 } from 'lucide-react'
 import { characters } from '../data/characters'
@@ -44,42 +44,6 @@ const BACKGROUND_MODELS = [
   { id: 'abstract', label: 'Abstract', preview: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=300&q=60' },
 ]
 
-function SectionTitle({ icon: Icon, title, subtitle }: { icon: any, title: string, subtitle?: string }) {
-  return (
-    <div className="mb-4">
-      <div className="flex items-center gap-3 mb-1">
-        <div className="size-9 rounded-xl bg-gradient-to-br from-[#d05bf8]/20 to-[#ff18a0]/20 flex items-center justify-center">
-          <Icon size={18} className="text-gl-pink" />
-        </div>
-        <div>
-          <h3 className="text-white text-base font-semibold">{title}</h3>
-          {subtitle && <p className="text-white/40 text-xs">{subtitle}</p>}
-        </div>
-      </div>
-    </div>
-  )
-}
-
-function OptionGrid({ options, selected, onSelect, columns = 3 }: { options: string[], selected: string, onSelect: (v: string) => void, columns?: number }) {
-  return (
-    <div className={`grid gap-2`} style={{ gridTemplateColumns: `repeat(${columns}, 1fr)` }}>
-      {options.map(opt => (
-        <button
-          key={opt}
-          onClick={() => onSelect(opt)}
-          className={`px-3 py-2.5 rounded-xl text-xs font-medium transition-all ${
-            selected === opt
-              ? 'bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] text-white'
-              : 'bg-white/[4%] text-white/60 hover:bg-white/[8%] hover:text-white'
-          }`}
-        >
-          {opt}
-        </button>
-      ))}
-    </div>
-  )
-}
-
 export default function Generate() {
   const [mode, setMode] = useState<Mode>('image')
   const [activeTab, setActiveTab] = useState<Tab>('action')
@@ -94,7 +58,7 @@ export default function Generate() {
 
   // Advanced Settings state
   const [quality, setQuality] = useState('High')
-  const [style, setStyle] = useState('Cinematic')
+  const [style, setStyle] = useState('Realistic')
   const [lighting, setLighting] = useState('Natural')
   const [cameraAngle, setCameraAngle] = useState('Front')
   const [pose, setPose] = useState('Standing')
@@ -242,151 +206,70 @@ export default function Generate() {
           ))}
         </div>
 
-        {/* ======== ADVANCED SETTINGS TAB ======== */}
-        {activeTab === 'advanced' && (
-          <div className="space-y-6 animate-fade-in">
-            <SectionTitle icon={Sliders} title="Advanced Settings" subtitle="Fine-tune your generation" />
+        {/* Models Grid - 2 columns, larger cards */}
+        <div className="grid grid-cols-2 gap-3 mb-4">
+          {models.map(model => {
+            const isSelected = getSelected() === model.id
+            return (
+              <button
+                key={model.id}
+                onClick={() => setSelected(model.id)}
+                className={`relative overflow-hidden rounded-2xl transition-all group ${
+                  isSelected
+                    ? 'ring-2 ring-[#d05bf8] ring-offset-2 ring-offset-[#0f0e0f]'
+                    : 'hover:ring-1 hover:ring-white/20'
+                }`}
+                style={{ aspectRatio: '1/1.1' }}
+              >
+                <img
+                  src={model.preview}
+                  alt={model.label}
+                  className="w-full h-full object-cover transition-transform group-hover:scale-105"
+                  onError={e => { (e.target as HTMLImageElement).src = '' }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+                <div className="absolute bottom-0 left-0 right-0 p-3">
+                  <span className="text-white font-medium text-xs">{model.label}</span>
+                </div>
+                {isSelected && (
+                  <div className="absolute top-2 right-2 size-6 rounded-full bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] flex items-center justify-center">
+                    <Check size={12} className="text-white" />
+                  </div>
+                )}
+              </button>
+            )
+          })}
+        </div>
 
-            {/* Quality */}
-            <div>
-              <h4 className="text-white/60 text-xs font-medium mb-2">Quality</h4>
-              <div className="flex gap-2">
-                {['Standard', 'High', 'Ultra'].map(q => (
-                  <button key={q} onClick={() => setQuality(q)} className={`flex-1 py-2.5 rounded-xl text-xs font-medium transition-all ${quality === q ? 'bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] text-white' : 'bg-white/[4%] text-white/50 hover:text-white'}`}>{q}</button>
-                ))}
-              </div>
-            </div>
+        {/* Prompt Input */}
+        <div className="mb-4">
+          <textarea
+            value={prompt}
+            onChange={e => setPrompt(e.target.value)}
+            placeholder="Add custom details to your generation..."
+            rows={2}
+            className="w-full bg-white/[4%] border border-white/[8%] rounded-xl px-4 py-3 text-white text-xs placeholder:text-white/30 focus:outline-none focus:border-[#d05bf8]/40 transition-all resize-none"
+          />
+        </div>
 
-            {/* Style Preset */}
-            <div>
-              <h4 className="text-white/60 text-xs font-medium mb-2">Style Preset</h4>
-              <OptionGrid options={['Cinematic', 'Portrait', 'Fashion', 'Natural', 'Artistic', 'No Style']} selected={style} onSelect={setStyle} columns={3} />
-            </div>
-
-            {/* Lighting */}
-            <div>
-              <h4 className="text-white/60 text-xs font-medium mb-2">Lighting</h4>
-              <OptionGrid options={['Natural', 'Studio', 'Dramatic', 'Soft', 'Neon', 'Golden Hour']} selected={lighting} onSelect={setLighting} columns={3} />
-            </div>
-
-            {/* Camera Angle */}
-            <div>
-              <h4 className="text-white/60 text-xs font-medium mb-2">Camera Angle</h4>
-              <OptionGrid options={['Front', 'Side', 'Above', 'Low Angle', 'Close-up', 'Wide Shot']} selected={cameraAngle} onSelect={setCameraAngle} columns={3} />
-            </div>
-
-            {/* Pose */}
-            <div>
-              <h4 className="text-white/60 text-xs font-medium mb-2">Pose</h4>
-              <OptionGrid options={['Standing', 'Sitting', 'Lying', 'Leaning', 'Dynamic', 'Fixed']} selected={pose} onSelect={setPose} columns={3} />
-            </div>
-
-            {/* Background Detail */}
-            <div>
-              <h4 className="text-white/60 text-xs font-medium mb-2">Background Detail</h4>
-              <OptionGrid options={['Simple', 'Moderate', 'Detailed', 'Abstract', 'Blurred', 'None']} selected={backgroundDetail} onSelect={setBackgroundDetail} columns={3} />
-            </div>
-
-            {/* Aspect Ratio */}
-            <div>
-              <h4 className="text-white/60 text-xs font-medium mb-2">Aspect Ratio</h4>
-              <div className="flex gap-2">
-                {['1:1', '4:3', '3:4', '16:9', '9:16'].map(r => (
-                  <button key={r} onClick={() => setAspectRatio(r)} className={`flex-1 py-2.5 rounded-xl text-xs font-medium transition-all ${aspectRatio === r ? 'bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] text-white' : 'bg-white/[4%] text-white/50 hover:text-white'}`}>{r}</button>
-                ))}
-              </div>
-            </div>
-
-            {/* Negative Prompt */}
-            <div>
-              <h4 className="text-white/60 text-xs font-medium mb-2">Negative Prompt</h4>
-              <textarea
-                value={negativePrompt}
-                onChange={e => setNegativePrompt(e.target.value)}
-                placeholder="Extra fingers, blurry, low quality, watermark..."
-                rows={2}
-                className="w-full bg-white/[4%] border border-white/[8%] rounded-xl px-4 py-3 text-white text-xs placeholder:text-white/30 focus:outline-none focus:border-[#d05bf8]/40 transition-all resize-none"
-              />
-            </div>
-
-            {/* Apply Button */}
-            <button
-              onClick={() => setActiveTab('action')}
-              className="w-full bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] text-white font-semibold py-3 rounded-full text-xs hover:opacity-90 transition-all"
-            >
-              Apply Settings
-            </button>
-          </div>
-        )}
-
-        {/* ======== MODELS GRID (only when NOT advanced tab) ======== */}
-        {activeTab !== 'advanced' && (
-          <>
-            <div className="grid grid-cols-2 gap-3 mb-4">
-              {models.map(model => {
-                const isSelected = getSelected() === model.id
-                return (
-                  <button
-                    key={model.id}
-                    onClick={() => setSelected(model.id)}
-                    className={`relative overflow-hidden rounded-2xl transition-all group ${
-                      isSelected
-                        ? 'ring-2 ring-[#d05bf8] ring-offset-2 ring-offset-[#0f0e0f]'
-                        : 'hover:ring-1 hover:ring-white/20'
-                    }`}
-                    style={{ aspectRatio: '1/1.1' }}
-                  >
-                    <img
-                      src={model.preview}
-                      alt={model.label}
-                      className="w-full h-full object-cover transition-transform group-hover:scale-105"
-                      onError={e => { (e.target as HTMLImageElement).src = '' }}
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
-                    <div className="absolute bottom-0 left-0 right-0 p-3">
-                      <span className="text-white font-medium text-xs">{model.label}</span>
-                    </div>
-                    {isSelected && (
-                      <div className="absolute top-2 right-2 size-6 rounded-full bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] flex items-center justify-center">
-                        <Check size={12} className="text-white" />
-                      </div>
-                    )}
-                  </button>
-                )
-              })}
-            </div>
-
-            {/* Prompt Input */}
-            <div className="mb-4">
-              <textarea
-                value={prompt}
-                onChange={e => setPrompt(e.target.value)}
-                placeholder="Add custom details to your generation..."
-                rows={2}
-                className="w-full bg-white/[4%] border border-white/[8%] rounded-xl px-4 py-3 text-white text-xs placeholder:text-white/30 focus:outline-none focus:border-[#d05bf8]/40 transition-all resize-none"
-              />
-            </div>
-
-            {/* Generate Button */}
-            <button
-              onClick={handleGenerate}
-              disabled={generating || (!prompt.trim() && !selectedAction && !selectedClothes && !selectedBackground)}
-              className="w-full bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] rounded-full py-3.5 text-xs font-semibold flex items-center justify-center gap-2 disabled:opacity-40 transition-all hover:opacity-90 active:scale-[0.98]"
-            >
-              {generating ? (
-                <>
-                  <RefreshCw size={14} className="animate-spin" />
-                  Generating {mode}...
-                </>
-              ) : (
-                <>
-                  <Wand2 size={14} />
-                  Generate {mode === 'image' ? 'Image' : 'Video'}
-                </>
-              )}
-            </button>
-          </>
-        )}
+        {/* Generate Button */}
+        <button
+          onClick={handleGenerate}
+          disabled={generating || (!prompt.trim() && !selectedAction && !selectedClothes && !selectedBackground)}
+          className="w-full bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] rounded-full py-3.5 text-xs font-semibold flex items-center justify-center gap-2 disabled:opacity-40 transition-all hover:opacity-90 active:scale-[0.98]"
+        >
+          {generating ? (
+            <>
+              <RefreshCw size={14} className="animate-spin" />
+              Generating {mode}...
+            </>
+          ) : (
+            <>
+              <Wand2 size={14} />
+              Generate {mode === 'image' ? 'Image' : 'Video'}
+            </>
+          )}
+        </button>
 
         {/* Results */}
         {results.length > 0 && (

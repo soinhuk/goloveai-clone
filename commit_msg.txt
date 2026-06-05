@@ -1,1 +1,0 @@
-feat: Chat UI improvements - compact layout, bubble styling, time grouping
