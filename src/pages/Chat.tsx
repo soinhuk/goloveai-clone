@@ -59,25 +59,17 @@ export default function Chat() {
   const nameInputRef = useRef<HTMLInputElement>(null)
 
   const char = characters.find(c => c.username === username || c.id === username)
-  if (!char || isDeleted) return <div className="flex flex-col items-center justify-center h-screen bg-[#0a0a0f] text-white/40 text-lg gap-4">
-    <span className="text-5xl">💔</span>
-    <span>该角色已被删除</span>
-    <button onClick={() => navigate('/app/chats')} className="px-6 py-2 rounded-full bg-[#d05bf8]/20 text-[#d05bf8] text-sm font-semibold hover:bg-[#d05bf8]/30 transition-all">返回聊天列表</button>
-  </div>
 
-  const videoAvatar = char.avatar?.replace('/images_avif_q50_720/', '/video_avatar/').replace('_avatar.avif', '_video_avatar_nsfw.mp4')
-  const nsfwAvatar = char.avatar?.replace('_avatar.avif', '_avatar_nsfw.avif')
-  // Only live models have actual video avatars
-  const hasLiveVideo = char.isLive && !!videoAvatar
-  const displayName = customName || char.name
-  // Gallery: only unique images, no duplicates with main photo
-  const baseGallery = [char.avatar, nsfwAvatar].filter(Boolean)
+  const videoAvatar = char?.avatar?.replace('/images_avif_q50_720/', '/video_avatar/').replace('_avatar.avif', '_video_avatar_nsfw.mp4')
+  const nsfwAvatar = char?.avatar?.replace('_avatar.avif', '_avatar_nsfw.avif')
+  const hasLiveVideo = char?.isLive && !!videoAvatar
+  const displayName = customName || char?.name || ''
+  const baseGallery = [char?.avatar, nsfwAvatar].filter(Boolean)
   const uniqueGallery = [...new Set(baseGallery)]
-  // Combined gallery: base + gift-unlocked content
   const galleryImages = [...uniqueGallery, ...unlockedContent.filter(c => c.startsWith('photo:')).map(c => c.replace('photo:', ''))]
 
   const [messages, setMessages] = useState([
-    { id: 1, sender: 'ai' as const, text: char.greeting || `I love it when a conversation starts with something interesting... so, where do we begin? 😈`, time: '2:09 PM', photos: undefined as string[] | undefined },
+    { id: 1, sender: 'ai' as const, text: char?.greeting || `I love it when a conversation starts with something interesting... so, where do we begin? 😈`, time: '2:09 PM', photos: undefined as string[] | undefined },
   ])
 
   const handleSend = (text?: string) => {
@@ -123,28 +115,30 @@ export default function Chat() {
     messagesRef.current?.scrollTo({ top: messagesRef.current.scrollHeight, behavior: 'smooth' })
   }, [messages, isTyping])
 
-  // Close dropdowns on outside click
+  // Close dropdowns on outside click (for all menus)
   useEffect(() => {
     if (!showQuickQuestions && !showGifts && !showMoreMenu) return
     const handleClose = (e: MouseEvent) => {
       const target = e.target as HTMLElement
-      // Don't close if clicking inside dropdown or the toggle buttons
       if (target.closest('[data-dropdown]') || target.closest('[data-dropdown-toggle]')) return
       setShowQuickQuestions(false)
       setShowGifts(false)
       setShowMoreMenu(false)
     }
-    // Use setTimeout to avoid immediate trigger from the current click
-    const timer = setTimeout(() => {
-      document.addEventListener('mousedown', handleClose)
-    }, 10)
-    return () => {
-      clearTimeout(timer)
-      document.removeEventListener('mousedown', handleClose)
-    }
+    document.addEventListener('mousedown', handleClose)
+    return () => document.removeEventListener('mousedown', handleClose)
   }, [showQuickQuestions, showGifts, showMoreMenu])
 
-  const otherChars = characters.filter(c => c.id !== char.id).slice(0, 12)
+  const otherChars = characters.filter(c => c.id !== char?.id).slice(0, 12)
+
+  // Deleted or not found - render AFTER all hooks
+  if (!char || isDeleted) return (
+    <div className="flex flex-col items-center justify-center h-screen bg-[#0a0a0f] text-white/40 text-lg gap-4">
+      <span className="text-5xl">💔</span>
+      <span>{!char ? '角色不存在' : '该角色已被删除'}</span>
+      <button onClick={() => navigate('/app/chats')} className="px-6 py-2 rounded-full bg-[#d05bf8]/20 text-[#d05bf8] text-sm font-semibold hover:bg-[#d05bf8]/30 transition-all">返回聊天列表</button>
+    </div>
+  )
 
   return (
     <div className="flex h-[calc(100dvh-32px)] bg-[#0a0a0f]">
@@ -220,6 +214,10 @@ export default function Chat() {
             <div className="min-w-0">
               <div className="flex items-center gap-2">
                 <h1 className="text-[18px] font-bold text-white leading-tight truncate">{displayName}</h1>
+                <button onClick={() => { setIsEditingName(true); setTimeout(() => nameInputRef.current?.focus(), 100) }}
+                  className="p-1 rounded hover:bg-white/[6%] transition-all" title="改名">
+                  <Pencil size={12} className="text-white/25 hover:text-[#d05bf8]" />
+                </button>
               </div>
               <div className="flex items-center gap-1.5">
                 <span className="size-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_6px_rgba(52,211,153,0.5)]" />
@@ -238,38 +236,27 @@ export default function Chat() {
               <span className="absolute -top-1 -right-1 px-1.5 py-0.5 text-[7px] font-bold bg-gradient-to-r from-[#ff18a0] to-[#d05bf8] text-white rounded-full leading-none shadow-[0_0_10px_rgba(255,24,160,0.5)]">NEW</span>
             </div>
             <div className="relative" data-dropdown-toggle>
-              <button onClick={() => setShowMoreMenu(!showMoreMenu)} className="flex items-center justify-center size-11 rounded-full hover:bg-white/[6%] transition-all border border-white/[5%]">
+              <button onClick={(e) => { e.stopPropagation(); setShowMoreMenu(!showMoreMenu) }} className="flex items-center justify-center size-11 rounded-full hover:bg-white/[6%] transition-all border border-white/[5%]">
                 <MoreHorizontal size={20} className="text-white/45" />
               </button>
               {showMoreMenu && (
-                <div data-dropdown className="absolute top-full right-0 mt-2 w-[220px] bg-[#1a1a24]/95 backdrop-blur-2xl border border-white/[8%] rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.5)] overflow-hidden z-30">
-                  <div className="py-1">
-                    <button onClick={() => { setIsEditingName(true); setShowMoreMenu(false); setTimeout(() => nameInputRef.current?.focus(), 50) }}
-                      className="w-full flex items-center gap-3 px-5 py-3.5 hover:bg-white/[4%] transition-all text-left group">
-                      <span className="text-base">✏️</span>
-                      <div>
-                        <span className="text-[14px] text-white/70 group-hover:text-white/90 transition-colors font-medium">修改角色名称</span>
-                        <p className="text-[11px] text-white/25 mt-0.5">给女友取一个新的名字</p>
-                      </div>
-                    </button>
-                    <button onClick={() => { setMessages([{ id: 1, sender: 'ai' as const, text: char.greeting || `I love it when a conversation starts with something interesting... so, where do we begin? 😈`, time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), photos: undefined as string[] | undefined }]); setUnlockedContent([]); setShowMoreMenu(false) }}
-                      className="w-full flex items-center gap-3 px-5 py-3.5 hover:bg-white/[4%] transition-all text-left group">
-                      <span className="text-base">🔄</span>
-                      <div>
-                        <span className="text-[14px] text-white/70 group-hover:text-white/90 transition-colors font-medium">重置对话</span>
-                        <p className="text-[11px] text-white/25 mt-0.5">清除所有聊天记录</p>
-                      </div>
-                    </button>
-                    <div className="mx-4 border-t border-white/[5%]" />
-                    <button onClick={() => { setIsDeleted(true); setShowMoreMenu(false) }}
-                      className="w-full flex items-center gap-3 px-5 py-3.5 hover:bg-red-500/[5%] transition-all text-left group">
-                      <span className="text-base">🗑️</span>
-                      <div>
-                        <span className="text-[14px] text-red-400/70 group-hover:text-red-400 transition-colors font-medium">删除该女友</span>
-                        <p className="text-[11px] text-white/25 mt-0.5">删除后不再显示在聊天列表中</p>
-                      </div>
-                    </button>
-                  </div>
+                <div onMouseDown={e => e.stopPropagation()} className="absolute top-full right-0 mt-1.5 w-[180px] bg-[#16161e] border border-white/[6%] rounded-xl shadow-[0_8px_30px_rgba(0,0,0,0.6)] overflow-hidden z-30">
+                  <button onClick={() => { setIsEditingName(true); setShowMoreMenu(false); setTimeout(() => nameInputRef.current?.focus(), 100) }}
+                    className="w-full flex items-center gap-2.5 px-3.5 py-2.5 hover:bg-white/[4%] transition-all text-left">
+                    <span className="text-sm">✏️</span>
+                    <span className="text-[13px] text-white/60 hover:text-white/90 transition-colors">修改名称</span>
+                  </button>
+                  <button onClick={() => { setMessages([{ id: 1, sender: 'ai' as const, text: char?.greeting || `I love it when a conversation starts with something interesting... so, where do we begin? 😈`, time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), photos: undefined as string[] | undefined }]); setUnlockedContent([]); setShowMoreMenu(false) }}
+                    className="w-full flex items-center gap-2.5 px-3.5 py-2.5 hover:bg-white/[4%] transition-all text-left">
+                    <span className="text-sm">🔄</span>
+                    <span className="text-[13px] text-white/60 hover:text-white/90 transition-colors">重置对话</span>
+                  </button>
+                  <div className="mx-3 border-t border-white/[4%]" />
+                  <button onClick={() => { setShowMoreMenu(false); window.location.href = '/app/chats' }}
+                    className="w-full flex items-center gap-2.5 px-3.5 py-2.5 hover:bg-red-500/[5%] transition-all text-left">
+                    <span className="text-sm">🗑️</span>
+                    <span className="text-[13px] text-red-400/60 hover:text-red-400 transition-colors">删除女友</span>
+                  </button>
                 </div>
               )}
             </div>
@@ -683,20 +670,20 @@ export default function Chat() {
 
       {/* ═══════ NAME EDIT MODAL ═══════ */}
       {isEditingName && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center" onClick={() => setIsEditingName(false)}>
-          <div className="bg-[#1a1a24] border border-white/[8%] rounded-2xl p-6 w-[340px] shadow-[0_20px_60px_rgba(0,0,0,0.5)]" onClick={e => e.stopPropagation()}>
-            <div className="flex items-center gap-2 mb-4">
-              <span className="text-xl">💕</span>
-              <h3 className="text-[16px] font-bold text-white/90">给女友取一个新的名字</h3>
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center" onClick={() => setIsEditingName(false)}>
+          <div className="bg-[#16161e] border border-white/[6%] rounded-2xl p-5 w-[300px] shadow-[0_15px_50px_rgba(0,0,0,0.6)]" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center gap-2 mb-3">
+              <span>💕</span>
+              <span className="text-[14px] font-semibold text-white/80">给女友取一个新名字</span>
             </div>
             <input ref={nameInputRef} type="text" value={customName || char.name}
               onChange={e => setCustomName(e.target.value)}
               onKeyDown={e => { if (e.key === 'Enter') setIsEditingName(false) }}
               placeholder="输入新名字..."
-              className="w-full bg-white/[5%] border border-white/[8%] rounded-xl py-3 px-4 text-[15px] text-white placeholder:text-white/20 focus:outline-none focus:border-[#d05bf8]/40 mb-4" autoFocus />
+              className="w-full bg-white/[4%] border border-white/[6%] rounded-xl py-2.5 px-3.5 text-[14px] text-white placeholder:text-white/20 focus:outline-none focus:border-[#d05bf8]/30 mb-3" autoFocus />
             <div className="flex gap-2">
-              <button onClick={() => setIsEditingName(false)} className="flex-1 py-2.5 rounded-xl bg-white/[5%] text-white/50 text-sm font-medium hover:bg-white/[8%] transition-all">取消</button>
-              <button onClick={() => setIsEditingName(false)} className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] text-white text-sm font-bold hover:shadow-[0_0_15px_rgba(208,91,248,0.3)] transition-all">保存</button>
+              <button onClick={() => { setCustomName(''); setIsEditingName(false) }} className="flex-1 py-2 rounded-lg bg-white/[4%] text-white/40 text-[12px] font-medium hover:bg-white/[6%] transition-all">重置</button>
+              <button onClick={() => setIsEditingName(false)} className="flex-1 py-2 rounded-lg bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] text-white text-[12px] font-bold">保存</button>
             </div>
           </div>
         </div>
