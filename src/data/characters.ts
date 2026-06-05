@@ -29,6 +29,7 @@ export const characters: Character[] = [
     specialFeature: "Beauty mark on left cheek",
     greeting: "I love it when a conversation starts with something interesting... so, where do we begin? 😈",
     fantasy: "A sunset dinner on a private yacht, with nothing but the ocean and good conversation",
+    type: "realistic",
   },
   {
     id: "daisy",
@@ -56,6 +57,7 @@ export const characters: Character[] = [
     specialFeature: "Freckles across nose",
     greeting: "H-hey there... I'm a little nervous but excited to meet you! 💖",
     fantasy: "A cozy cabin in the mountains, fireplace glowing, just the two of us",
+    type: "realistic",
   },
   {
     id: "jessica",
@@ -83,6 +85,7 @@ export const characters: Character[] = [
     specialFeature: "Glasses that she takes off slowly",
     greeting: "Well well... looks like someone needs a private lesson. I don't bite... unless you ask nicely 😉",
     fantasy: "After-hours tutoring session that turns into something much more interesting",
+    type: "realistic",
   },
   {
     id: "itsumi",

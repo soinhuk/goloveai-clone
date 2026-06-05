@@ -270,10 +270,10 @@ export default function Generate() {
   
   // 模式标签
   const modeTabs = [
-    { key: 'model-video' as const, icon: Video, label: '生成视频' },
-    { key: 'model-image' as const, icon: ImageIcon, label: '生成图片' },
-    { key: 'custom-video' as const, icon: Wand2, label: '自定义视频' },
-    { key: 'custom-image' as const, icon: Upload, label: '自定义图片' },
+    { key: 'model-video' as const, icon: Video, label: 'Model Video' },
+    { key: 'model-image' as const, icon: ImageIcon, label: 'Model Image' },
+    { key: 'custom-video' as const, icon: Wand2, label: 'Custom Video' },
+    { key: 'custom-image' as const, icon: Upload, label: 'Custom Image' },
   ]
   
   // Character picker with glassmorphism
