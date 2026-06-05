@@ -86,6 +86,7 @@ export const characters: Character[] = [
   },
   {
     id: "itsumi",
+    type: "realistic",
     name: "Itsumi",
     username: "itsumi",
     avatar: "https://storage.googleapis.com/golove-public/characters/itsumi_tokita/images_avif_q50_720/itsumi_tokita_avatar.avif",
@@ -113,6 +114,7 @@ export const characters: Character[] = [
 },
   {
     id: "kennedy",
+    type: "realistic",
     name: "Kennedy",
     username: "kennedy",
     avatar: "https://storage.googleapis.com/golove-public/characters/kennedy_hill/images_avif_q50_720/kennedy_hill_avatar_nsfw.avif",
@@ -140,6 +142,7 @@ export const characters: Character[] = [
 },
   {
     id: "lexie",
+    type: "realistic",
     name: "Lexie",
     username: "lexie",
     avatar: "https://storage.googleapis.com/golove-public/characters/lexie_hollis/images_avif_q50_720/lexie_hollis_avatar_nsfw.avif",
@@ -167,6 +170,7 @@ export const characters: Character[] = [
 },
   {
     id: "amina",
+    type: "realistic",
     name: "Amina",
     username: "amina",
     avatar: "https://storage.googleapis.com/golove-public/characters/amina_hakim/images_avif_q50_720/amina_hakim_avatar_nsfw.avif",
@@ -193,6 +197,7 @@ export const characters: Character[] = [
 },
   {
     id: "melissa",
+    type: "realistic",
     name: "Melissa",
     username: "melissa",
     avatar: "https://storage.googleapis.com/golove-public/characters/melissa_henry/images_avif_q50_720/melissa_henry_avatar_nsfw.avif",
@@ -219,6 +224,7 @@ export const characters: Character[] = [
 },
   {
     id: "sunny",
+    type: "realistic",
     name: "Sunny",
     username: "sunny",
     avatar: "https://storage.googleapis.com/golove-public/characters/sunny_fletcher/images_avif_q50_720/sunny_fletcher_avatar_nsfw.avif",
@@ -245,6 +251,7 @@ export const characters: Character[] = [
 },
   {
     id: "nicole",
+    type: "realistic",
     name: "Nicole",
     username: "nicole",
     avatar: "https://storage.googleapis.com/golove-public/characters/nicole_rogers/images_avif_q50_720/nicole_rogers_avatar_nsfw.avif",
@@ -271,6 +278,7 @@ export const characters: Character[] = [
 },
   {
     id: "saya",
+    type: "realistic",
     name: "Saya",
     username: "saya",
     avatar: "https://storage.googleapis.com/golove-public/characters/saya_matsuo/images_avif_q50_720/saya_matsuo_avatar_nsfw.avif",
@@ -297,6 +305,7 @@ export const characters: Character[] = [
 },
   {
     id: "macy",
+    type: "realistic",
     name: "Macy",
     username: "macy",
     avatar: "https://storage.googleapis.com/golove-public/characters/macy_thompson/images_avif_q50_720/macy_thompson_avatar_nsfw.avif",
@@ -323,6 +332,7 @@ export const characters: Character[] = [
 },
   {
     id: "riley",
+    type: "realistic",
     name: "Riley",
     username: "riley",
     avatar: "https://storage.googleapis.com/golove-public/characters/riley_green/images_avif_q50_720/riley_green_avatar_nsfw.avif",
@@ -349,6 +359,7 @@ export const characters: Character[] = [
 },
   {
     id: "amelia",
+    type: "realistic",
     name: "Amelia",
     username: "amelia",
     avatar: "https://storage.googleapis.com/golove-public/characters/amelia_butler/images_avif_q50_720/amelia_butler_avatar_nsfw.avif",
@@ -375,6 +386,7 @@ export const characters: Character[] = [
 },
   {
     id: "karen",
+    type: "realistic",
     name: "Karen",
     username: "karen",
     avatar: "https://storage.googleapis.com/golove-public/characters/karen_wheeler/images_avif_q50_720/karen_wheeler_avatar_nsfw.avif",
@@ -402,6 +414,7 @@ export const characters: Character[] = [
   // ===== ADDITIONAL CHARACTERS =====
   {
     id: "aisha",
+    type: "realistic",
     name: "Aisha",
     username: "aisha",
     avatar: "https://storage.googleapis.com/golove-public/characters/aisha_kwame/images_avif_q50_720/aisha_kwame_avatar.avif",
@@ -428,6 +441,7 @@ export const characters: Character[] = [
 },
   {
     id: "sana",
+    type: "realistic",
     name: "Sana",
     username: "sana",
     avatar: "https://storage.googleapis.com/golove-public/characters/sana_kapoor/images_avif_q50_720/sana_kapoor_avatar.avif",
@@ -454,6 +468,7 @@ export const characters: Character[] = [
 },
   {
     id: "lauren",
+    type: "realistic",
     name: "Lauren",
     username: "lauren",
     avatar: "https://storage.googleapis.com/golove-public/characters/lauren_flores/images_avif_q50_720/lauren_flores_avatar.avif",
@@ -480,6 +495,7 @@ export const characters: Character[] = [
 },
   {
     id: "samantha",
+    type: "realistic",
     name: "Samantha",
     username: "samantha",
     avatar: "https://storage.googleapis.com/golove-public/characters/samantha_vaughn/images_avif_q50_720/samantha_vaughn_avatar.avif",
@@ -506,6 +522,7 @@ export const characters: Character[] = [
 },
   {
     id: "anita",
+    type: "realistic",
     name: "Anita",
     username: "anita",
     avatar: "https://storage.googleapis.com/golove-public/characters/anita_allis/images_avif_q50_720/anita_allis_avatar.avif",
@@ -532,6 +549,7 @@ export const characters: Character[] = [
 },
   {
     id: "fiona",
+    type: "realistic",
     name: "Fiona",
     username: "fiona",
     avatar: "https://storage.googleapis.com/golove-public/characters/fiona_graham/images_avif_q50_720/fiona_graham_avatar.avif",
@@ -558,6 +576,7 @@ export const characters: Character[] = [
 },
   {
     id: "alex",
+    type: "realistic",
     name: "Alex",
     username: "alex",
     avatar: "https://storage.googleapis.com/golove-public/characters/alex_turner/images_avif_q50_720/alex_turner_avatar.avif",
@@ -584,6 +603,7 @@ export const characters: Character[] = [
 },
   {
     id: "fae",
+    type: "realistic",
     name: "Fae",
     username: "fae",
     avatar: "https://storage.googleapis.com/golove-public/characters/fae_zero/images_avif_q50_720/fae_zero_avatar.avif",
@@ -610,6 +630,7 @@ export const characters: Character[] = [
 },
   {
     id: "lori",
+    type: "realistic",
     name: "Lori",
     username: "lori",
     avatar: "https://storage.googleapis.com/golove-public/characters/lori_hill/images_avif_q50_720/lori_hill_avatar.avif",
@@ -636,6 +657,7 @@ export const characters: Character[] = [
 },
   {
     id: "emma",
+    type: "realistic",
     name: "Emma",
     username: "emma",
     avatar: "https://storage.googleapis.com/golove-public/characters/emma_walker/images_avif_q50_720/emma_walker_avatar.avif",
@@ -662,6 +684,7 @@ export const characters: Character[] = [
 },
   {
     id: "annie",
+    type: "realistic",
     name: "Annie",
     username: "annie",
     avatar: "https://storage.googleapis.com/golove-public/characters/annie_may/images_avif_q50_720/annie_may_avatar.avif",
@@ -688,6 +711,7 @@ export const characters: Character[] = [
 },
   {
     id: "ember",
+    type: "realistic",
     name: "Ember",
     username: "ember",
     avatar: "https://storage.googleapis.com/golove-public/characters/ember_foxhart/images_avif_q50_720/ember_foxhart_avatar.avif",
@@ -714,6 +738,7 @@ export const characters: Character[] = [
 },
   {
     id: "hannah",
+    type: "realistic",
     name: "Hannah",
     username: "hannah",
     avatar: "https://storage.googleapis.com/golove-public/characters/hannah_berger/images_avif_q50_720/hannah_berger_avatar.avif",
@@ -740,6 +765,7 @@ export const characters: Character[] = [
 },
   {
     id: "rose",
+    type: "realistic",
     name: "Rose",
     username: "rose",
     avatar: "https://storage.googleapis.com/golove-public/characters/rose_branchflower/images_avif_q50_720/rose_branchflower_avatar.avif",
@@ -766,6 +792,7 @@ export const characters: Character[] = [
 },
   {
     id: "kimberly",
+    type: "realistic",
     name: "Kimberly",
     username: "kimberly",
     avatar: "https://storage.googleapis.com/golove-public/characters/kimberly_rhodes/images_avif_q50_720/kimberly_rhodes_avatar.avif",
@@ -792,6 +819,7 @@ export const characters: Character[] = [
 },
   {
     id: "lily",
+    type: "realistic",
     name: "Lily",
     username: "lily",
     avatar: "https://storage.googleapis.com/golove-public/characters/lily_evans/images_avif_q50_720/lily_evans_avatar.avif",
@@ -818,6 +846,7 @@ export const characters: Character[] = [
 },
   {
     id: "sophie",
+    type: "realistic",
     name: "Sophie",
     username: "sophie",
     avatar: "https://storage.googleapis.com/golove-public/characters/sophie_bennett/images_avif_q50_720/sophie_bennett_avatar.avif",
@@ -844,6 +873,7 @@ export const characters: Character[] = [
 },
   {
     id: "chloe",
+    type: "realistic",
     name: "Chloe",
     username: "chloe",
     avatar: "https://storage.googleapis.com/golove-public/characters/chloe_harper/images_avif_q50_720/chloe_harper_avatar.avif",
@@ -870,6 +900,7 @@ export const characters: Character[] = [
 },
   {
     id: "ivy",
+    type: "realistic",
     name: "Ivy",
     username: "ivy",
     avatar: "https://storage.googleapis.com/golove-public/characters/ivy_blake/images_avif_q50_720/ivy_blake_avatar.avif",
@@ -896,6 +927,7 @@ export const characters: Character[] = [
 },
   {
     id: "stella",
+    type: "realistic",
     name: "Stella",
     username: "stella",
     avatar: "https://storage.googleapis.com/golove-public/characters/stella_miller/images_avif_q50_720/stella_miller_avatar.avif",
@@ -922,6 +954,7 @@ export const characters: Character[] = [
 },
   {
     id: "zoe",
+    type: "realistic",
     name: "Zoe",
     username: "zoe",
     avatar: "https://storage.googleapis.com/golove-public/characters/zoe_taylor/images_avif_q50_720/zoe_taylor_avatar.avif",
@@ -948,6 +981,7 @@ export const characters: Character[] = [
 },
   {
     id: "elena",
+    type: "realistic",
     name: "Elena",
     username: "elena",
     avatar: "https://storage.googleapis.com/golove-public/characters/elize_noir/images_avif_q50_720/elize_noir_avatar.avif",
@@ -974,6 +1008,7 @@ export const characters: Character[] = [
 },
   {
     id: "maya",
+    type: "realistic",
     name: "Maya",
     username: "maya",
     avatar: "https://storage.googleapis.com/golove-public/characters/maya_wright/images_avif_q50_720/maya_wright_avatar.avif",
@@ -1000,6 +1035,7 @@ export const characters: Character[] = [
 },
   {
     id: "aria",
+    type: "realistic",
     name: "Aria",
     username: "aria",
     avatar: "https://storage.googleapis.com/golove-public/characters/aria_ratana/images_avif_q50_720/aria_ratana_avatar.avif",
@@ -1026,6 +1062,7 @@ export const characters: Character[] = [
 },
   {
     id: "luna",
+    type: "realistic",
     name: "Luna",
     username: "luna",
     avatar: "https://storage.googleapis.com/golove-public/characters/lulu_yamashiro/images_avif_q50_720/lulu_yamashiro_avatar.avif",
@@ -1052,6 +1089,7 @@ export const characters: Character[] = [
 },
   {
     id: "aria2",
+    type: "realistic",
     name: "Aria",
     username: "aria2",
     avatar: "https://storage.googleapis.com/golove-public/characters/aria_ratana/images_avif_q50_720/aria_ratana_avatar.avif",
@@ -1078,6 +1116,7 @@ export const characters: Character[] = [
 },
   {
     id: "nina",
+    type: "realistic",
     name: "Nina",
     username: "nina",
     avatar: "https://storage.googleapis.com/golove-public/characters/nina_hart/images_avif_q50_720/nina_hart_avatar.avif",
@@ -1104,6 +1143,7 @@ export const characters: Character[] = [
 },
   {
     id: "sofia",
+    type: "realistic",
     name: "Sofia",
     username: "sofia",
     avatar: "https://storage.googleapis.com/golove-public/characters/sofia_bianchi/images_avif_q50_720/sofia_bianchi_avatar.avif",
@@ -1130,6 +1170,7 @@ export const characters: Character[] = [
 },
   {
     id: "jade",
+    type: "realistic",
     name: "Jade",
     username: "jade",
     avatar: "https://storage.googleapis.com/golove-public/characters/jade_rivers/images_avif_q50_720/jade_rivers_avatar.avif",
@@ -1156,6 +1197,7 @@ export const characters: Character[] = [
 },
   {
     id: "raven",
+    type: "realistic",
     name: "Raven",
     username: "raven",
     avatar: "https://storage.googleapis.com/golove-public/characters/raven_greene/images_avif_q50_720/raven_greene_avatar.avif",
@@ -1182,6 +1224,7 @@ export const characters: Character[] = [
 },
   {
     id: "aurora",
+    type: "realistic",
     name: "Aurora",
     username: "aurora",
     avatar: "https://storage.googleapis.com/golove-public/characters/aurora_lux/images_avif_q50_720/aurora_lux_avatar.avif",
@@ -1208,6 +1251,7 @@ export const characters: Character[] = [
 },
   {
     id: "scarlett",
+    type: "realistic",
     name: "Scarlett",
     username: "scarlett",
     avatar: "https://storage.googleapis.com/golove-public/characters/scarlett_rose/images_avif_q50_720/scarlett_rose_avatar.avif",
@@ -1234,6 +1278,7 @@ export const characters: Character[] = [
 },
   {
     id: "harper",
+    type: "realistic",
     name: "Harper",
     username: "harper",
     avatar: "https://storage.googleapis.com/golove-public/characters/harper_reynolds/images_avif_q50_720/harper_reynolds_avatar.avif",
@@ -1260,6 +1305,7 @@ export const characters: Character[] = [
 },
   {
     id: "willow",
+    type: "realistic",
     name: "Willow",
     username: "willow",
     avatar: "https://storage.googleapis.com/golove-public/characters/willow_maddison/images_avif_q50_720/willow_maddison_avatar.avif",
@@ -1286,6 +1332,7 @@ export const characters: Character[] = [
 },
   {
     id: "jade2",
+    type: "realistic",
     name: "Jade",
     username: "jade2",
     avatar: "https://storage.googleapis.com/golove-public/characters/jade_kim/images_avif_q50_720/jade_kim_avatar.avif",
@@ -1312,6 +1359,7 @@ export const characters: Character[] = [
 },
   {
     id: "lucy",
+    type: "realistic",
     name: "Lucy",
     username: "lucy",
     avatar: "https://storage.googleapis.com/golove-public/characters/lucy_wilson/images_avif_q50_720/lucy_wilson_avatar.avif",
@@ -1338,6 +1386,7 @@ export const characters: Character[] = [
 },
   {
     id: "eva",
+    type: "realistic",
     name: "Eva",
     username: "eva",
     avatar: "https://storage.googleapis.com/golove-public/characters/eva_larsen/images_avif_q50_720/eva_larsen_avatar.avif",
@@ -1364,6 +1413,7 @@ export const characters: Character[] = [
 },
   {
     id: "alice",
+    type: "realistic",
     name: "Alice",
     username: "alice",
     avatar: "https://storage.googleapis.com/golove-public/characters/alice_summers/images_avif_q50_720/alice_summers_avatar.avif",
@@ -1390,6 +1440,7 @@ export const characters: Character[] = [
 },
   {
     id: "clara",
+    type: "realistic",
     name: "Clara",
     username: "clara",
     avatar: "https://storage.googleapis.com/golove-public/characters/clara_mendoza/images_avif_q50_720/clara_mendoza_avatar.avif",
@@ -1416,6 +1467,7 @@ export const characters: Character[] = [
 },
   {
     id: "yuki",
+    type: "realistic",
     name: "Yuki",
     username: "yuki",
     avatar: "https://storage.googleapis.com/golove-public/characters/yuki_nakamura/images_avif_q50_720/yuki_nakamura_avatar.avif",
@@ -1442,6 +1494,7 @@ export const characters: Character[] = [
 },
   {
     id: "lila",
+    type: "realistic",
     name: "Lila",
     username: "lila",
     avatar: "https://storage.googleapis.com/golove-public/characters/lila_summers/images_avif_q50_720/lila_summers_avatar.avif",
@@ -1468,6 +1521,7 @@ export const characters: Character[] = [
 },
   {
     id: "nora",
+    type: "realistic",
     name: "Nora",
     username: "nora",
     avatar: "https://storage.googleapis.com/golove-public/characters/nora_nelson/images_avif_q50_720/nora_nelson_avatar.avif",
@@ -1494,6 +1548,7 @@ export const characters: Character[] = [
 },
   {
     id: "irys",
+    type: "realistic",
     name: "Irys",
     username: "irys",
     avatar: "https://storage.googleapis.com/golove-public/characters/iris_anderson/images_avif_q50_720/iris_anderson_avatar.avif",
@@ -1520,6 +1575,7 @@ export const characters: Character[] = [
 },
   {
     id: "isabella",
+    type: "realistic",
     name: "Isabella",
     username: "isabella",
     avatar: "https://storage.googleapis.com/golove-public/characters/isabella_rossi/images_avif_q50_720/isabella_rossi_avatar.avif",
@@ -1546,6 +1602,7 @@ export const characters: Character[] = [
 },
   {
     id: "freya",
+    type: "realistic",
     name: "Freya",
     username: "freya",
     avatar: "https://storage.googleapis.com/golove-public/characters/freya_voss/images_avif_q50_720/freya_voss_avatar.avif",
@@ -1572,6 +1629,7 @@ export const characters: Character[] = [
 },
   {
     id: "sierra",
+    type: "realistic",
     name: "Sierra",
     username: "sierra",
     avatar: "https://storage.googleapis.com/golove-public/characters/sierra_fishy/images_avif_q50_720/sierra_fishy_avatar.avif",
@@ -1598,6 +1656,7 @@ export const characters: Character[] = [
 },
   {
     id: "celeste",
+    type: "realistic",
     name: "Celeste",
     username: "celeste",
     avatar: "https://storage.googleapis.com/golove-public/characters/celeste_draven/images_avif_q50_720/celeste_draven_avatar.avif",
@@ -1624,6 +1683,7 @@ export const characters: Character[] = [
 },
   {
     id: "piper",
+    type: "realistic",
     name: "Piper",
     username: "piper",
     avatar: "https://storage.googleapis.com/golove-public/characters/piper_hall/images_avif_q50_720/piper_hall_avatar.avif",
@@ -1650,6 +1710,7 @@ export const characters: Character[] = [
 },
   {
     id: "diana",
+    type: "realistic",
     name: "Diana",
     username: "diana",
     avatar: "https://storage.googleapis.com/golove-public/characters/dina_zanetti/images_avif_q50_720/dina_zanetti_avatar.avif",
@@ -1676,6 +1737,7 @@ export const characters: Character[] = [
 },
   {
     id: "viola",
+    type: "realistic",
     name: "Viola",
     username: "viola",
     avatar: "https://storage.googleapis.com/golove-public/characters/viola_frost/images_avif_q50_720/viola_frost_avatar.avif",
@@ -1702,6 +1764,7 @@ export const characters: Character[] = [
 },
   {
     id: "elara",
+    type: "realistic",
     name: "Elara",
     username: "elara",
     avatar: "https://storage.googleapis.com/golove-public/characters/elara_frostwhisper/images_avif_q50_720/elara_frostwhisper_avatar.avif",
@@ -1728,6 +1791,7 @@ export const characters: Character[] = [
 },
   {
     id: "morgana",
+    type: "realistic",
     name: "Morgana",
     username: "morgana",
     avatar: "https://storage.googleapis.com/golove-public/characters/morgana_ashwood/images_avif_q50_720/morgana_ashwood_avatar.avif",
@@ -1754,6 +1818,7 @@ export const characters: Character[] = [
 },
   {
     id: "vivienne",
+    type: "realistic",
     name: "Vivienne",
     username: "vivienne",
     avatar: "https://storage.googleapis.com/golove-public/characters/vivienne_larke/images_avif_q50_720/vivienne_larke_avatar.avif",
@@ -1780,6 +1845,7 @@ export const characters: Character[] = [
 },
   {
     id: "lilith",
+    type: "realistic",
     name: "Lilith",
     username: "lilith",
     avatar: "https://storage.googleapis.com/golove-public/characters/lilith_blackwood/images_avif_q50_720/lilith_blackwood_avatar.avif",

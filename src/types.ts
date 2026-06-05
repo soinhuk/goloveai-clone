@@ -14,6 +14,7 @@ export type Character = {
   isPremium?: boolean;
   isFavorite?: boolean;
   age?: number;
+  type?: 'realistic' | 'anime';
   // Extended profile fields
   personality?: string;
   occupation?: string;
