@@ -54,10 +54,16 @@ export default function Chat() {
   const [lightboxVideo, setLightboxVideo] = useState<string | null>(null)
   const [customName, setCustomName] = useState<string>('')
   const [isEditingName, setIsEditingName] = useState(false)
+  const [showMoreMenu, setShowMoreMenu] = useState(false)
+  const [isDeleted, setIsDeleted] = useState(false)
   const nameInputRef = useRef<HTMLInputElement>(null)
 
   const char = characters.find(c => c.username === username || c.id === username)
-  if (!char) return <div className="flex items-center justify-center h-screen bg-[#0a0a0f] text-white/40 text-lg">Character not found</div>
+  if (!char || isDeleted) return <div className="flex flex-col items-center justify-center h-screen bg-[#0a0a0f] text-white/40 text-lg gap-4">
+    <span className="text-5xl">💔</span>
+    <span>该角色已被删除</span>
+    <button onClick={() => navigate('/app/chats')} className="px-6 py-2 rounded-full bg-[#d05bf8]/20 text-[#d05bf8] text-sm font-semibold hover:bg-[#d05bf8]/30 transition-all">返回聊天列表</button>
+  </div>
 
   const videoAvatar = char.avatar?.replace('/images_avif_q50_720/', '/video_avatar/').replace('_avatar.avif', '_video_avatar_nsfw.mp4')
   const nsfwAvatar = char.avatar?.replace('_avatar.avif', '_avatar_nsfw.avif')
@@ -119,13 +125,14 @@ export default function Chat() {
 
   // Close dropdowns on outside click
   useEffect(() => {
-    if (!showQuickQuestions && !showGifts) return
+    if (!showQuickQuestions && !showGifts && !showMoreMenu) return
     const handleClose = (e: MouseEvent) => {
       const target = e.target as HTMLElement
       // Don't close if clicking inside dropdown or the toggle buttons
       if (target.closest('[data-dropdown]') || target.closest('[data-dropdown-toggle]')) return
       setShowQuickQuestions(false)
       setShowGifts(false)
+      setShowMoreMenu(false)
     }
     // Use setTimeout to avoid immediate trigger from the current click
     const timer = setTimeout(() => {
@@ -135,7 +142,7 @@ export default function Chat() {
       clearTimeout(timer)
       document.removeEventListener('mousedown', handleClose)
     }
-  }, [showQuickQuestions, showGifts])
+  }, [showQuickQuestions, showGifts, showMoreMenu])
 
   const otherChars = characters.filter(c => c.id !== char.id).slice(0, 12)
 
@@ -194,11 +201,9 @@ export default function Chat() {
 
       {/* ═══════ CENTER PANEL ═══════ */}
       <div className="flex-1 flex flex-col relative min-w-0">
-        {/* Dreamy Background */}
-        {hasLiveVideo && (
-          <video src={videoAvatar} autoPlay loop muted playsInline className="absolute inset-0 w-full h-full object-cover opacity-[0.08] blur-[30px] z-0" />
-        )}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#d05bf8]/[0.02] via-transparent to-[#ff18a0]/[0.02] z-0 pointer-events-none" />
+        {/* Dark Pink Gradient Background */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a0f] via-[#120812] to-[#0a0a0f] z-0 pointer-events-none" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(208,91,248,0.04)_0%,transparent_70%)] z-0 pointer-events-none" />
 
         {/* Header */}
         <header className="relative z-10 flex items-center gap-3 px-5 py-3 border-b border-white/[4%] bg-[#0a0a0f]/90 backdrop-blur-2xl">
@@ -214,19 +219,7 @@ export default function Chat() {
             </div>
             <div className="min-w-0">
               <div className="flex items-center gap-2">
-                {isEditingName ? (
-                  <input ref={nameInputRef} type="text" value={customName || char.name}
-                    onChange={e => setCustomName(e.target.value)}
-                    onBlur={() => setIsEditingName(false)}
-                    onKeyDown={e => { if (e.key === 'Enter') setIsEditingName(false) }}
-                    className="text-[18px] font-bold text-white bg-transparent border-b border-[#d05bf8]/40 outline-none w-[120px] py-0.5" autoFocus />
-                ) : (
-                  <h1 className="text-[18px] font-bold text-white leading-tight truncate">{displayName}</h1>
-                )}
-                <button onClick={() => { setIsEditingName(true); setTimeout(() => nameInputRef.current?.focus(), 50) }}
-                  className="p-1.5 rounded-lg hover:bg-white/[6%] transition-all" title="编辑名字">
-                  <Pencil size={13} className="text-white/30 hover:text-[#d05bf8]" />
-                </button>
+                <h1 className="text-[18px] font-bold text-white leading-tight truncate">{displayName}</h1>
               </div>
               <div className="flex items-center gap-1.5">
                 <span className="size-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_6px_rgba(52,211,153,0.5)]" />
@@ -244,20 +237,48 @@ export default function Chat() {
               </button>
               <span className="absolute -top-1 -right-1 px-1.5 py-0.5 text-[7px] font-bold bg-gradient-to-r from-[#ff18a0] to-[#d05bf8] text-white rounded-full leading-none shadow-[0_0_10px_rgba(255,24,160,0.5)]">NEW</span>
             </div>
-            <button className="flex items-center justify-center size-11 rounded-full hover:bg-white/[6%] transition-all border border-white/[5%]"><MoreHorizontal size={20} className="text-white/45" /></button>
+            <div className="relative" data-dropdown-toggle>
+              <button onClick={() => setShowMoreMenu(!showMoreMenu)} className="flex items-center justify-center size-11 rounded-full hover:bg-white/[6%] transition-all border border-white/[5%]">
+                <MoreHorizontal size={20} className="text-white/45" />
+              </button>
+              {showMoreMenu && (
+                <div data-dropdown className="absolute top-full right-0 mt-2 w-[220px] bg-[#1a1a24]/95 backdrop-blur-2xl border border-white/[8%] rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.5)] overflow-hidden z-30">
+                  <div className="py-1">
+                    <button onClick={() => { setIsEditingName(true); setShowMoreMenu(false); setTimeout(() => nameInputRef.current?.focus(), 50) }}
+                      className="w-full flex items-center gap-3 px-5 py-3.5 hover:bg-white/[4%] transition-all text-left group">
+                      <span className="text-base">✏️</span>
+                      <div>
+                        <span className="text-[14px] text-white/70 group-hover:text-white/90 transition-colors font-medium">修改角色名称</span>
+                        <p className="text-[11px] text-white/25 mt-0.5">给女友取一个新的名字</p>
+                      </div>
+                    </button>
+                    <button onClick={() => { setMessages([{ id: 1, sender: 'ai' as const, text: char.greeting || `I love it when a conversation starts with something interesting... so, where do we begin? 😈`, time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), photos: undefined as string[] | undefined }]); setUnlockedContent([]); setShowMoreMenu(false) }}
+                      className="w-full flex items-center gap-3 px-5 py-3.5 hover:bg-white/[4%] transition-all text-left group">
+                      <span className="text-base">🔄</span>
+                      <div>
+                        <span className="text-[14px] text-white/70 group-hover:text-white/90 transition-colors font-medium">重置对话</span>
+                        <p className="text-[11px] text-white/25 mt-0.5">清除所有聊天记录</p>
+                      </div>
+                    </button>
+                    <div className="mx-4 border-t border-white/[5%]" />
+                    <button onClick={() => { setIsDeleted(true); setShowMoreMenu(false) }}
+                      className="w-full flex items-center gap-3 px-5 py-3.5 hover:bg-red-500/[5%] transition-all text-left group">
+                      <span className="text-base">🗑️</span>
+                      <div>
+                        <span className="text-[14px] text-red-400/70 group-hover:text-red-400 transition-colors font-medium">删除该女友</span>
+                        <p className="text-[11px] text-white/25 mt-0.5">删除后不再显示在聊天列表中</p>
+                      </div>
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
             <button className="flex items-center justify-center size-11 rounded-full hover:bg-white/[6%] transition-all border border-white/[5%]"><Filter size={18} className="text-white/45" /></button>
             <button onClick={() => setShowDetails(!showDetails)} className={`flex items-center justify-center size-11 rounded-full transition-all ${showDetails ? 'bg-[#d05bf8]/15 text-[#d05bf8] shadow-[0_0_12px_rgba(208,91,248,0.2)] border border-[#d05bf8]/20' : 'hover:bg-white/[6%] text-white/45 border border-white/[5%]'}`}>
               <ChevronRight size={20} className={`transition-transform duration-200 ${showDetails ? 'rotate-180' : ''}`} />
             </button>
           </div>
         </header>
-
-        {/* Hint Banner */}
-        <div className="relative z-10 mx-5 mt-4 px-5 py-3.5 rounded-2xl bg-gradient-to-r from-[#d05bf8]/[0.08] to-[#ff18a0]/[0.06] border border-[#d05bf8]/[0.1] shadow-[0_0_20px_rgba(208,91,248,0.05)]">
-          <p className="text-[15px] text-[#d05bf8]/70 leading-relaxed">
-            ✨ <span className="font-semibold text-[#d05bf8]/90">这是一个AI角色。</span> 欢迎随便聊聊任何事情！你的对话是私密且无审查的。
-          </p>
-        </div>
 
         {/* Messages */}
         <div ref={messagesRef} className="relative z-10 flex-1 overflow-y-auto px-5 py-5 space-y-5 scrollbar-hide">
@@ -343,14 +364,6 @@ export default function Chat() {
               </button>
             ))}
           </div>
-        </div>
-
-        {/* Quick Action */}
-        <div className="relative z-10 px-5 pb-3">
-          <button className="w-full py-3 rounded-full border border-[#FF18A0]/20 bg-gradient-to-r from-[#FF18A0]/5 to-[#d05bf8]/5 text-[#FF18A0] text-[15px] font-medium hover:from-[#FF18A0]/10 hover:to-[#d05bf8]/10 hover:border-[#FF18A0]/30 hover:shadow-[0_0_15px_rgba(255,24,160,0.1)] transition-all flex items-center justify-center gap-2">
-            <ImageIcon size={16} />
-            给我发些辣味照片
-          </button>
         </div>
 
         {/* Input Area */}
@@ -665,6 +678,27 @@ export default function Chat() {
           {lightboxVideo && (
             <video src={lightboxVideo} autoPlay loop controls className="max-w-[90vw] max-h-[90vh] object-contain rounded-2xl shadow-2xl" onClick={e => e.stopPropagation()} />
           )}
+        </div>
+      )}
+
+      {/* ═══════ NAME EDIT MODAL ═══════ */}
+      {isEditingName && (
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center" onClick={() => setIsEditingName(false)}>
+          <div className="bg-[#1a1a24] border border-white/[8%] rounded-2xl p-6 w-[340px] shadow-[0_20px_60px_rgba(0,0,0,0.5)]" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center gap-2 mb-4">
+              <span className="text-xl">💕</span>
+              <h3 className="text-[16px] font-bold text-white/90">给女友取一个新的名字</h3>
+            </div>
+            <input ref={nameInputRef} type="text" value={customName || char.name}
+              onChange={e => setCustomName(e.target.value)}
+              onKeyDown={e => { if (e.key === 'Enter') setIsEditingName(false) }}
+              placeholder="输入新名字..."
+              className="w-full bg-white/[5%] border border-white/[8%] rounded-xl py-3 px-4 text-[15px] text-white placeholder:text-white/20 focus:outline-none focus:border-[#d05bf8]/40 mb-4" autoFocus />
+            <div className="flex gap-2">
+              <button onClick={() => setIsEditingName(false)} className="flex-1 py-2.5 rounded-xl bg-white/[5%] text-white/50 text-sm font-medium hover:bg-white/[8%] transition-all">取消</button>
+              <button onClick={() => setIsEditingName(false)} className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] text-white text-sm font-bold hover:shadow-[0_0_15px_rgba(208,91,248,0.3)] transition-all">保存</button>
+            </div>
+          </div>
         </div>
       )}
     </div>
