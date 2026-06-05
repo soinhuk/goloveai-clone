@@ -56,8 +56,13 @@ export default function Chat() {
 
   const videoAvatar = char.avatar?.replace('/images_avif_q50_720/', '/video_avatar/').replace('_avatar.avif', '_video_avatar_nsfw.mp4')
   const nsfwAvatar = char.avatar?.replace('_avatar.avif', '_avatar_nsfw.avif')
-  // Gallery: use avatar variants, avoid duplicating main photo (nsfwAvatar)
-  const galleryImages = [char.avatar, char.avatar?.replace('_avatar.avif', '_avatar_2.avif'), char.avatar?.replace('_avatar.avif', '_avatar_3.avif'), char.avatar?.replace('_avatar.avif', '_avatar_4.avif')].filter(Boolean)
+  // Only live models have actual video avatars
+  const hasLiveVideo = char.isLive && !!videoAvatar
+  // Gallery: only unique images, no duplicates with main photo
+  const baseGallery = [char.avatar, nsfwAvatar].filter(Boolean)
+  const uniqueGallery = [...new Set(baseGallery)]
+  // Combined gallery: base + gift-unlocked content
+  const galleryImages = [...uniqueGallery, ...unlockedContent.filter(c => c.startsWith('photo:')).map(c => c.replace('photo:', ''))]
 
   const [messages, setMessages] = useState([
     { id: 1, sender: 'ai' as const, text: char.greeting || `I love it when a conversation starts with something interesting... so, where do we begin? 😈`, time: '2:09 PM', photos: undefined as string[] | undefined },
@@ -75,8 +80,13 @@ export default function Chat() {
 
     // If sending a gift, add unlocked content to gallery
     if (msgText.includes('💎')) {
-      const rewardPhoto = nsfwAvatar || char.avatar
-      setUnlockedContent(prev => [...prev, `photo:${rewardPhoto}`])
+      // Photo gifts add photos, video gifts add videos
+      if (msgText.includes('实时镜头') || msgText.includes('泳装') || msgText.includes('定制')) {
+        if (hasLiveVideo) setUnlockedContent(prev => [...prev, `video:${videoAvatar}`])
+      } else {
+        const rewardPhoto = nsfwAvatar || char.avatar
+        setUnlockedContent(prev => [...prev, `photo:${rewardPhoto}`])
+      }
     }
     setTimeout(() => {
       const replies = [
@@ -179,7 +189,7 @@ export default function Chat() {
       {/* ═══════ CENTER PANEL ═══════ */}
       <div className="flex-1 flex flex-col relative min-w-0">
         {/* Dreamy Background */}
-        {videoAvatar && (
+        {hasLiveVideo && (
           <video src={videoAvatar} autoPlay loop muted playsInline className="absolute inset-0 w-full h-full object-cover opacity-[0.08] blur-[30px] z-0" />
         )}
         <div className="absolute inset-0 bg-gradient-to-b from-[#d05bf8]/[0.02] via-transparent to-[#ff18a0]/[0.02] z-0 pointer-events-none" />
@@ -582,23 +592,34 @@ export default function Chat() {
             </div>
           </div>
 
-          {/* Gallery - All unlocked, gift content added here */}
+          {/* Gallery - unique images + gift-unlocked content */}
           <div className="px-5 pb-4">
             <div className="flex items-center gap-2 mb-3">
               <ImageIcon size={14} className="text-white/35" />
               <h3 className="text-sm font-bold text-white/80">作品集</h3>
-              <span className="text-[10px] text-white/25">{galleryImages.length + unlockedContent.filter(c => c.startsWith('photo:')).length} 张</span>
+              <span className="text-[10px] text-white/25">{galleryImages.length + unlockedContent.filter(c => c.startsWith('video:')).length} 项</span>
             </div>
             <div className="grid grid-cols-4 gap-2">
-              {[...galleryImages, ...unlockedContent.filter(c => c.startsWith('photo:')).map(c => c.replace('photo:', ''))].map((img, i) => (
-                <div key={i} className="aspect-[3/4] rounded-xl overflow-hidden cursor-pointer hover:scale-105 transition-all border border-white/[5%]">
+              {/* Photos */}
+              {galleryImages.map((img, i) => (
+                <div key={`p-${i}`} className="aspect-[3/4] rounded-xl overflow-hidden cursor-pointer hover:scale-105 transition-all border border-white/[5%]">
                   <img src={img} alt={`gallery ${i + 1}`} className="w-full h-full object-cover" />
+                </div>
+              ))}
+              {/* Videos from gifts */}
+              {unlockedContent.filter(c => c.startsWith('video:')).map((v, i) => (
+                <div key={`v-${i}`} className="aspect-[3/4] rounded-xl overflow-hidden cursor-pointer hover:scale-105 transition-all border border-white/[5%] relative">
+                  <video src={v.replace('video:', '')} muted className="w-full h-full object-cover" />
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+                    <MonitorPlay size={20} className="text-white/80" />
+                  </div>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Live Camera - Directly viewable */}
+          {/* Live Camera - only if character has live video */}
+          {hasLiveVideo && (
           <div className="px-5 pb-6">
             <div className="flex items-center gap-2 mb-3">
               <MonitorPlay size={14} className="text-[#ff18a0]" />
@@ -606,22 +627,14 @@ export default function Chat() {
               <span className="text-[9px] px-2 py-0.5 bg-gradient-to-r from-red-500/20 to-[#ff18a0]/20 text-red-400 rounded-full font-bold border border-red-500/10">🔴 LIVE</span>
             </div>
             <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-white/[3%] border border-white/[5%] shadow-[0_4px_15px_rgba(0,0,0,0.3)]">
-              {videoAvatar ? (
-                <>
-                  <video src={videoAvatar} autoPlay loop muted playsInline className="w-full h-full object-cover" />
-                  <div className="absolute top-3 left-3 flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-500/80 backdrop-blur-sm shadow-[0_0_10px_rgba(239,68,68,0.3)]">
-                    <span className="size-2 rounded-full bg-white animate-pulse" />
-                    <span className="text-[10px] text-white font-bold">LIVE</span>
-                  </div>
-                </>
-              ) : (
-                <div className="flex flex-col items-center justify-center h-full">
-                  <MonitorPlay size={40} className="text-white/15 mx-auto mb-2" />
-                  <p className="text-sm text-white/30">实时预览</p>
-                </div>
-              )}
+              <video src={videoAvatar} autoPlay loop muted playsInline className="w-full h-full object-cover" />
+              <div className="absolute top-3 left-3 flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-500/80 backdrop-blur-sm shadow-[0_0_10px_rgba(239,68,68,0.3)]">
+                <span className="size-2 rounded-full bg-white animate-pulse" />
+                <span className="text-[10px] text-white font-bold">LIVE</span>
+              </div>
             </div>
           </div>
+          )}
         </div>
       )}
     </div>
