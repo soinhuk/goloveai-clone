@@ -58,11 +58,11 @@ export default function Chat() {
 
   const videoAvatar = char.avatar?.replace('/images_avif_q50_720/', '/video_avatar/').replace('_avatar.avif', '_video_avatar_nsfw.mp4')
   const nsfwAvatar = char.avatar?.replace('_avatar.avif', '_avatar_nsfw.avif')
-  // Gallery: nsfw + avatar + 2 extras (avoid duplicating main photo which is nsfwAvatar)
-  const galleryImages = [nsfwAvatar, char.avatar, char.avatar?.replace('_avatar.avif', '_avatar_2.avif'), char.avatar?.replace('_avatar.avif', '_avatar_3.avif')].filter(Boolean)
+  // Gallery: use avatar variants, avoid duplicating main photo (nsfwAvatar)
+  const galleryImages = [char.avatar, char.avatar?.replace('_avatar.avif', '_avatar_2.avif'), char.avatar?.replace('_avatar.avif', '_avatar_3.avif'), char.avatar?.replace('_avatar.avif', '_avatar_4.avif')].filter(Boolean)
 
   const [messages, setMessages] = useState([
-    { id: 1, sender: 'ai' as const, text: char.greeting || `I love it when a conversation starts with something interesting... so, where do we begin? 😈`, time: '2:09 PM', photos: [nsfwAvatar, char.avatar] },
+    { id: 1, sender: 'ai' as const, text: char.greeting || `I love it when a conversation starts with something interesting... so, where do we begin? 😈`, time: '2:09 PM', photos: undefined as string[] | undefined },
   ])
 
   const handleSend = (text?: string) => {
@@ -588,10 +588,9 @@ export default function Chat() {
                       <img src={img} alt={`gallery ${i + 1}`} className="w-full h-full object-cover" />
                     ) : (
                       <>
-                        <img src={img} alt={`gallery ${i + 1}`} className="w-full h-full object-cover blur-md opacity-40" />
-                        <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center gap-1" onClick={() => setUnlockedGallery(prev => new Set([...prev, i]))}>
-                          <span className="text-lg">🔒</span>
-                          <span className="text-[10px] font-bold text-[#d05bf8]">2 💎</span>
+                        <img src={img} alt={`gallery ${i + 1}`} className="w-full h-full object-cover opacity-30" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex flex-col items-center justify-end pb-2" onClick={() => setUnlockedGallery(prev => new Set([...prev, i]))}>
+                          <span className="text-[10px] font-bold text-[#d05bf8] bg-black/40 px-2 py-0.5 rounded-full">🔒 2 💎</span>
                         </div>
                       </>
                     )}
