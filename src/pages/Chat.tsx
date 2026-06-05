@@ -57,6 +57,25 @@ export default function Chat() {
   const [showMoreMenu, setShowMoreMenu] = useState(false)
   const [isDeleted, setIsDeleted] = useState(false)
   const nameInputRef = useRef<HTMLInputElement>(null)
+  const moreMenuRef = useRef<HTMLDivElement>(null)
+
+  // Close more menu when clicking outside
+  useEffect(() => {
+    if (!showMoreMenu) return
+    const handleClick = (e: MouseEvent) => {
+      if (!moreMenuRef.current?.contains(e.target as Node)) {
+        setShowMoreMenu(false)
+      }
+    }
+    // Small delay to avoid closing immediately when clicking the "..." toggle button
+    const timeout = setTimeout(() => {
+      document.addEventListener('click', handleClick)
+    }, 50)
+    return () => {
+      clearTimeout(timeout)
+      document.removeEventListener('click', handleClick)
+    }
+  }, [showMoreMenu])
 
   const char = characters.find(c => c.username === username || c.id === username)
 
@@ -114,20 +133,6 @@ export default function Chat() {
   useEffect(() => {
     messagesRef.current?.scrollTo({ top: messagesRef.current.scrollHeight, behavior: 'smooth' })
   }, [messages, isTyping])
-
-  // Close dropdowns on outside click (click works because we use stopPropagation)
-  useEffect(() => {
-    if (!showQuickQuestions && !showGifts && !showMoreMenu) return
-    const handleClose = (e: Event) => {
-      const target = e.target as HTMLElement
-      if (target.closest('[data-dropdown]') || target.closest('[data-dropdown-toggle]')) return
-      setShowQuickQuestions(false)
-      setShowGifts(false)
-      setShowMoreMenu(false)
-    }
-    document.addEventListener('click', handleClose)
-    return () => document.removeEventListener('click', handleClose)
-  }, [showQuickQuestions, showGifts, showMoreMenu])
 
   const otherChars = characters.filter(c => c.id !== char?.id).slice(0, 12)
 
@@ -240,8 +245,8 @@ export default function Chat() {
                 <MoreHorizontal size={20} className="text-white/45" />
               </button>
               {showMoreMenu && (
-                <div onMouseDown={e => e.stopPropagation()} onClick={e => e.stopPropagation()} className="absolute top-full right-0 mt-1.5 w-[180px] bg-[#16161e] border border-white/[6%] rounded-xl shadow-[0_8px_30px_rgba(0,0,0,0.6)] overflow-hidden z-30">
-                  <button onClick={e => { e.stopPropagation(); setIsEditingName(true); setShowMoreMenu(false); setTimeout(() => nameInputRef.current?.focus(), 100) }}
+                <div ref={moreMenuRef} data-dropdown className="absolute top-full right-0 mt-1.5 w-[180px] bg-[#16161e] border border-white/[6%] rounded-xl shadow-[0_8px_30px_rgba(0,0,0,0.6)] overflow-hidden z-30">
+                  <button onClick={() => { setIsEditingName(true); setShowMoreMenu(false) }}
                     className="w-full flex items-center gap-2.5 px-3.5 py-2.5 hover:bg-white/[4%] transition-all text-left">
                     <span className="text-sm">✏️</span>
                     <span className="text-[13px] text-white/60 hover:text-white/90 transition-colors">修改名称</span>
