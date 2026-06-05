@@ -111,15 +111,16 @@ export default function Generate() {
   const [selectedChar, setSelectedChar] = useState(characters[0])
   const [charIndex, setCharIndex] = useState(0)
   const [showCharPicker, setShowCharPicker] = useState(false)
-  const [charTypeFilter, setCharTypeFilter] = useState('Realistic')
+  const [charTypeFilter, setCharTypeFilter] = useState('All')
   const [charSearch, setCharSearch] = useState('')
   const [mode, setMode] = useState<'video' | 'image'>('video')
   const [activeDialog, setActiveDialog] = useState<string | null>(null)
   const [selectedAction, setSelectedAction] = useState('')
   const [selectedClothes, setSelectedClothes] = useState('')
   const [selectedBg, setSelectedBg] = useState('')
-  const [aspectRatio, setAspectRatio] = useState('9:16')
-  const [quality, setQuality] = useState('HD')
+  const [videoQuantity, setVideoQuantity] = useState(1)
+  const [videoResolution, setVideoResolution] = useState('1080p')
+  const [imageQuantity, setImageQuantity] = useState(1)
   const [customPrompt, setCustomPrompt] = useState('')
   const [actionSearch, setActionSearch] = useState('')
   const [clothesSearch, setClothesSearch] = useState('')
@@ -136,7 +137,8 @@ export default function Generate() {
   }
 
   const filteredChars = characters.filter(c => {
-    const matchesType = charTypeFilter === 'All' || c.type === charTypeFilter.toLowerCase()
+    const typeMap: Record<string, string> = { 'Realistic': 'realistic', 'Anime': 'anime', 'Custom': 'custom' }
+    const matchesType = charTypeFilter === 'All' || c.type === typeMap[charTypeFilter]
     return matchesType && c.name.toLowerCase().includes(charSearch.toLowerCase())
   })
   const filteredActions = ACTIONS.filter(a => a.name.toLowerCase().includes(actionSearch.toLowerCase()))
@@ -188,7 +190,7 @@ export default function Generate() {
                     selectedAction === action.name ? 'border-[#d05bf8] shadow-lg shadow-[#d05bf8]/20' : 'border-white/[6%] hover:border-white/[15%]'
                   }`}
                 >
-                  <img src={action.image} alt={action.name} className="w-full h-full object-cover pointer-events-none" />
+                  <img src={action.image} alt={action.name} className="w-full aspect-[3/4] object-cover pointer-events-none" />
                   {action.video && (
                     <video src={action.video} muted loop playsInline preload="metadata"
                       className="absolute inset-0 w-full h-full object-cover pointer-events-none" style={{ display: 'none' }} />
@@ -286,8 +288,41 @@ export default function Generate() {
       )
     } else if (activeDialog === 'advanced') {
       title = 'Advanced Settings'
-      content = (
+      content = mode === 'video' ? (
         <div className="px-5 py-4 space-y-6">
+          {/* Quantity */}
+          <div className="space-y-3">
+            <label className="text-[12px] text-white/50 font-medium">Quantity Video</label>
+            <div className="grid grid-cols-3 gap-2">
+              {[1, 2, 4].map(q => (
+                <button key={q} onClick={() => setVideoQuantity(q)}
+                  className={`px-4 py-3 rounded-xl text-[14px] font-semibold transition-all flex items-center justify-center gap-2 ${
+                    videoQuantity === q
+                      ? 'bg-gradient-to-r from-[#d05bf8]/30 to-[#ff18a0]/30 border border-[#d05bf8]/50 text-white'
+                      : 'bg-white/[4%] border border-white/[8%] text-white/50 hover:bg-white/[8%]'
+                  }`}>
+                  {q}
+                </button>
+              ))}
+            </div>
+          </div>
+          {/* Resolution */}
+          <div className="space-y-3">
+            <label className="text-[12px] text-white/50 font-medium">Resolution</label>
+            <div className="grid grid-cols-3 gap-2">
+              {['480p', '720p', '1080p'].map(r => (
+                <button key={r} onClick={() => setVideoResolution(r)}
+                  className={`px-4 py-3 rounded-xl text-[14px] font-semibold transition-all flex items-center justify-center gap-2 ${
+                    videoResolution === r
+                      ? 'bg-gradient-to-r from-[#d05bf8]/30 to-[#ff18a0]/30 border border-[#d05bf8]/50 text-white'
+                      : 'bg-white/[4%] border border-white/[8%] text-white/50 hover:bg-white/[8%]'
+                  }`}>
+                  {r}
+                </button>
+              ))}
+            </div>
+          </div>
+          {/* Custom Prompt */}
           <div className="space-y-2">
             <label className="text-[12px] text-white/50 font-medium">Custom Prompt</label>
             <textarea value={customPrompt} onChange={e => setCustomPrompt(e.target.value)}
@@ -296,28 +331,63 @@ export default function Generate() {
               className="w-full bg-white/[4%] border border-white/[8%] rounded-xl py-3.5 px-4 text-[14px] text-white placeholder:text-white/25 focus:outline-none focus:border-[#d05bf8]/40 resize-none" />
             <div className="text-right text-[11px] text-white/20">{customPrompt.length}/1000</div>
           </div>
+        </div>
+      ) : (
+        <div className="px-5 py-4 space-y-6">
+          {/* Quantity */}
           <div className="space-y-3">
-            <label className="text-[12px] text-white/50 font-medium">Aspect Ratio</label>
+            <label className="text-[12px] text-white/50 font-medium">Quantity Image</label>
             <div className="grid grid-cols-4 gap-2">
-              {[{ r: '1:1', d: 'Square' }, { r: '16:9', d: 'Landscape' }, { r: '9:16', d: 'Portrait' }, { r: '4:3', d: 'Standard' }].map(item => (
-                <button key={item.r} onClick={() => setAspectRatio(item.r)}
-                  className={`px-3 py-3 rounded-xl text-[13px] font-medium transition-all ${aspectRatio === item.r ? 'bg-gradient-to-r from-[#d05bf8]/30 to-[#ff18a0]/30 border border-[#d05bf8]/50 text-white' : 'bg-white/[4%] border border-white/[8%] text-white/50'}`}>
-                  <div className="font-semibold">{item.r}</div>
-                  <div className="text-[10px] text-white/30 mt-0.5">{item.d}</div>
-                </button>
-              ))}
-            </div>
-          </div>
-          <div className="space-y-3">
-            <label className="text-[12px] text-white/50 font-medium">Quality</label>
-            <div className="flex gap-2">
-              {['Standard', 'HD', 'Ultra'].map(q => (
-                <button key={q} onClick={() => setQuality(q)}
-                  className={`flex-1 px-4 py-3 rounded-xl text-[12px] font-semibold transition-all ${quality === q ? 'bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] text-white shadow-lg' : 'bg-white/[4%] border border-white/[8%] text-white/50'}`}>
+              {[1, 2, 4, 8].map(q => (
+                <button key={q} onClick={() => setImageQuantity(q)}
+                  className={`px-4 py-3 rounded-xl text-[14px] font-semibold transition-all flex items-center justify-center gap-2 ${
+                    imageQuantity === q
+                      ? 'bg-gradient-to-r from-[#d05bf8]/30 to-[#ff18a0]/30 border border-[#d05bf8]/50 text-white'
+                      : 'bg-white/[4%] border border-white/[8%] text-white/50 hover:bg-white/[8%]'
+                  }`}>
                   {q}
                 </button>
               ))}
             </div>
+          </div>
+          {/* Orientation - Coming Soon */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
+              <label className="text-[12px] text-white/50 font-medium">Orientation</label>
+              <span className="text-[10px] px-2 py-0.5 rounded-full bg-white/[5%] text-white/30">Soon</span>
+            </div>
+            <div className="grid grid-cols-3 gap-2">
+              {['9:16', '16:9', '3:4', '4:3', '1:1', '21:9'].map(r => (
+                <button key={r} disabled
+                  className="px-4 py-3 rounded-xl text-[14px] font-semibold transition-all flex items-center justify-center gap-2 bg-white/[4%] border border-white/[8%] text-white/20 cursor-not-allowed">
+                  {r}
+                </button>
+              ))}
+            </div>
+          </div>
+          {/* Resolution - Coming Soon */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
+              <label className="text-[12px] text-white/50 font-medium">Resolution</label>
+              <span className="text-[10px] px-2 py-0.5 rounded-full bg-white/[5%] text-white/30">Soon</span>
+            </div>
+            <div className="grid grid-cols-3 gap-2">
+              {['480p', '720p', '1080p'].map(r => (
+                <button key={r} disabled
+                  className="px-4 py-3 rounded-xl text-[14px] font-semibold transition-all flex items-center justify-center gap-2 bg-white/[4%] border border-white/[8%] text-white/20 cursor-not-allowed">
+                  {r}
+                </button>
+              ))}
+            </div>
+          </div>
+          {/* Custom Prompt */}
+          <div className="space-y-2">
+            <label className="text-[12px] text-white/50 font-medium">Custom Prompt</label>
+            <textarea value={customPrompt} onChange={e => setCustomPrompt(e.target.value)}
+              placeholder="Describe the scene, mood, and actions in detail..."
+              rows={4} maxLength={1000}
+              className="w-full bg-white/[4%] border border-white/[8%] rounded-xl py-3.5 px-4 text-[14px] text-white placeholder:text-white/25 focus:outline-none focus:border-[#d05bf8]/40 resize-none" />
+            <div className="text-right text-[11px] text-white/20">{customPrompt.length}/1000</div>
           </div>
         </div>
       )
@@ -349,11 +419,11 @@ export default function Generate() {
 
     return (
       <div className="fixed inset-0 z-[200] flex flex-col" style={{ pointerEvents: 'auto' }}>
-        {/* Backdrop - clicks close dialog */}
+        {/* Backdrop */}
         <div className="absolute inset-0 bg-black/80 backdrop-blur-md" onClick={closeDialog} />
-        {/* Dialog content - positioned at bottom */}
+        {/* Dialog content */}
         <div className="absolute bottom-0 left-0 right-0 max-h-[85vh] flex flex-col items-center">
-          <div className="bg-[#181718] rounded-t-[24px] w-full max-w-3xl overflow-hidden flex flex-col max-h-[85vh]" style={{ pointerEvents: 'auto' }}>
+          <div className="bg-[#181718] rounded-t-[24px] w-full max-w-3xl overflow-hidden flex flex-col max-h-[85vh]">
             <div className="flex items-center justify-between px-5 py-4 border-b border-white/[6%] shrink-0">
               <h2 className="text-[17px] font-bold">{title}</h2>
               <button onClick={closeDialog} className="size-9 flex items-center justify-center rounded-full hover:bg-white/[8%] transition-colors">
@@ -431,7 +501,7 @@ export default function Generate() {
           <ChevronLeft size={22} className="text-white/60" />
         </button>
         <button onClick={() => setShowCharPicker(true)} className="flex items-center gap-3 px-4 py-2.5 rounded-full bg-white/[4%] border border-white/[8%] hover:bg-white/[8%] transition-all">
-          <div className="size-10 rounded-full overflow-hidden ring-2 ring-[#d05bf8]/30">
+          <div className="size-10 rounded-full overflow-hidden ring-2 ring-[#c939c9]/50">
             <img src={selectedChar.avatar} alt={selectedChar.name} className="w-full h-full object-cover" />
           </div>
           <div className="text-left">
@@ -458,114 +528,200 @@ export default function Generate() {
 
       {/* Content Tabs */}
       <div className="flex justify-center gap-1.5 px-4 pb-4 overflow-x-auto no-scrollbar">
-        {[
-          { key: 'action', label: 'Action', emoji: '🏃' },
-          { key: 'clothes', icon: Shirt, label: 'Clothes' },
-          { key: 'background', icon: Mountain, label: 'Background' },
-          { key: 'advanced', icon: Settings2, label: 'Advanced' },
-        ].map(tab => (
-          <button key={tab.key} onClick={() => setActiveDialog(tab.key)}
-            className={`shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-xl text-[12px] font-semibold transition-all duration-200 text-white/40 hover:text-white/70 hover:bg-white/[4%]`}>
-            {tab.key === 'action' ? <span className="text-base">{tab.emoji}</span> : tab.icon ? <tab.icon size={14} /> : null}
-            {tab.label}
-            <ChevronDown size={10} className="text-white/30" />
-          </button>
-        ))}
+        <button onClick={() => setActiveDialog('action')}
+          className={`shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-xl text-[12px] font-semibold transition-all duration-200 ${
+            mode === 'video' ? 'bg-white/[8%] text-white border border-[#d05bf8]/30' : 'text-white/40 hover:text-white/70 hover:bg-white/[4%]'
+          }`}>
+          <span className="text-base">{mode === 'video' ? '🏃' : '🧍'}</span>
+          {mode === 'video' ? 'Action' : 'Pose Models'}
+        </button>
+        <button onClick={() => setActiveDialog('clothes')}
+          className={`shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-xl text-[12px] font-semibold transition-all duration-200 ${activeDialog === 'clothes' ? 'bg-white/[8%] text-white border border-[#d05bf8]/30' : 'text-white/40 hover:text-white/70 hover:bg-white/[4%]'}`}>
+          <Shirt size={14} />
+          Clothes
+        </button>
+        <button onClick={() => setActiveDialog('background')}
+          className={`shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-xl text-[12px] font-semibold transition-all duration-200 ${activeDialog === 'background' ? 'bg-white/[8%] text-white border border-[#d05bf8]/30' : 'text-white/40 hover:text-white/70 hover:bg-white/[4%]'}`}>
+          <Mountain size={14} />
+          Background
+        </button>
+        <button onClick={() => setActiveDialog('advanced')}
+          className={`shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-xl text-[12px] font-semibold transition-all duration-200 ${activeDialog === 'advanced' ? 'bg-white/[8%] text-white border border-[#d05bf8]/30' : 'text-white/40 hover:text-white/70 hover:bg-white/[4%]'}`}>
+          <Settings2 size={14} />
+          Advanced
+        </button>
+        <button onClick={() => setShowCharPicker(true)}
+          className="shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-xl text-[12px] font-semibold transition-all duration-200 text-white/40 hover:text-white/70 hover:bg-white/[4%]">
+          <span className="text-base">👤</span>
+          Model
+        </button>
       </div>
 
-      {/* 3-Slot Preview Grid */}
-      <div className="px-4 flex flex-wrap justify-center gap-3">
-        {/* Action Slot */}
-        <div onClick={() => setActiveDialog('action')}
-          onMouseEnter={e => {
-            const vid = e.currentTarget.querySelector('video') as HTMLVideoElement
-            const img = e.currentTarget.querySelector('img') as HTMLImageElement
-            if (vid && selectedAction && getActionVideo(selectedAction)) { vid.style.display = 'block'; if(img) img.style.display = 'none'; vid.play().catch(() => {}) }
-          }}
-          onMouseLeave={e => {
-            const vid = e.currentTarget.querySelector('video') as HTMLVideoElement
-            const img = e.currentTarget.querySelector('img') as HTMLImageElement
-            if (vid) { vid.style.display = 'none'; if(img) img.style.display = 'block'; vid.pause(); vid.currentTime = 0 }
-          }}
-          className="cursor-pointer w-[220px] h-[250px] rounded-2xl overflow-hidden border border-white/[8%] hover:border-white/[15%] transition-all relative group">
-          {selectedAction ? (
-            <>
-              <img src={getActionImage(selectedAction)} alt={selectedAction} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-              {getActionVideo(selectedAction) && (
-                <video src={getActionVideo(selectedAction)} muted loop playsInline preload="metadata"
-                  className="absolute inset-0 w-full h-full object-cover" style={{ display: 'none' }} />
-              )}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none" />
-              <div className="absolute bottom-4 left-4 right-4 pointer-events-none">
-                <div className="text-[11px] text-white/50 mb-1">Action</div>
-                <div className="text-[16px] font-bold">{selectedAction}</div>
+      {/* 2-Column Preview Grid */}
+      <div className="px-4 flex justify-center">
+        <div className="w-full max-w-[600px] grid grid-cols-[1fr_1fr] gap-2">
+          {/* Left Column - Action/Pose (tall, spans 2 rows) */}
+          <div
+            onClick={() => setActiveDialog('action')}
+            onMouseEnter={e => {
+              if (!selectedAction || !getActionVideo(selectedAction)) return
+              const vid = e.currentTarget.querySelector('video') as HTMLVideoElement
+              const img = e.currentTarget.querySelector('img') as HTMLImageElement
+              if (vid) { vid.style.display = 'block'; if(img) img.style.display = 'none'; vid.play().catch(() => {}) }
+            }}
+            onMouseLeave={e => {
+              const vid = e.currentTarget.querySelector('video') as HTMLVideoElement
+              const img = e.currentTarget.querySelector('img') as HTMLImageElement
+              if (vid) { vid.style.display = 'none'; if(img) img.style.display = 'block'; vid.pause(); vid.currentTime = 0 }
+            }}
+            className="row-span-2 cursor-pointer rounded-[20px] overflow-hidden border border-white/10 hover:border-pink-start transition-all relative group aspect-[3/4]"
+          >
+            {selectedAction ? (
+              <>
+                <img src={getActionImage(selectedAction)} alt={selectedAction} className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-300" />
+                {getActionVideo(selectedAction) && (
+                  <video src={getActionVideo(selectedAction)} muted loop playsInline preload="metadata"
+                    className="absolute inset-0 w-full h-full object-cover" style={{ display: 'none' }} />
+                )}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none" />
+                <div className="absolute bottom-4 left-4 right-4 pointer-events-none">
+                  <div className="text-[11px] text-white/50 mb-1">{mode === 'video' ? 'Action' : 'Pose Models'}</div>
+                  <div className="text-[16px] font-bold">{selectedAction}</div>
+                </div>
+                <button onClick={e => { e.stopPropagation(); setSelectedAction('') }}
+                  className="absolute top-3 right-3 size-8 rounded-full bg-black/50 hover:bg-black/70 flex items-center justify-center">
+                  <X size={16} />
+                </button>
+              </>
+            ) : (
+              <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-purple-600/20 to-pink-500/20">
+                <div className="size-12 rounded-full bg-pink-start/15 border border-pink-start/25 backdrop-blur-sm flex items-center justify-center mb-2">
+                  <Plus size={24} className="text-white" />
+                </div>
+                <span className="text-[12px] font-medium text-white">{mode === 'video' ? 'Action' : 'Pose Models'}</span>
               </div>
-              <button onClick={e => { e.stopPropagation(); setSelectedAction('') }}
-                className="absolute top-3 right-3 size-8 rounded-full bg-black/50 hover:bg-black/70 flex items-center justify-center">
-                <X size={16} />
-              </button>
-            </>
-          ) : (
-            <div className="w-full h-full flex flex-col items-center justify-center bg-white/[3%]">
-              <Plus size={32} className="text-white/20 mb-2" />
-              <span className="text-[14px] text-white/30">Select Action</span>
-            </div>
-          )}
-        </div>
+            )}
+          </div>
 
-        {/* Clothes */}
-        <div onClick={() => setActiveDialog('clothes')}
-          className="cursor-pointer w-[220px] h-[250px] rounded-2xl overflow-hidden border border-white/[8%] hover:border-white/[15%] transition-all relative group">
-          {selectedClothes ? (
-            <>
-              <img src={getClothesImage(selectedClothes)} alt={selectedClothes} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none" />
-              <div className="absolute bottom-3 left-3 right-3 pointer-events-none">
-                <div className="text-[11px] text-white/50 mb-1">Clothes</div>
-                <div className="text-[14px] font-bold">{selectedClothes}</div>
+          {/* Right Column Top - Clothes */}
+          <div
+            onClick={() => setActiveDialog('clothes')}
+            className="cursor-pointer rounded-[20px] overflow-hidden border border-white/10 hover:border-pink-start transition-all relative group aspect-[3/4]"
+          >
+            {selectedClothes ? (
+              <>
+                <img src={getClothesImage(selectedClothes)} alt={selectedClothes} className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-300" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none" />
+                <div className="absolute bottom-3 left-3 right-3 pointer-events-none">
+                  <div className="text-[11px] text-white/50 mb-1">Clothes</div>
+                  <div className="text-[14px] font-bold">{selectedClothes}</div>
+                </div>
+                <button onClick={e => { e.stopPropagation(); setSelectedClothes('') }}
+                  className="absolute top-2 right-2 size-7 rounded-full bg-black/50 hover:bg-black/70 flex items-center justify-center">
+                  <X size={14} />
+                </button>
+              </>
+            ) : (
+              <div className="w-full h-full flex flex-col items-center justify-center bg-white/[3%]">
+                <div className="size-10 rounded-full bg-pink-start/15 border border-pink-start/25 backdrop-blur-sm flex items-center justify-center mb-2">
+                  <Plus size={20} className="text-white/60" />
+                </div>
+                <span className="text-[12px] font-medium text-white/40">Clothes</span>
               </div>
-              <button onClick={e => { e.stopPropagation(); setSelectedClothes('') }}
-                className="absolute top-2 right-2 size-7 rounded-full bg-black/50 hover:bg-black/70 flex items-center justify-center">
-                <X size={14} />
-              </button>
-            </>
-          ) : (
-            <div className="w-full h-full flex flex-col items-center justify-center bg-white/[3%]">
-              <Plus size={28} className="text-white/20 mb-2" />
-              <span className="text-[13px] text-white/30">Select Clothes</span>
-            </div>
-          )}
-        </div>
+            )}
+          </div>
 
-        {/* Background */}
-        <div onClick={() => setActiveDialog('background')}
-          className="cursor-pointer w-[220px] h-[250px] rounded-2xl overflow-hidden border border-white/[8%] hover:border-white/[15%] transition-all relative group">
-          {selectedBg ? (
-            <>
-              <img src={getBgImagePath(selectedBg)} alt={selectedBg} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none" />
-              <div className="absolute bottom-3 left-3 right-3 pointer-events-none">
-                <div className="text-[11px] text-white/50 mb-1">Background</div>
-                <div className="text-[14px] font-bold">{selectedBg}</div>
+          {/* Right Column Bottom - Background */}
+          <div
+            onClick={() => setActiveDialog('background')}
+            className="cursor-pointer rounded-[20px] overflow-hidden border border-white/10 hover:border-pink-start transition-all relative group aspect-[3/4]"
+          >
+            {selectedBg ? (
+              <>
+                <img src={getBgImagePath(selectedBg)} alt={selectedBg} className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-300" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none" />
+                <div className="absolute bottom-3 left-3 right-3 pointer-events-none">
+                  <div className="text-[11px] text-white/50 mb-1">Background</div>
+                  <div className="text-[14px] font-bold">{selectedBg}</div>
+                </div>
+                <button onClick={e => { e.stopPropagation(); setSelectedBg('') }}
+                  className="absolute top-2 right-2 size-7 rounded-full bg-black/50 hover:bg-black/70 flex items-center justify-center">
+                  <X size={14} />
+                </button>
+              </>
+            ) : (
+              <div className="w-full h-full flex flex-col items-center justify-center bg-white/[3%]">
+                <div className="size-10 rounded-full bg-pink-start/15 border border-pink-start/25 backdrop-blur-sm flex items-center justify-center mb-2">
+                  <Plus size={20} className="text-white/60" />
+                </div>
+                <span className="text-[12px] font-medium text-white/40">Background</span>
               </div>
-              <button onClick={e => { e.stopPropagation(); setSelectedBg('') }}
-                className="absolute top-2 right-2 size-7 rounded-full bg-black/50 hover:bg-black/70 flex items-center justify-center">
-                <X size={14} />
-              </button>
-            </>
-          ) : (
-            <div className="w-full h-full flex flex-col items-center justify-center bg-white/[3%]">
-              <Plus size={28} className="text-white/20 mb-2" />
-              <span className="text-[13px] text-white/30">Select Background</span>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
+
+      {/* Advanced Settings Bar (always visible below grid) */}
+      {mode === 'video' && (
+        <div className="px-4 mt-4 space-y-3 max-w-[600px] mx-auto">
+          <div className="flex items-center gap-3">
+            <span className="text-[11px] text-white/40 shrink-0">Quantity</span>
+            <div className="flex gap-1">
+              {[1, 2, 4].map(q => (
+                <button key={q} onClick={() => setVideoQuantity(q)}
+                  className={`px-3 py-1.5 rounded-lg text-[12px] font-medium transition-all ${
+                    videoQuantity === q ? 'bg-pink-start/30 text-white' : 'bg-white/[5%] text-white/40'
+                  }`}>
+                  {q}
+                </button>
+              ))}
+            </div>
+            <span className="text-[11px] text-white/40 shrink-0 ml-2">Resolution</span>
+            <div className="flex gap-1">
+              {['480p', '720p', '1080p'].map(r => (
+                <button key={r} onClick={() => setVideoResolution(r)}
+                  className={`px-3 py-1.5 rounded-lg text-[12px] font-medium transition-all ${
+                    videoResolution === r ? 'bg-pink-start/30 text-white' : 'bg-white/[5%] text-white/40'
+                  }`}>
+                  {r}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {mode === 'image' && (
+        <div className="px-4 mt-4 space-y-3 max-w-[600px] mx-auto">
+          <div className="flex items-center gap-3">
+            <span className="text-[11px] text-white/40 shrink-0">Quantity</span>
+            <div className="flex gap-1">
+              {[1, 2, 4, 8].map(q => (
+                <button key={q} onClick={() => setImageQuantity(q)}
+                  className={`px-3 py-1.5 rounded-lg text-[12px] font-medium transition-all ${
+                    imageQuantity === q ? 'bg-pink-start/30 text-white' : 'bg-white/[5%] text-white/40'
+                  }`}>
+                  {q}
+                </button>
+              ))}
+            </div>
+            <span className="text-[11px] text-white/20 shrink-0 ml-2">Orientation <span className="text-[10px]">Soon</span></span>
+            <div className="flex gap-1">
+              {['9:16', '16:9', '1:1'].map(r => (
+                <button key={r} disabled
+                  className="px-3 py-1.5 rounded-lg text-[12px] font-medium bg-white/[3%] text-white/20 cursor-not-allowed">
+                  {r}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Generate Button */}
       <div className="flex justify-center px-4 mt-6">
         {canGenerate ? (
-          <button onClick={() => alert(`Generation started! (Demo)\n\nCharacter: ${selectedChar.name}\nAction: ${selectedAction || 'None'}\nClothes: ${selectedClothes || 'None'}\nBackground: ${selectedBg || 'None'}\nMode: ${mode}\nAspect: ${aspectRatio}\nQuality: ${quality}`)}
+          <button onClick={() => alert(`Generation started! (Demo)\n\nCharacter: ${selectedChar.name}\n${mode === 'video' ? 'Action' : 'Pose'}: ${selectedAction || 'None'}\nClothes: ${selectedClothes || 'None'}\nBackground: ${selectedBg || 'None'}\nMode: ${mode}\nQuantity: ${mode === 'video' ? videoQuantity : imageQuantity}\nResolution: ${mode === 'video' ? videoResolution : 'N/A'}`)}
             className="w-1/4 py-3.5 rounded-2xl bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] text-white font-bold text-[14px] shadow-lg shadow-[#d05bf8]/30 hover:shadow-[#d05bf8]/50 transition-all active:scale-[0.98]">
             Generate {mode === 'video' ? 'Video' : 'Image'}
           </button>
