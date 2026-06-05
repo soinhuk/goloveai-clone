@@ -110,6 +110,76 @@ const getActionImage = (name: string) => ACTIONS.find(a => a.name === name)?.ima
 const getActionVideo = (name: string) => ACTIONS.find(a => a.name === name)?.video || ''
 const getClothesImage = (name: string) => CLOTHES.find(c => c.name === name)?.image || ''
 
+// 彩色滑块组件
+const ColorSlider = ({ 
+  value, onChange, min, max, step = 1, unit = '', 
+  label, color = 'gradient' 
+}: { 
+  value: number
+  onChange: (v: number) => void
+  min: number
+  max: number
+  step?: number
+  unit?: string
+  label: string
+  color?: 'gradient' | 'blue'
+}) => {
+  const percentage = ((value - min) / (max - min)) * 100
+  const gradient = color === 'gradient' 
+    ? 'linear-gradient(90deg, #d05bf8 0%, #ff18a0 100%)'
+    : 'linear-gradient(90deg, #3b82f6 0%, #06b6d4 100%)'
+  
+  return (
+    <div className="space-y-2">
+      <div className="flex items-center justify-between">
+        <span className="text-[13px] text-white/50 font-medium flex items-center gap-2">
+          <span className="w-1 h-3 rounded-full" style={{ background: gradient }} />
+          {label}
+        </span>
+        <span className="text-[14px] font-bold text-white">
+          {value}{unit}
+        </span>
+      </div>
+      <div className="relative h-10 flex items-center">
+        <input
+          type="range"
+          min={min}
+          max={max}
+          step={step}
+          value={value}
+          onChange={e => onChange(Number(e.target.value))}
+          className="w-full h-2 rounded-full appearance-none cursor-pointer"
+          style={{
+            background: `linear-gradient(90deg, ${percentage}% ${gradient}, rgba(255,255,255,0.1) ${percentage}%)`,
+          }}
+        />
+        {/* 滑块刻度点 */}
+        <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 flex justify-between px-0.5 pointer-events-none">
+          {Array.from({ length: Math.floor((max - min) / step) + 1 }, (_, i) => min + i * step).map(v => {
+            const pct = ((v - min) / (max - min)) * 100
+            const isActive = value >= v
+            return (
+              <div 
+                key={v} 
+                className="w-2 h-2 rounded-full transition-all"
+                style={{
+                  background: isActive ? 'rgba(208,91,248,0.8)' : 'rgba(255,255,255,0.15)',
+                  transform: `scale(${isActive ? 1.2 : 1})`,
+                }}
+              />
+            )
+          })}
+        </div>
+      </div>
+      {/* 刻度标签 */}
+      <div className="flex justify-between mt-1 px-1">
+        <span className="text-[10px] text-white/30">{min}{unit}</span>
+        <span className="text-[10px] text-white/30">{max}{unit}</span>
+      </div>
+    </div>
+  )
+}
+
 // 生成模式类型
 type GenerationMode = 'model-video' | 'model-image' | 'custom-video' | 'custom-image'
 
@@ -131,25 +201,25 @@ export default function Generate() {
   
   // 模型视频设置
   const [videoQuantity, setVideoQuantity] = useState(1)
-  const [videoResolution, setVideoResolution] = useState('1080p')
+  const [videoResolution, setVideoResolution] = useState(1080)
   
   // 模型图片设置
   const [imageQuantity, setImageQuantity] = useState(1)
   const [imageAspect, setImageAspect] = useState('1:1')
-  const [imageResolution, setImageResolution] = useState('1080p')
+  const [imageResolution, setImageResolution] = useState(1080)
   
   // 自定义视频设置
   const [customVideoQuantity, setCustomVideoQuantity] = useState(1)
   const [customVideoDuration, setCustomVideoDuration] = useState(5)
   const [customVideoAspect, setCustomVideoAspect] = useState('16:9')
-  const [customVideoResolution, setCustomVideoResolution] = useState('1080p')
+  const [customVideoResolution, setCustomVideoResolution] = useState(1080)
   const [customVideoPrompt, setCustomVideoPrompt] = useState('')
   const [customVideoNegative, setCustomVideoNegative] = useState('')
   
   // 自定义图片设置
   const [customImageQuantity, setCustomImageQuantity] = useState(1)
   const [customImageAspect, setCustomImageAspect] = useState('1:1')
-  const [customImageResolution, setCustomImageResolution] = useState('1080p')
+  const [customImageResolution, setCustomImageResolution] = useState(1080)
   const [customImagePrompt, setCustomImagePrompt] = useState('')
   const [customImageNegative, setCustomImageNegative] = useState('')
   
@@ -613,6 +683,44 @@ export default function Generate() {
             background: linear-gradient(135deg, #d05bf8 0%, #ff18a0 100%) !important;
             box-shadow: 0 0 20px rgba(208,91,248,0.5), 0 0 40px rgba(255,24,160,0.3);
           }
+          /* 滑块样式 */
+          input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            background: rgba(255,255,255,0.1);
+            border-radius: 9999px;
+            outline: none;
+          }
+          input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #d05bf8 0%, #ff18a0 100%);
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(208,91,248,0.6), 0 0 30px rgba(255,24,160,0.4);
+            border: 2px solid white;
+            margin-top: -9px;
+          }
+          input[type="range"]::-webkit-slider-runnable-track {
+            height: 2px;
+            border-radius: 9999px;
+          }
+          input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #d05bf8 0%, #ff18a0 100%);
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(208,91,248,0.6), 0 0 30px rgba(255,24,160,0.4);
+            border: 2px solid white;
+          }
+          input[type="range"]::-moz-range-track {
+            height: 2px;
+            border-radius: 9999px;
+            background: transparent;
+          }
         `}</style>
 
         {/* Top model selector */}
@@ -693,84 +801,40 @@ export default function Generate() {
                   </div>
                 </div>
           
-                {/* Model video settings */}
+                {/* Model video settings - Slider style */}
                 {mode === 'model-video' && (
-                  <div className="px-4 mt-6 max-w-[600px] mx-auto space-y-4 relative z-10">
-                    {/* Resolution - Neon buttons */}
-                                  <div className="space-y-2">
-                                    <span className="text-[13px] text-white/50 font-medium flex items-center gap-2">
-                                      <span className="w-1 h-3 rounded-full bg-gradient-to-b from-[#d05bf8] to-[#ff18a0]" />
-                                      Resolution
-                                    </span>
-                                    <div className="flex gap-2">
-                                      {['480p', '720p', '1080p'].map(r => (
-                                        <button key={r} onClick={() => setVideoResolution(r)}
-                                          className={`relative px-4 py-2.5 rounded-xl text-[13px] font-bold transition-all duration-300 overflow-hidden group ${r === videoResolution ? 'text-white' : 'text-white/40 hover:text-white'} ${r === videoResolution ? 'neon-setting-btn selected' : ''}`}>
-                                          <span className={`absolute inset-0 rounded-xl transition-all duration-300 ${
-                                            r === videoResolution 
-                                              ? 'bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] shadow-[0_0_20px_rgba(208,91,248,0.5)]' 
-                                              : 'bg-white/[5%] group-hover:bg-white/[10%]'
-                                          }`} />
-                                          {r === videoResolution && (
-                                            <span className="absolute inset-0 rounded-xl border border-white/30" />
-                                          )}
-                                          <span className="relative z-10">{r}</span>
-                                        </button>
-                                      ))}
-                                    </div>
-                                  </div>
-                                  {/* Quantity - Neon buttons */}
-                                  <div className="space-y-2">
-                                    <span className="text-[13px] text-white/50 font-medium flex items-center gap-2">
-                                      <span className="w-1 h-3 rounded-full bg-gradient-to-b from-[#d05bf8] to-[#ff18a0]" />
-                                      Quantity
-                                    </span>
-                                    <div className="flex gap-2">
-                                      {[1, 2, 4].map(q => (
-                                        <button key={q} onClick={() => setVideoQuantity(q)}
-                                          className={`relative px-4 py-2.5 rounded-xl text-[13px] font-bold transition-all duration-300 overflow-hidden group ${q === videoQuantity ? 'text-white' : 'text-white/40 hover:text-white'} ${q === videoQuantity ? 'neon-setting-btn selected' : ''}`}>
-                                          <span className={`absolute inset-0 rounded-xl transition-all duration-300 ${
-                                            q === videoQuantity 
-                                              ? 'bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] shadow-[0_0_20px_rgba(208,91,248,0.5)]' 
-                                              : 'bg-white/[5%] group-hover:bg-white/[10%]'
-                                          }`} />
-                                          {q === videoQuantity && (
-                                            <span className="absolute inset-0 rounded-xl border border-white/30" />
-                                          )}
-                                          <span className="relative z-10">{q}</span>
-                                        </button>
-                                      ))}
-                                    </div>
-                                  </div>
+                  <div className="px-4 mt-6 max-w-[464px] mx-auto space-y-4 relative z-10">
+                    <ColorSlider
+                      value={videoResolution}
+                      onChange={setVideoResolution}
+                      min={480}
+                      max={1440}
+                      step={1}
+                      unit="p"
+                      label="Resolution"
+                    />
+                    <ColorSlider
+                      value={videoQuantity}
+                      onChange={setVideoQuantity}
+                      min={1}
+                      max={4}
+                      step={1}
+                      label="Quantity"
+                    />
                   </div>
                 )}
           
-                {/* Model image settings - Neon buttons */}
+                {/* Model image settings - Slider style */}
                           {mode === 'model-image' && (
-                            <div className="px-4 mt-6 max-w-[600px] mx-auto space-y-4 relative z-10">
-                              {/* Quantity */}
-                              <div className="space-y-2">
-                                <span className="text-[13px] text-white/50 font-medium flex items-center gap-2">
-                                  <span className="w-1 h-3 rounded-full bg-gradient-to-b from-[#d05bf8] to-[#ff18a0]" />
-                                  Quantity
-                                </span>
-                                <div className="flex gap-2">
-                                  {[1, 2, 4, 8].map(q => (
-                                    <button key={q} onClick={() => setImageQuantity(q)}
-                                      className={`relative px-4 py-2.5 rounded-xl text-[13px] font-bold transition-all duration-300 overflow-hidden group ${q === imageQuantity ? 'text-white' : 'text-white/40 hover:text-white'} ${q === imageQuantity ? 'neon-setting-btn selected' : ''}`}>
-                                      <span className={`absolute inset-0 rounded-xl transition-all duration-300 ${
-                                        q === imageQuantity 
-                                          ? 'bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] shadow-[0_0_20px_rgba(208,91,248,0.5)]' 
-                                          : 'bg-white/[5%] group-hover:bg-white/[10%]'
-                                      }`} />
-                                      {q === imageQuantity && (
-                                        <span className="absolute inset-0 rounded-xl border border-white/30" />
-                                      )}
-                                      <span className="relative z-10">{q}</span>
-                                    </button>
-                                  ))}
-                                </div>
-                              </div>
+                            <div className="px-4 mt-6 max-w-[464px] mx-auto space-y-4 relative z-10">
+                              <ColorSlider
+                                value={imageQuantity}
+                                onChange={setImageQuantity}
+                                min={1}
+                                max={8}
+                                step={1}
+                                label="Quantity"
+                              />
                               {/* Aspect - unavailable */}
                               <div className="space-y-2">
                                 <span className="text-[13px] text-white/50 font-medium flex items-center gap-2">
@@ -787,58 +851,42 @@ export default function Generate() {
                                   ))}
                                 </div>
                               </div>
-                              {/* Resolution - unavailable */}
-                              <div className="space-y-2">
-                                <span className="text-[13px] text-white/50 font-medium flex items-center gap-2">
-                                  <span className="w-1 h-3 rounded-full bg-gradient-to-b from-white/30 to-white/10" />
-                                  Resolution
-                                </span>
-                                <div className="flex gap-2">
-                                  {['480p', '720p', '1080p'].map(r => (
-                                    <button key={r} onClick={() => setImageResolution(r)}
-                                      className={`relative px-4 py-2.5 rounded-xl text-[13px] font-bold transition-all ${imageResolution === r ? 'bg-gradient-to-r from-[#d05bf8]/30 to-[#ff18a0]/30 text-white ring-1 ring-[#d05bf8]/50' : 'bg-white/[5%] text-white/50 hover:bg-white/[10%]'}`}>
-                                      <span className="absolute inset-0 rounded-xl bg-white/[3%]" />
-                                      <span className="relative z-10">{r}</span>
-                                    </button>
-                                  ))}
-                                </div>
-                              </div>
+                              <ColorSlider
+                                value={imageResolution}
+                                onChange={setImageResolution}
+                                min={480}
+                                max={1440}
+                                step={1}
+                                unit="p"
+                                label="Resolution"
+                              />
                             </div>
                           )}
               </>
             ) : (
         <>
           {/* 自定义生成 - 两个框架输入 */}
-          <div className="px-4 mt-4 max-w-[600px] mx-auto space-y-4">
+          <div className="px-4 mt-4 max-w-[464px] mx-auto space-y-4">
             {/* 视频/图片设置 */}
             {mode === 'custom-video' && (
               <>
-                <div className="flex items-center gap-3">
-                  <span className="text-[13px] text-white/40 shrink-0 w-20">Quantity</span>
-                  <div className="flex gap-1.5">
-                    {[1, 2, 4].map(q => (
-                      <button key={q} onClick={() => setCustomVideoQuantity(q)}
-                        className={`px-3 py-1.5 rounded-lg text-[13px] font-medium transition-all ${
-                          customVideoQuantity === q ? 'bg-pink-start/30 text-white' : 'bg-white/[5%] text-white/40'
-                        }`}>
-                        {q}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <span className="text-[13px] text-white/40 shrink-0 w-20">Duration</span>
-                  <div className="flex gap-1.5">
-                    {[5, 6, 7, 8, 9, 10].map(d => (
-                      <button key={d} onClick={() => setCustomVideoDuration(d)}
-                        className={`px-3 py-1.5 rounded-lg text-[13px] font-medium transition-all ${
-                          customVideoDuration === d ? 'bg-pink-start/30 text-white' : 'bg-white/[5%] text-white/40'
-                        }`}>
-                        {d}s
-                      </button>
-                    ))}
-                  </div>
-                </div>
+                <ColorSlider
+                  value={customVideoQuantity}
+                  onChange={setCustomVideoQuantity}
+                  min={1}
+                  max={4}
+                  step={1}
+                  label="Quantity"
+                />
+                <ColorSlider
+                  value={customVideoDuration}
+                  onChange={setCustomVideoDuration}
+                  min={5}
+                  max={10}
+                  step={1}
+                  unit="s"
+                  label="Duration"
+                />
                 <div className="flex items-center gap-3">
                   <span className="text-[13px] text-white/40 shrink-0 w-20">Aspect</span>
                   <div className="flex gap-1.5">
@@ -852,37 +900,28 @@ export default function Generate() {
                     ))}
                   </div>
                 </div>
-                <div className="flex items-center gap-3">
-                  <span className="text-[13px] text-white/40 shrink-0 w-20">Resolution</span>
-                  <div className="flex gap-1.5">
-                    {['480p', '720p', '1080p'].map(r => (
-                      <button key={r} onClick={() => setCustomVideoResolution(r)}
-                        className={`px-3 py-1.5 rounded-lg text-[13px] font-medium transition-all ${
-                          customVideoResolution === r ? 'bg-pink-start/30 text-white' : 'bg-white/[5%] text-white/40'
-                        }`}>
-                        {r}
-                      </button>
-                    ))}
-                  </div>
-                </div>
+                <ColorSlider
+                  value={customVideoResolution}
+                  onChange={setCustomVideoResolution}
+                  min={480}
+                  max={1440}
+                  step={1}
+                  unit="p"
+                  label="Resolution"
+                />
               </>
             )}
             
             {mode === 'custom-image' && (
               <>
-                <div className="flex items-center gap-3">
-                  <span className="text-[13px] text-white/40 shrink-0 w-20">Quantity</span>
-                  <div className="flex gap-1.5">
-                    {[1, 2, 4, 8].map(q => (
-                      <button key={q} onClick={() => setCustomImageQuantity(q)}
-                        className={`px-3 py-1.5 rounded-lg text-[13px] font-medium transition-all ${
-                          customImageQuantity === q ? 'bg-pink-start/30 text-white' : 'bg-white/[5%] text-white/40'
-                        }`}>
-                        {q}
-                      </button>
-                    ))}
-                  </div>
-                </div>
+                <ColorSlider
+                  value={customImageQuantity}
+                  onChange={setCustomImageQuantity}
+                  min={1}
+                  max={8}
+                  step={1}
+                  label="Quantity"
+                />
                 <div className="flex items-center gap-3">
                   <span className="text-[13px] text-white/40 shrink-0 w-20">Aspect</span>
                   <div className="flex gap-1.5">
@@ -894,17 +933,15 @@ export default function Generate() {
                     ))}
                   </div>
                 </div>
-                <div className="flex items-center gap-3">
-                  <span className="text-[13px] text-white/40 shrink-0 w-20">Resolution</span>
-                  <div className="flex gap-1.5">
-                    {['480p', '720p', '1080p'].map(r => (
-                      <button key={r} onClick={() => setCustomImageResolution(r)}
-                        className={`px-3 py-1.5 rounded-lg text-[13px] font-medium transition-all ${customImageResolution === r ? 'bg-pink-start/30 text-white' : 'bg-white/[5%] text-white/50 hover:bg-white/[10%]'}`}>
-                        {r}
-                      </button>
-                    ))}
-                  </div>
-                </div>
+                <ColorSlider
+                  value={customImageResolution}
+                  onChange={setCustomImageResolution}
+                  min={480}
+                  max={1440}
+                  step={1}
+                  unit="p"
+                  label="Resolution"
+                />
               </>
             )}
             
