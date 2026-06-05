@@ -50,6 +50,11 @@ export default function Chat() {
   const [showGifts, setShowGifts] = useState(false)
   const [isTyping, setIsTyping] = useState(false)
   const [unlockedContent, setUnlockedContent] = useState<string[]>([])
+  const [lightboxImage, setLightboxImage] = useState<string | null>(null)
+  const [lightboxVideo, setLightboxVideo] = useState<string | null>(null)
+  const [customName, setCustomName] = useState<string>('')
+  const [isEditingName, setIsEditingName] = useState(false)
+  const nameInputRef = useRef<HTMLInputElement>(null)
 
   const char = characters.find(c => c.username === username || c.id === username)
   if (!char) return <div className="flex items-center justify-center h-screen bg-[#0a0a0f] text-white/40 text-lg">Character not found</div>
@@ -58,6 +63,7 @@ export default function Chat() {
   const nsfwAvatar = char.avatar?.replace('_avatar.avif', '_avatar_nsfw.avif')
   // Only live models have actual video avatars
   const hasLiveVideo = char.isLive && !!videoAvatar
+  const displayName = customName || char.name
   // Gallery: only unique images, no duplicates with main photo
   const baseGallery = [char.avatar, nsfwAvatar].filter(Boolean)
   const uniqueGallery = [...new Set(baseGallery)]
@@ -196,43 +202,52 @@ export default function Chat() {
 
         {/* Header */}
         <header className="relative z-10 flex items-center gap-3 px-5 py-3 border-b border-white/[4%] bg-[#0a0a0f]/90 backdrop-blur-2xl">
-          <button onClick={() => navigate('/app/chats')} className="flex items-center justify-center size-9 rounded-full hover:bg-white/[5%] transition-all">
-            <ArrowLeft size={20} className="text-white/50" />
+          <button onClick={() => navigate('/app/chats')} className="flex items-center justify-center size-10 rounded-full hover:bg-white/[5%] transition-all">
+            <ArrowLeft size={22} className="text-white/60" />
           </button>
           <Link to={`/chat/${char.username}`} className="flex items-center gap-3 flex-1 min-w-0">
             <div className="relative shrink-0">
-              <div className="size-11 rounded-full overflow-hidden ring-2 ring-[#d05bf8]/20 shadow-[0_0_10px_rgba(208,91,248,0.15)]">
-                <img src={char.avatar} alt={char.name} className="w-full h-full object-cover" />
+              <div className="size-12 rounded-full overflow-hidden ring-2 ring-[#d05bf8]/25 shadow-[0_0_12px_rgba(208,91,248,0.2)]">
+                <img src={char.avatar} alt={displayName} className="w-full h-full object-cover" />
               </div>
-              {char.isOnline && <span className="absolute bottom-0 right-0 size-2.5 rounded-full bg-emerald-400 border-2 border-[#0a0a0f] shadow-[0_0_6px_rgba(52,211,153,0.5)]" />}
+              {char.isOnline && <span className="absolute bottom-0 right-0 size-3 rounded-full bg-emerald-400 border-2 border-[#0a0a0f] shadow-[0_0_8px_rgba(52,211,153,0.6)]" />}
             </div>
             <div className="min-w-0">
               <div className="flex items-center gap-2">
-                <h1 className="text-[17px] font-bold text-white leading-tight truncate">{char.name}</h1>
-                <button className="p-1 rounded hover:bg-white/[5%] transition-all" title="Rename">
-                  <Pencil size={11} className="text-white/20 hover:text-white/40" />
+                {isEditingName ? (
+                  <input ref={nameInputRef} type="text" value={customName || char.name}
+                    onChange={e => setCustomName(e.target.value)}
+                    onBlur={() => setIsEditingName(false)}
+                    onKeyDown={e => { if (e.key === 'Enter') setIsEditingName(false) }}
+                    className="text-[18px] font-bold text-white bg-transparent border-b border-[#d05bf8]/40 outline-none w-[120px] py-0.5" autoFocus />
+                ) : (
+                  <h1 className="text-[18px] font-bold text-white leading-tight truncate">{displayName}</h1>
+                )}
+                <button onClick={() => { setIsEditingName(true); setTimeout(() => nameInputRef.current?.focus(), 50) }}
+                  className="p-1.5 rounded-lg hover:bg-white/[6%] transition-all" title="编辑名字">
+                  <Pencil size={13} className="text-white/30 hover:text-[#d05bf8]" />
                 </button>
               </div>
               <div className="flex items-center gap-1.5">
-                <span className="size-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                <span className="text-[11px] text-white/35">在线</span>
+                <span className="size-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_6px_rgba(52,211,153,0.5)]" />
+                <span className="text-xs text-white/40">在线</span>
               </div>
             </div>
           </Link>
-          <div className="flex items-center gap-1">
-            <button className="flex items-center justify-center size-9 rounded-full hover:bg-emerald-500/10 transition-all" title="Voice Call">
-              <Phone size={17} className="text-emerald-400/50" />
+          <div className="flex items-center gap-1.5">
+            <button className="flex items-center justify-center size-11 rounded-full bg-emerald-500/10 hover:bg-emerald-500/20 transition-all border border-emerald-500/10" title="语音通话">
+              <Phone size={20} className="text-emerald-400 drop-shadow-[0_0_6px_rgba(52,211,153,0.4)]" />
             </button>
             <div className="relative">
-              <button className="flex items-center justify-center size-9 rounded-full hover:bg-[#d05bf8]/10 transition-all" title="Video Call">
-                <Video size={17} className="text-[#d05bf8]/50" />
+              <button className="flex items-center justify-center size-11 rounded-full bg-[#d05bf8]/10 hover:bg-[#d05bf8]/20 transition-all border border-[#d05bf8]/15" title="视频通话">
+                <Video size={20} className="text-[#d05bf8] drop-shadow-[0_0_8px_rgba(208,91,248,0.4)]" />
               </button>
-              <span className="absolute -top-1 -right-1 px-1.5 py-0.5 text-[7px] font-bold bg-gradient-to-r from-[#ff18a0] to-[#d05bf8] text-white rounded-full leading-none shadow-[0_0_8px_rgba(255,24,160,0.4)]">NEW</span>
+              <span className="absolute -top-1 -right-1 px-1.5 py-0.5 text-[7px] font-bold bg-gradient-to-r from-[#ff18a0] to-[#d05bf8] text-white rounded-full leading-none shadow-[0_0_10px_rgba(255,24,160,0.5)]">NEW</span>
             </div>
-            <button className="flex items-center justify-center size-9 rounded-full hover:bg-white/[5%] transition-all"><MoreHorizontal size={17} className="text-white/35" /></button>
-            <button className="flex items-center justify-center size-9 rounded-full hover:bg-white/[5%] transition-all"><Filter size={15} className="text-white/35" /></button>
-            <button onClick={() => setShowDetails(!showDetails)} className={`flex items-center justify-center size-9 rounded-full transition-all ${showDetails ? 'bg-[#d05bf8]/15 text-[#d05bf8] shadow-[0_0_10px_rgba(208,91,248,0.15)]' : 'hover:bg-white/[5%] text-white/35'}`}>
-              <ChevronRight size={17} className={`transition-transform duration-200 ${showDetails ? 'rotate-180' : ''}`} />
+            <button className="flex items-center justify-center size-11 rounded-full hover:bg-white/[6%] transition-all border border-white/[5%]"><MoreHorizontal size={20} className="text-white/45" /></button>
+            <button className="flex items-center justify-center size-11 rounded-full hover:bg-white/[6%] transition-all border border-white/[5%]"><Filter size={18} className="text-white/45" /></button>
+            <button onClick={() => setShowDetails(!showDetails)} className={`flex items-center justify-center size-11 rounded-full transition-all ${showDetails ? 'bg-[#d05bf8]/15 text-[#d05bf8] shadow-[0_0_12px_rgba(208,91,248,0.2)] border border-[#d05bf8]/20' : 'hover:bg-white/[6%] text-white/45 border border-white/[5%]'}`}>
+              <ChevronRight size={20} className={`transition-transform duration-200 ${showDetails ? 'rotate-180' : ''}`} />
             </button>
           </div>
         </header>
@@ -479,21 +494,22 @@ export default function Chat() {
       {/* ═══════ RIGHT PANEL ═══════ */}
       {showDetails && (
         <div className="w-[330px] shrink-0 border-l border-white/[4%] flex flex-col bg-[#0d0d14] overflow-y-auto scrollbar-hide">
-          {/* Close */}
-          <div className="flex items-center justify-between px-5 pt-5 pb-2">
-            <div className="flex items-center gap-2">
-              <Crown size={14} className="text-[#d05bf8]" />
-              <span className="text-[11px] font-bold text-white/30 uppercase tracking-widest">角色详情</span>
-            </div>
-            <button onClick={() => setShowDetails(false)} className="size-7 rounded-full hover:bg-white/[5%] flex items-center justify-center">
-              <X size={14} className="text-white/25" />
+          {/* Close - hidden title */}
+          <div className="flex items-center justify-end px-5 pt-4 pb-1">
+            <button onClick={() => setShowDetails(false)} className="size-8 rounded-full hover:bg-white/[5%] flex items-center justify-center">
+              <X size={16} className="text-white/30" />
             </button>
           </div>
 
-          {/* Main Photo - SINGLE IMAGE */}
+          {/* Main Photo - SINGLE IMAGE, clickable */}
           <div className="px-5 pb-4">
-            <div className="relative w-full aspect-[3/4] rounded-2xl overflow-hidden shadow-[0_8px_30px_rgba(0,0,0,0.4)]">
-              <img src={nsfwAvatar || char.avatar} alt={char.name} className="w-full h-full object-cover" />
+            <div onClick={() => setLightboxImage(nsfwAvatar || char.avatar)} className="relative w-full aspect-[3/4] rounded-2xl overflow-hidden shadow-[0_8px_30px_rgba(0,0,0,0.4)] cursor-pointer group">
+              <img src={nsfwAvatar || char.avatar} alt={displayName} className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform" />
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center">
+                <div className="opacity-0 group-hover:opacity-100 transition-opacity">
+                  <ImageIcon size={28} className="text-white/60 drop-shadow-lg" />
+                </div>
+              </div>
             </div>
           </div>
 
@@ -514,31 +530,31 @@ export default function Chat() {
             </div>
           </div>
 
-          {/* Action Buttons */}
+          {/* Action Buttons - Dreamy */}
           <div className="px-5 pb-3 flex gap-2">
-            <button className="flex-1 py-3 rounded-xl bg-emerald-500/10 text-emerald-400 text-sm font-semibold flex items-center justify-center gap-2 hover:bg-emerald-500/20 transition-all border border-emerald-500/10 hover:shadow-[0_0_12px_rgba(52,211,153,0.15)]">
-              <Phone size={15} /> 给我打电话
+            <button className="flex-1 py-3.5 rounded-xl bg-gradient-to-r from-emerald-500/15 to-emerald-400/10 text-emerald-300 text-sm font-bold flex items-center justify-center gap-2 hover:from-emerald-500/25 hover:to-emerald-400/20 transition-all border border-emerald-500/15 shadow-[0_0_12px_rgba(52,211,153,0.1)] hover:shadow-[0_0_20px_rgba(52,211,153,0.2)]">
+              <Phone size={16} className="drop-shadow-[0_0_4px_rgba(52,211,153,0.5)]" /> 给我打电话
             </button>
-            <button className="flex-1 py-3 rounded-xl bg-[#d05bf8]/10 text-[#d05bf8] text-sm font-semibold flex items-center justify-center gap-2 hover:bg-[#d05bf8]/20 transition-all border border-[#d05bf8]/10 hover:shadow-[0_0_12px_rgba(208,91,248,0.15)]">
-              <Video size={15} /> 视频通话
+            <button className="flex-1 py-3.5 rounded-xl bg-gradient-to-r from-[#d05bf8]/15 to-[#ff18a0]/10 text-[#d05bf8] text-sm font-bold flex items-center justify-center gap-2 hover:from-[#d05bf8]/25 hover:to-[#ff18a0]/20 transition-all border border-[#d05bf8]/15 shadow-[0_0_12px_rgba(208,91,248,0.1)] hover:shadow-[0_0_20px_rgba(208,91,248,0.2)]">
+              <Video size={16} className="drop-shadow-[0_0_4px_rgba(208,91,248,0.5)]" /> 视频通话
             </button>
           </div>
 
-          {/* Generate + Voice */}
+          {/* Generate + Voice - Dreamy */}
           <div className="px-5 pb-3 flex gap-2">
-            <Link to="/generate" className="flex-1 py-3 rounded-xl bg-[#1a1a24] border border-white/[5%] text-sm font-bold text-[#d05bf8] hover:border-[#d05bf8]/30 transition-all flex items-center justify-center gap-2">
-              <ImageIcon size={15} /> 生成媒体
+            <Link to="/generate" className="flex-1 py-3.5 rounded-xl bg-gradient-to-r from-[#d05bf8]/10 to-[#ff18a0]/10 border border-[#d05bf8]/15 text-sm font-bold text-[#d05bf8] hover:from-[#d05bf8]/20 hover:to-[#ff18a0]/15 transition-all flex items-center justify-center gap-2 shadow-[0_0_8px_rgba(208,91,248,0.08)]">
+              <ImageIcon size={16} className="drop-shadow-[0_0_4px_rgba(208,91,248,0.4)]" /> 生成媒体
             </Link>
-            <button className="flex-1 py-3 rounded-xl bg-[#1a1a24] border border-white/[5%] text-sm font-bold text-[#d05bf8] hover:border-[#d05bf8]/30 transition-all flex items-center justify-center gap-2">
-              <Music size={15} /> 语音预览
+            <button className="flex-1 py-3.5 rounded-xl bg-gradient-to-r from-[#ff18a0]/10 to-[#d05bf8]/10 border border-[#ff18a0]/15 text-sm font-bold text-[#ff18a0] hover:from-[#ff18a0]/20 hover:to-[#d05bf8]/15 transition-all flex items-center justify-center gap-2 shadow-[0_0_8px_rgba(255,24,160,0.08)]">
+              <Music size={16} className="drop-shadow-[0_0_4px_rgba(255,24,160,0.4)]" /> 语音预览
             </button>
           </div>
 
           {/* About Her */}
           <div className="px-5 pb-4">
             <div className="flex items-center gap-2 mb-3">
-              <Heart size={14} className="text-[#ff18a0]" />
-              <h3 className="text-sm font-bold text-white/80">她是什么样的？</h3>
+              <Heart size={15} className="text-[#ff18a0]" />
+              <h3 className="text-[15px] font-bold text-white/90">她是什么样的？</h3>
             </div>
             <div className="space-y-0">
               {[
@@ -551,12 +567,12 @@ export default function Chat() {
                 ['🟢', '状态', char.isOnline ? '在线' : '离线'],
                 ['🌐', '语言', 'English'],
               ].map(([icon, label, value]) => (
-                <div key={label} className="flex items-start justify-between py-2.5 border-b border-white/[3%] gap-3">
-                  <span className="text-[13px] text-white/35 shrink-0 flex items-center gap-1.5">
-                    <span className="text-[11px]">{icon}</span>
+                <div key={label} className="flex items-start justify-between py-3 border-b border-white/[4%] gap-3">
+                  <span className="text-[14px] text-white/50 shrink-0 flex items-center gap-2">
+                    <span className="text-sm">{icon}</span>
                     {label}
                   </span>
-                  <span className="text-[13px] text-white/55 font-medium text-right">{value}</span>
+                  <span className="text-[14px] text-white/70 font-medium text-right">{value}</span>
                 </div>
               ))}
             </div>
@@ -565,10 +581,10 @@ export default function Chat() {
           {/* Her Appearance */}
           <div className="px-5 pb-4">
             <div className="flex items-center gap-2 mb-3">
-              <Eye size={14} className="text-[#d05bf8]" />
-              <h3 className="text-sm font-bold text-white/80">她的外貌</h3>
+              <Eye size={15} className="text-[#d05bf8]" />
+              <h3 className="text-[15px] font-bold text-white/90">她的外貌</h3>
             </div>
-            <div className="grid grid-cols-2 gap-x-4 gap-y-3">
+            <div className="grid grid-cols-2 gap-x-4 gap-y-3.5">
               {[
                 ['🌍', '种族', char.ethnicity || '—'],
                 ['🎂', '年龄', `${char.age || '—'}`],
@@ -582,11 +598,11 @@ export default function Chat() {
                 ['⭐', '特征', char.specialFeature || '—'],
               ].map(([icon, label, value]) => (
                 <div key={label} className="flex flex-col">
-                  <span className="text-[10px] text-white/25 flex items-center gap-1">
-                    <span className="text-[10px]">{icon}</span>
+                  <span className="text-[11px] text-white/40 flex items-center gap-1.5">
+                    <span className="text-sm">{icon}</span>
                     {label}
                   </span>
-                  <span className="text-[13px] text-white/50 mt-0.5">{value}</span>
+                  <span className="text-[14px] text-white/65 mt-0.5 font-medium">{value}</span>
                 </div>
               ))}
             </div>
@@ -596,19 +612,17 @@ export default function Chat() {
           <div className="px-5 pb-4">
             <div className="flex items-center gap-2 mb-3">
               <ImageIcon size={14} className="text-white/35" />
-              <h3 className="text-sm font-bold text-white/80">作品集</h3>
-              <span className="text-[10px] text-white/25">{galleryImages.length + unlockedContent.filter(c => c.startsWith('video:')).length} 项</span>
+              <h3 className="text-[15px] font-bold text-white/90">作品集</h3>
+              <span className="text-[11px] text-white/30">{galleryImages.length + unlockedContent.filter(c => c.startsWith('video:')).length} 项</span>
             </div>
             <div className="grid grid-cols-4 gap-2">
-              {/* Photos */}
               {galleryImages.map((img, i) => (
-                <div key={`p-${i}`} className="aspect-[3/4] rounded-xl overflow-hidden cursor-pointer hover:scale-105 transition-all border border-white/[5%]">
+                <div key={`p-${i}`} onClick={() => setLightboxImage(img)} className="aspect-[3/4] rounded-xl overflow-hidden cursor-pointer hover:scale-105 transition-all border border-white/[5%]">
                   <img src={img} alt={`gallery ${i + 1}`} className="w-full h-full object-cover" />
                 </div>
               ))}
-              {/* Videos from gifts */}
               {unlockedContent.filter(c => c.startsWith('video:')).map((v, i) => (
-                <div key={`v-${i}`} className="aspect-[3/4] rounded-xl overflow-hidden cursor-pointer hover:scale-105 transition-all border border-white/[5%] relative">
+                <div key={`v-${i}`} onClick={() => setLightboxVideo(v.replace('video:', ''))} className="aspect-[3/4] rounded-xl overflow-hidden cursor-pointer hover:scale-105 transition-all border border-white/[5%] relative">
                   <video src={v.replace('video:', '')} muted className="w-full h-full object-cover" />
                   <div className="absolute inset-0 flex items-center justify-center bg-black/30">
                     <MonitorPlay size={20} className="text-white/80" />
@@ -626,14 +640,30 @@ export default function Chat() {
               <h3 className="text-sm font-bold text-white/80">实时镜头</h3>
               <span className="text-[9px] px-2 py-0.5 bg-gradient-to-r from-red-500/20 to-[#ff18a0]/20 text-red-400 rounded-full font-bold border border-red-500/10">🔴 LIVE</span>
             </div>
-            <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-white/[3%] border border-white/[5%] shadow-[0_4px_15px_rgba(0,0,0,0.3)]">
-              <video src={videoAvatar} autoPlay loop muted playsInline className="w-full h-full object-cover" />
+            <div onClick={() => setLightboxVideo(videoAvatar)} className="relative w-full aspect-video rounded-xl overflow-hidden bg-white/[3%] border border-white/[5%] shadow-[0_4px_15px_rgba(0,0,0,0.3)] cursor-pointer group">
+              <video src={videoAvatar} autoPlay loop muted playsInline className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform" />
               <div className="absolute top-3 left-3 flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-500/80 backdrop-blur-sm shadow-[0_0_10px_rgba(239,68,68,0.3)]">
                 <span className="size-2 rounded-full bg-white animate-pulse" />
                 <span className="text-[10px] text-white font-bold">LIVE</span>
               </div>
             </div>
           </div>
+          )}
+
+        </div>
+      )}
+
+      {/* ═══════ LIGHTBOX ═══════ */}
+      {(lightboxImage || lightboxVideo) && (
+        <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-sm flex items-center justify-center" onClick={() => { setLightboxImage(null); setLightboxVideo(null) }}>
+          <button onClick={() => { setLightboxImage(null); setLightboxVideo(null) }} className="absolute top-5 right-5 size-12 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-all z-10">
+            <X size={24} className="text-white" />
+          </button>
+          {lightboxImage && (
+            <img src={lightboxImage} alt="fullscreen" className="max-w-[90vw] max-h-[90vh] object-contain rounded-2xl shadow-2xl" onClick={e => e.stopPropagation()} />
+          )}
+          {lightboxVideo && (
+            <video src={lightboxVideo} autoPlay loop controls className="max-w-[90vw] max-h-[90vh] object-contain rounded-2xl shadow-2xl" onClick={e => e.stopPropagation()} />
           )}
         </div>
       )}
