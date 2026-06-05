@@ -1,10 +1,9 @@
 import { NavLink } from 'react-router-dom'
-import { CreateIcon, ExploreIcon, ChatIcon, GenerateIcon, MyAIIcon, PremiumIcon, HomeIcon } from './Icons'
+import { CreateIcon, ExploreIcon, ChatIcon, GenerateIcon, MyAIIcon, PremiumIcon } from './Icons'
 
 const navItems = [
-  { to: '/home', label: 'Home', Icon: HomeIcon },
   { to: '/create', label: 'Create', Icon: CreateIcon, special: true },
-  { to: '/app/explore', label: 'Explore', Icon: ExploreIcon },
+  { to: '/', label: 'Explore', Icon: ExploreIcon },
   { to: '/app/chats', label: 'Chat', Icon: ChatIcon },
   { to: '/generate', label: 'Generate', Icon: GenerateIcon },
   { to: '/app/characters', label: 'My AI', Icon: MyAIIcon, badge: 'NEW' },

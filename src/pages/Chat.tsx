@@ -1,272 +1,763 @@
 import { useState, useRef, useEffect } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
-import { Send, Smile, Image, MoreVertical, Star, Search, ArrowLeft, Phone, Video, MessageSquare } from 'lucide-react'
+import { ArrowLeft, Phone, Video, MoreHorizontal, Send, Smile, Image as ImageIcon, Search, ChevronRight, ChevronLeft, X, MonitorPlay, Pencil, Gift, Sparkles, ChevronDown, MessageCircle, Heart, Star, Flame, Wand2, Filter, Crown, Music, MapPin, Clock, Eye } from 'lucide-react'
 import { characters } from '../data/characters'
 
-const sampleMessages = [
-  { id: '1', sender: 'ai' as const, text: "Hey there! I've been waiting for you...", time: '2:30 PM' },
-  { id: '2', sender: 'user' as const, text: "Hi! Nice to meet you", time: '2:31 PM' },
-  { id: '3', sender: 'ai' as const, text: "The pleasure is all mine! I can't wait to get to know you better", time: '2:32 PM' },
-  { id: '4', sender: 'ai' as const, text: "Tell me something about yourself, I want to know everything", time: '2:33 PM' },
+const GIFTS = [
+  { icon: '🌹', name: '玫瑰', cost: 99, reward: '解锁一张性感自拍', rewardType: 'photo' },
+  { icon: '💎', name: '钻石', cost: 199, reward: '解锁性感内衣写真', rewardType: 'photo' },
+  { icon: '👗', name: '晚礼服', cost: 249, reward: '解锁晚礼服实时镜头', rewardType: 'video' },
+  { icon: '👑', name: '皇冠', cost: 399, reward: '解锁专属角色扮演', rewardType: 'photo' },
+  { icon: '💍', name: '戒指', cost: 599, reward: '解锁亲密语音消息', rewardType: 'voice' },
+  { icon: '🏖️', name: '度假', cost: 799, reward: '解锁泳装实时镜头', rewardType: 'video' },
+  { icon: '🥂', name: '香槟', cost: 999, reward: '解锁私人定制内容', rewardType: 'video' },
+  { icon: '✨', name: '梦幻', cost: 1299, reward: '解锁全部私密内容', rewardType: 'all' },
 ]
+
+const INPUT_SUGGESTIONS = {
+  text: [
+    { icon: '👀', text: '给我看看' },
+    { icon: '📩', text: '发给我' },
+    { icon: '🙏', text: '我能看看吗' },
+    { icon: '💋', text: '亲一个' },
+    { icon: '😘', text: '想你了' },
+    { icon: '💕', text: '抱抱我' },
+  ],
+  video: [
+    { icon: '🎬', text: '给我发视频' },
+    { icon: '📹', text: '发给我视频' },
+    { icon: '✨', text: '来个实时镜头' },
+    { icon: '🎥', text: '给我看看你在干嘛' },
+  ],
+  hot: [
+    { icon: '🔥', text: '给我看看私处' },
+    { icon: '🍑', text: '给我看看臀部' },
+    { icon: '💋', text: '给我看看胸部' },
+    { icon: '😈', text: '脱掉衣服' },
+    { icon: '🥵', text: '做给我看' },
+    { icon: '💦', text: '让我看看你有多湿' },
+  ],
+}
+
 
 export default function Chat() {
   const { username } = useParams()
   const navigate = useNavigate()
-  const [selectedChar, setSelectedChar] = useState(username || characters[0].username)
-  const [messages, setMessages] = useState(sampleMessages)
-  const [input, setInput] = useState('')
-  const [searchChat, setSearchChat] = useState('')
-  const messagesEndRef = useRef<HTMLDivElement>(null)
+  const char = characters.find(c => c.username === username || c.id === username)
 
-  const currentChar = characters.find(c => c.username === selectedChar) || characters[0]
+  const [message, setMessage] = useState('')
+  const messagesRef = useRef<HTMLDivElement>(null)
+  const [showDetails, setShowDetails] = useState(true)
+  const [showQuickQuestions, setShowQuickQuestions] = useState(false)
+  const [showGifts, setShowGifts] = useState(false)
+  const [isTyping, setIsTyping] = useState(false)
+  const [unlockedContent, setUnlockedContent] = useState<string[]>([])
+  const [lightboxImage, setLightboxImage] = useState<string | null>(null)
+  const [lightboxVideo, setLightboxVideo] = useState<string | null>(null)
+  const [customName, setCustomName] = useState<string>('')
+  const [isEditingName, setIsEditingName] = useState(false)
+  const [showMoreMenu, setShowMoreMenu] = useState(false)
+  const [isDeleted, setIsDeleted] = useState(false)
+  const [activeChats, setActiveChats] = useState<Array<{id: string; username: string; name: string; avatar: string; lastMsg: string; time: string; customName?: string}>>([])
+  const nameInputRef = useRef<HTMLInputElement>(null)
+  const moreMenuRef = useRef<HTMLDivElement>(null)
+  const quickQuestionsRef = useRef<HTMLDivElement>(null)
+  const giftsRef = useRef<HTMLDivElement>(null)
 
+  // Load active chats from localStorage on mount
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [messages])
+    try {
+      const saved = localStorage.getItem('golove_active_chats')
+      if (saved) setActiveChats(JSON.parse(saved))
+    } catch { /* ignore */ }
+  }, [])
 
+  // Save active chats to localStorage whenever it changes
   useEffect(() => {
-    if (username) {
-      setSelectedChar(username)
+    try {
+      localStorage.setItem('golove_active_chats', JSON.stringify(activeChats))
+    } catch { /* ignore */ }
+  }, [activeChats])
+
+  // Register or update this character in active chats
+  useEffect(() => {
+    if (!char) return
+    const chatEntry = {
+      id: char.id,
+      username: char.username,
+      name: char.name,
+      avatar: char.avatar,
+      lastMsg: char.bio || '',
+      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      customName: customName || '',
     }
-  }, [username])
+    setActiveChats(prev => {
+      const filtered = prev.filter(c => c.id !== char.id)
+      return [chatEntry, ...filtered]
+    })
+  }, [char?.id, customName])
 
-  const sendMessage = () => {
-    if (!input.trim()) return
-    setMessages(prev => [...prev, {
-      id: Date.now().toString(),
-      sender: 'user',
-      text: input.trim(),
-      time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
-    }])
-    setInput('')
+  // Close quick questions and gifts on outside click
+  useEffect(() => {
+    if (!showQuickQuestions && !showGifts) return
+    const handleOutside = (e: MouseEvent) => {
+      const target = e.target as HTMLElement
+      if (quickQuestionsRef.current && !quickQuestionsRef.current.contains(target)) {
+        if (!target.closest('[data-quick-questions-toggle]')) setShowQuickQuestions(false)
+      }
+      if (giftsRef.current && !giftsRef.current.contains(target)) {
+        if (!target.closest('[data-gifts-toggle]')) setShowGifts(false)
+      }
+    }
+    document.addEventListener('mousedown', handleOutside)
+    return () => document.removeEventListener('mousedown', handleOutside)
+  }, [showQuickQuestions, showGifts])
+
+  // Close more menu when clicking outside
+  useEffect(() => {
+    if (!showMoreMenu) return
+    const handleClick = (e: MouseEvent) => {
+      if (!moreMenuRef.current?.contains(e.target as Node)) {
+        setShowMoreMenu(false)
+      }
+    }
+    // Small delay to avoid closing immediately when clicking the "..." toggle button
+    const timeout = setTimeout(() => {
+      document.addEventListener('click', handleClick)
+    }, 50)
+    return () => {
+      clearTimeout(timeout)
+      document.removeEventListener('click', handleClick)
+    }
+  }, [showMoreMenu])
+
+  const videoAvatar = char?.avatar?.replace('/images_avif_q50_720/', '/video_avatar/').replace('_avatar.avif', '_video_avatar_nsfw.mp4')
+  const nsfwAvatar = char?.avatar?.replace('_avatar.avif', '_avatar_nsfw.avif')
+  const hasLiveVideo = char?.isLive && !!videoAvatar
+  const displayName = customName || char?.name || ''
+  const baseGallery = [char?.avatar, nsfwAvatar].filter(Boolean)
+  const uniqueGallery = [...new Set(baseGallery)]
+  const galleryImages = [...uniqueGallery, ...unlockedContent.filter(c => c.startsWith('photo:')).map(c => c.replace('photo:', ''))]
+
+  const [messages, setMessages] = useState([
+    { id: 1, sender: 'ai' as const, text: char?.greeting || `I love it when a conversation starts with something interesting... so, where do we begin? 😈`, time: '2:09 PM', photos: undefined as string[] | undefined },
+  ])
+
+  const handleSend = (text?: string) => {
+    const msgText = text || message.trim()
+    if (!msgText) return
+    const userMsg = { id: Date.now(), sender: 'user' as const, text: msgText, time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), photos: undefined as string[] | undefined }
+    setMessages(prev => [...prev, userMsg])
+    setMessage('')
+    setShowQuickQuestions(false)
+    setShowGifts(false)
+    setIsTyping(true)
+
+    // If sending a gift, add unlocked content to gallery
+    if (msgText.includes('💎')) {
+      // Photo gifts add photos, video gifts add videos
+      if (msgText.includes('实时镜头') || msgText.includes('泳装') || msgText.includes('定制')) {
+        if (hasLiveVideo) setUnlockedContent(prev => [...prev, `video:${videoAvatar}`])
+      } else {
+        const rewardPhoto = nsfwAvatar || char.avatar
+        setUnlockedContent(prev => [...prev, `photo:${rewardPhoto}`])
+      }
+    }
     setTimeout(() => {
-      setMessages(prev => [...prev, {
-        id: (Date.now() + 1).toString(),
-        sender: 'ai',
-        text: "That's really sweet of you to say! Tell me more about yourself...",
-        time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
-      }])
-    }, 1500)
+      const replies = [
+        "Mmm, I like where this is going... tell me more 😘",
+        "You're so sweet! What else is on your mind? 💕",
+        "Oh really? That's interesting... I want to know more about you 😊",
+        "Haha, you're funny! Keep talking to me 💋",
+        "I love that! You have great taste 😉",
+        "Mmm, you're making me blush... 😳🔥",
+        "I've been waiting for someone like you 💖",
+        "That's so hot... don't stop 🔥😈",
+        "You really know how to make a girl smile 🥰",
+        "I wish you were here right now... 💫",
+      ]
+      const aiMsg = { id: Date.now() + 1, sender: 'ai' as const, text: replies[Math.floor(Math.random() * replies.length)], time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), photos: undefined as string[] | undefined }
+      setMessages(prev => [...prev, aiMsg])
+      setIsTyping(false)
+    }, 1500 + Math.random() * 1000)
   }
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault()
-      sendMessage()
-    }
-  }
+  useEffect(() => {
+    messagesRef.current?.scrollTo({ top: messagesRef.current.scrollHeight, behavior: 'smooth' })
+  }, [messages, isTyping])
 
-  const filteredChars = characters.filter(c =>
-    c.name.toLowerCase().includes(searchChat.toLowerCase())
+  const otherChars = characters.filter(c => c.id !== char?.id).slice(0, 12)
+
+  // Deleted or not found - render AFTER all hooks
+  if (!char || isDeleted) return (
+    <div className="flex flex-col items-center justify-center h-screen bg-[#0a0a0f] text-white/40 text-lg gap-4">
+      <span className="text-5xl">💔</span>
+      <span>{!char ? '角色不存在' : '该角色已被删除'}</span>
+      <button onClick={() => navigate('/app/chats')} className="px-6 py-2 rounded-full bg-[#d05bf8]/20 text-[#d05bf8] text-sm font-semibold hover:bg-[#d05bf8]/30 transition-all">返回聊天列表</button>
+    </div>
   )
 
   return (
-    <div className="flex h-[calc(100vh-88px)] bg-gl-dark overflow-hidden">
-      {/* ======== LEFT: CHAT LIST (Narrower) ======== */}
-      <aside className="w-[200px] shrink-0 border-r border-white/[5%] flex flex-col">
-        {/* Header */}
-        <div className="p-3 border-b border-white/[5%]">
-          <h2 className="text-white font-bold text-sm mb-2">Chats</h2>
-          <div className="relative">
-            <Search size={12} className="absolute left-2 top-1/2 -translate-y-1/2 text-white/30" />
-            <input
-              type="text"
-              value={searchChat}
-              onChange={e => setSearchChat(e.target.value)}
-              placeholder="Search..."
-              className="w-full bg-white/[4%] border border-white/[5%] rounded-lg py-1.5 pl-7 pr-2 text-white text-xs placeholder:text-white/30 focus:outline-none focus:border-[#d05bf8]/40 transition-all"
-            />
+    <div className="flex h-[calc(100dvh-32px)] bg-[#0a0a0f]">
+      {/* ═══════ LEFT PANEL ═══════ */}
+      <div className="w-[300px] shrink-0 border-r border-white/[4%] flex flex-col bg-[#0d0d14]">
+        <div className="p-4 pb-3">
+          <div className="relative group">
+            <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-white/25 group-focus-within:text-[#d05bf8] transition-colors" />
+            <input type="text" placeholder="搜索对话..." className="w-full bg-white/[3%] border border-white/[5%] rounded-2xl py-3 pl-10 pr-4 text-sm text-white placeholder:text-white/25 focus:outline-none focus:border-[#d05bf8]/30 focus:bg-white/[4%] focus:shadow-[0_0_15px_rgba(208,91,248,0.1)] transition-all" />
           </div>
         </div>
 
-        {/* Chat List */}
-        <div className="flex-1 overflow-y-auto no-scrollbar">
-          {filteredChars.map(char => (
-            <button
-              key={char.id}
-              onClick={() => {
-                setSelectedChar(char.username)
-                navigate(`/chat/${char.username}`)
-              }}
-              className={`w-full flex items-center gap-2 p-2.5 transition-all hover:bg-white/[3%] ${
-                selectedChar === char.username ? 'bg-white/[5%] border-l-2 border-gl-pink' : ''
-              }`}
-            >
+        <div className="px-4 pb-2">
+          <span className="text-[11px] font-bold text-white/30 uppercase tracking-widest">活跃对话</span>
+        </div>
+        <div className="px-3 pb-2 overflow-y-auto scrollbar-hide space-y-0.5 max-h-[40vh]">
+          {activeChats.length === 0 && (
+            <p className="text-xs text-white/20 px-3 py-2">还没有聊天记录</p>
+          )}
+          {activeChats.map(chat => (
+            <Link key={chat.id} to={`/chat/${chat.username}`}
+              className={`flex items-center gap-3 px-3 py-3 rounded-2xl transition-all group ${chat.id === char?.id ? 'bg-gradient-to-r from-[#d05bf8]/[0.08] to-[#ff18a0]/[0.05] border border-[#d05bf8]/10' : 'hover:bg-white/[3%]'}`}>
               <div className="relative shrink-0">
-                <img src={char.avatar} alt={char.name} className="size-9 rounded-full object-cover" />
-                {char.isOnline && (
-                  <span className="absolute bottom-0 right-0 size-2 rounded-full bg-green-400 border border-gl-dark" />
+                <div className="size-12 rounded-full overflow-hidden ring-2 ring-[#d05bf8]/30 shadow-[0_0_12px_rgba(208,91,248,0.2)]">
+                  <img src={chat.avatar} alt={chat.name} className="w-full h-full object-cover" />
+                </div>
+                {characters.find(c => c.id === chat.id)?.isOnline && (
+                  <span className="absolute bottom-0 right-0 size-3 rounded-full bg-emerald-400 border-2 border-[#0d0d14] shadow-[0_0_6px_rgba(52,211,153,0.5)]" />
                 )}
               </div>
-              <div className="flex-1 min-w-0 text-left">
-                <div className="flex items-center justify-between">
-                  <span className="text-white font-medium text-xs truncate">{char.name}</span>
-                  <span className="text-white/30 text-[9px] shrink-0 ml-1">2:30</span>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center justify-between mb-0.5">
+                  <span className="text-sm font-bold text-white">{chat.customName || chat.name}</span>
+                  <span className="text-[11px] text-white/25">{chat.time}</span>
                 </div>
-                <p className="text-white/40 text-[10px] truncate mt-0.5">Hey baby! I've been waiting...</p>
+                <p className="text-xs text-white/35 truncate leading-relaxed">{chat.lastMsg}</p>
               </div>
-              {char.isLive && (
-                <span className="shrink-0 px-1 py-0.5 text-[8px] font-bold bg-red-500 text-white rounded">
-                  LIVE
-                </span>
-              )}
-            </button>
+              <button
+                onClick={(e) => { e.preventDefault(); e.stopPropagation(); setActiveChats(prev => prev.filter(c => c.id !== chat.id)) }}
+                className="shrink-0 p-1.5 rounded-lg hover:bg-white/[5%] opacity-0 group-hover:opacity-100 transition-all"
+              >
+                <X size={12} className="text-white/25" />
+              </button>
+            </Link>
           ))}
         </div>
-      </aside>
 
-      {/* ======== RIGHT: CHAT WINDOW (Compact) ======== */}
-      <main className="flex-1 flex flex-col min-w-0">
-        {currentChar ? (
-          <>
-            {/* Chat Top Bar */}
-            <div className="flex items-center justify-between px-4 py-2.5 border-b border-white/[5%]">
-              <div className="flex items-center gap-2.5">
-                <button onClick={() => navigate('/app/chats')} className="md:hidden">
-                  <ArrowLeft size={16} className="text-white/60" />
-                </button>
-                <Link to={`/chat/${currentChar.username}`} className="flex items-center gap-2.5">
-                  <div className="relative">
-                    <img
-                      src={currentChar.avatar}
-                      alt={currentChar.name}
-                      className="size-9 rounded-full object-cover border border-gl-pink/50"
-                    />
-                    {currentChar.isOnline && (
-                      <span className="absolute bottom-0 right-0 size-2 rounded-full bg-green-400 border border-gl-dark" />
-                    )}
-                  </div>
-                  <div>
-                    <h3 className="text-white font-semibold text-sm leading-tight">{currentChar.name}</h3>
-                    <p className="text-white/40 text-[10px] flex items-center gap-1">
-                      {currentChar.isOnline ? (
-                        <>
-                          <span className="size-1 rounded-full bg-green-400 inline-block" />
-                          Online
-                        </>
-                      ) : 'Offline'}
-                    </p>
-                  </div>
-                </Link>
+        <div className="px-4 pt-3 pb-2">
+          <span className="text-[11px] font-bold text-white/30 uppercase tracking-widest">推荐对话</span>
+        </div>
+        <div className="px-3 flex-1 overflow-y-auto scrollbar-hide space-y-0.5">
+          {otherChars.filter(c => !activeChats.find(ac => ac.id === c.id)).slice(0, 8).map(c => (
+            <Link key={c.id} to={`/chat/${c.username}`} className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/[3%] transition-all group">
+              <div className="relative shrink-0">
+                <div className="size-11 rounded-full overflow-hidden group-hover:ring-2 group-hover:ring-[#d05bf8]/20 transition-all">
+                  <img src={c.avatar} alt={c.name} className="w-full h-full object-cover" />
+                </div>
+                {c.isOnline && <span className="absolute bottom-0 right-0 size-2.5 rounded-full bg-emerald-400 border-2 border-[#0d0d14]" />}
               </div>
-              <div className="flex items-center gap-0.5">
-                <button className="size-8 flex items-center justify-center rounded-lg hover:bg-white/[8%] text-white/50 hover:text-white transition-all">
-                  <Video size={14} />
+              <div className="flex-1 min-w-0">
+                <span className="text-[13px] font-medium text-white/60 group-hover:text-white/80 transition-colors">{c.name}, {c.age}</span>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </div>
+
+      {/* ═══════ CENTER PANEL ═══════ */}
+      <div className="flex-1 flex flex-col relative min-w-0">
+        {/* Dark Pink Gradient Background */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a0f] via-[#120812] to-[#0a0a0f] z-0 pointer-events-none" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(208,91,248,0.04)_0%,transparent_70%)] z-0 pointer-events-none" />
+
+        {/* Header */}
+        <header className="relative z-10 flex items-center gap-3 px-5 py-3 border-b border-white/[4%] bg-[#0a0a0f]/90 backdrop-blur-2xl">
+          <button onClick={() => navigate('/app/chats')} className="flex items-center justify-center size-10 rounded-full hover:bg-white/[5%] transition-all">
+            <ArrowLeft size={22} className="text-white/60" />
+          </button>
+          <Link to={`/chat/${char.username}`} className="flex items-center gap-3 flex-1 min-w-0">
+            <div className="relative shrink-0">
+              <div className="size-12 rounded-full overflow-hidden ring-2 ring-[#d05bf8]/25 shadow-[0_0_12px_rgba(208,91,248,0.2)]">
+                <img src={char.avatar} alt={displayName} className="w-full h-full object-cover" />
+              </div>
+              {char.isOnline && <span className="absolute bottom-0 right-0 size-3 rounded-full bg-emerald-400 border-2 border-[#0a0a0f] shadow-[0_0_8px_rgba(52,211,153,0.6)]" />}
+            </div>
+            <div className="min-w-0">
+              <div className="flex items-center gap-2">
+                <h1 className="text-[18px] font-bold text-white leading-tight truncate">{displayName}</h1>
+                <button onClick={() => { setIsEditingName(true); setTimeout(() => nameInputRef.current?.focus(), 100) }}
+                  className="p-1 rounded hover:bg-white/[6%] transition-all" title="改名">
+                  <Pencil size={12} className="text-white/25 hover:text-[#d05bf8]" />
                 </button>
-                <button className="size-8 flex items-center justify-center rounded-lg hover:bg-white/[8%] text-white/50 hover:text-white transition-all">
-                  <Phone size={14} />
-                </button>
-                <button className="size-8 flex items-center justify-center rounded-lg hover:bg-white/[8%] text-white/50 hover:text-white transition-all">
-                  <Star size={14} />
-                </button>
-                <button className="size-8 flex items-center justify-center rounded-lg hover:bg-white/[8%] text-white/50 hover:text-white transition-all">
-                  <MoreVertical size={14} />
-                </button>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="size-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_6px_rgba(52,211,153,0.5)]" />
+                <span className="text-xs text-white/40">在线</span>
               </div>
             </div>
-
-            {/* Messages Area */}
-            <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3 no-scrollbar">
-              {/* Intro */}
-              <div className="flex gap-2 mb-4 animate-slide-up">
-                <img src={currentChar.avatar} alt={currentChar.name} className="size-8 rounded-full object-cover shrink-0" />
-                <div className="bg-white/[4%] rounded-xl rounded-tl-sm px-3 py-2 max-w-[260px]">
-                  <p className="text-white/80 text-xs leading-relaxed">
-                    Hey baby! {currentChar.name} here. I'm so excited to talk to you!
-                  </p>
+          </Link>
+          <div className="flex items-center gap-1.5">
+            <button className="flex items-center justify-center size-11 rounded-full bg-emerald-500/10 hover:bg-emerald-500/20 transition-all border border-emerald-500/10" title="语音通话">
+              <Phone size={20} className="text-emerald-400 drop-shadow-[0_0_6px_rgba(52,211,153,0.4)]" />
+            </button>
+            <div className="relative">
+              <button className="flex items-center justify-center size-11 rounded-full bg-[#d05bf8]/10 hover:bg-[#d05bf8]/20 transition-all border border-[#d05bf8]/15" title="视频通话">
+                <Video size={20} className="text-[#d05bf8] drop-shadow-[0_0_8px_rgba(208,91,248,0.4)]" />
+              </button>
+              <span className="absolute -top-1 -right-1 px-1.5 py-0.5 text-[7px] font-bold bg-gradient-to-r from-[#ff18a0] to-[#d05bf8] text-white rounded-full leading-none shadow-[0_0_10px_rgba(255,24,160,0.5)]">NEW</span>
+            </div>
+            <div className="relative" data-dropdown-toggle>
+              <button onClick={(e) => { e.stopPropagation(); setShowMoreMenu(!showMoreMenu) }} className="flex items-center justify-center size-11 rounded-full hover:bg-white/[6%] transition-all border border-white/[5%]">
+                <MoreHorizontal size={20} className="text-white/45" />
+              </button>
+              {showMoreMenu && (
+                <div ref={moreMenuRef} data-dropdown className="absolute top-full right-0 mt-1.5 w-[180px] bg-[#16161e] border border-white/[6%] rounded-xl shadow-[0_8px_30px_rgba(0,0,0,0.6)] overflow-hidden z-30">
+                  <button onClick={() => { setIsEditingName(true); setShowMoreMenu(false) }}
+                    className="w-full flex items-center gap-2.5 px-3.5 py-2.5 hover:bg-white/[4%] transition-all text-left">
+                    <span className="text-sm">✏️</span>
+                    <span className="text-[13px] text-white/60 hover:text-white/90 transition-colors">修改名称</span>
+                  </button>
+                  <button onClick={() => { setMessages([{ id: 1, sender: 'ai' as const, text: char?.greeting || `I love it when a conversation starts with something interesting... so, where do we begin? 😈`, time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), photos: undefined as string[] | undefined }]); setUnlockedContent([]); setShowMoreMenu(false) }}
+                    className="w-full flex items-center gap-2.5 px-3.5 py-2.5 hover:bg-white/[4%] transition-all text-left">
+                    <span className="text-sm">🔄</span>
+                    <span className="text-[13px] text-white/60 hover:text-white/90 transition-colors">重置对话</span>
+                  </button>
+                  <div className="mx-3 border-t border-white/[4%]" />
+                  <button onClick={() => { setActiveChats(prev => prev.filter(c => c.id !== char.id)); setShowMoreMenu(false); window.location.href = '/app/chats' }}
+                    className="w-full flex items-center gap-2.5 px-3.5 py-2.5 hover:bg-red-500/[5%] transition-all text-left">
+                    <span className="text-sm">🗑️</span>
+                    <span className="text-[13px] text-red-400/60 hover:text-red-400 transition-colors">删除女友</span>
+                  </button>
                 </div>
-              </div>
+              )}
+            </div>
+            <button className="flex items-center justify-center size-11 rounded-full hover:bg-white/[6%] transition-all border border-white/[5%]"><Filter size={18} className="text-white/45" /></button>
+            <button onClick={() => setShowDetails(!showDetails)} className={`flex items-center justify-center size-11 rounded-full transition-all ${showDetails ? 'bg-[#d05bf8]/15 text-[#d05bf8] shadow-[0_0_12px_rgba(208,91,248,0.2)] border border-[#d05bf8]/20' : 'hover:bg-white/[6%] text-white/45 border border-white/[5%]'}`}>
+              <ChevronRight size={20} className={`transition-transform duration-200 ${showDetails ? 'rotate-180' : ''}`} />
+            </button>
+          </div>
+        </header>
 
-              {/* Messages */}
-              {messages.map(msg => (
-                <div
-                  key={msg.id}
-                  className={`flex gap-2 animate-slide-up ${msg.sender === 'user' ? 'flex-row-reverse' : ''}`}
-                >
-                  {msg.sender === 'ai' && (
-                    <img src={currentChar.avatar} alt={currentChar.name} className="size-8 rounded-full object-cover shrink-0" />
-                  )}
-                  <div className={`flex flex-col gap-0.5 ${msg.sender === 'user' ? 'items-end' : ''}`}>
-                    <div
-                      className={`px-3 py-2 rounded-xl max-w-[260px] text-xs leading-relaxed ${
-                        msg.sender === 'user'
-                          ? 'bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] text-white rounded-tr-sm'
-                          : 'bg-white/[4%] text-white/80 rounded-tl-sm'
-                      }`}
-                    >
-                      {msg.text}
-                    </div>
-                    <span className="text-white/25 text-[9px] px-1">{msg.time}</span>
+        {/* Messages */}
+        <div ref={messagesRef} className="relative z-10 flex-1 overflow-y-auto px-5 py-5 space-y-5 scrollbar-hide">
+          <div className="flex justify-center">
+            <span className="px-5 py-1.5 text-[11px] text-white/20 bg-white/[3%] rounded-full border border-white/[3%]">Today</span>
+          </div>
+
+          {messages.map(msg => (
+            <div key={msg.id} className={`flex gap-3 ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
+              {msg.sender === 'ai' && (
+                <div className="shrink-0 mt-1">
+                  <div className="size-9 rounded-full overflow-hidden ring-1 ring-white/10 shadow-[0_0_8px_rgba(208,91,248,0.1)]">
+                    <img src={char.avatar} alt={char.name} className="w-full h-full object-cover" />
                   </div>
                 </div>
-              ))}
-              <div ref={messagesEndRef} />
+              )}
+              <div className={`flex flex-col ${msg.sender === 'user' ? 'items-end' : 'items-start'} max-w-[75%]`}>
+                <div className={`rounded-2xl px-5 py-3.5 ${
+                  msg.sender === 'user'
+                    ? 'bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] text-white shadow-[0_4px_15px_rgba(208,91,248,0.25)]'
+                    : 'bg-white/[6%] text-white/85 border border-white/[5%] shadow-[0_2px_10px_rgba(0,0,0,0.2)]'
+                }`}>
+                  <p className="text-[16px] leading-[24px] tracking-wide">{msg.text}</p>
+                </div>
+                {msg.photos && (
+                  <div className="flex gap-3 mt-3">
+                    {msg.photos.filter(Boolean).map((photo, i) => (
+                      <div key={i} className="w-[160px] h-[210px] rounded-2xl overflow-hidden cursor-pointer hover:scale-[1.02] transition-all shadow-[0_4px_20px_rgba(0,0,0,0.3)] ring-1 ring-white/[5%]">
+                        <img src={photo} alt={`photo ${i + 1}`} className="w-full h-full object-cover" />
+                      </div>
+                    ))}
+                  </div>
+                )}
+                <span className="text-[10px] text-white/15 mt-1.5 px-1">{msg.time}</span>
+              </div>
+              {msg.sender === 'user' && (
+                <div className="shrink-0 mt-1">
+                  <div className="size-9 rounded-full bg-gradient-to-br from-[#d05bf8] to-[#ff18a0] flex items-center justify-center shadow-[0_2px_8px_rgba(208,91,248,0.3)]">
+                    <span className="text-xs text-white font-bold">U</span>
+                  </div>
+                </div>
+              )}
             </div>
+          ))}
 
-            {/* Input Area */}
-            <div className="px-4 py-3 border-t border-white/[5%]">
-              {/* Quick Actions */}
-              <div className="flex items-center gap-1.5 mb-2.5 overflow-x-auto no-scrollbar">
-                {['Hey!', 'How are you?', 'Tell me more', 'What do you like?', '💕', '🔥'].map(txt => (
+          {/* Typing Indicator */}
+          {isTyping && (
+            <div className="flex gap-3 justify-start">
+              <div className="shrink-0 mt-1">
+                <div className="size-9 rounded-full overflow-hidden ring-1 ring-white/10">
+                  <img src={char.avatar} alt={char.name} className="w-full h-full object-cover" />
+                </div>
+              </div>
+              <div className="bg-white/[6%] border border-white/[5%] rounded-2xl px-5 py-4 flex items-center gap-1.5">
+                <span className="size-2 rounded-full bg-[#d05bf8]/60 animate-bounce" style={{ animationDelay: '0ms' }} />
+                <span className="size-2 rounded-full bg-[#d05bf8]/60 animate-bounce" style={{ animationDelay: '150ms' }} />
+                <span className="size-2 rounded-full bg-[#d05bf8]/60 animate-bounce" style={{ animationDelay: '300ms' }} />
+              </div>
+            </div>
+          )}
+
+          {/* Sign Up CTA */}
+          <div className="flex flex-col items-center gap-4 pt-6 pb-2">
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] rounded-full blur-xl opacity-30" />
+              <button className="relative px-10 py-3.5 rounded-full bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] text-white text-[15px] font-bold shadow-[0_4px_25px_rgba(208,91,248,0.4)] hover:shadow-[0_4px_35px_rgba(208,91,248,0.6)] hover:scale-105 transition-all">
+                注册以查看更多聊天
+              </button>
+            </div>
+            <p className="text-center text-white/25 text-[15px] leading-relaxed max-w-[340px]">
+              认识一下<span className="text-white/50 font-semibold">{char.name}</span>，一个毫无过滤的AI女友。<br /><span className="bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] bg-clip-text text-transparent font-semibold">敢问什么吗？</span>
+            </p>
+          </div>
+        </div>
+
+        {/* Quick Reply Suggestions */}
+        <div className="relative z-10 px-5 pb-3">
+          <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
+            {INPUT_SUGGESTIONS.text.map((s, i) => (
+              <button key={i} onClick={() => { setMessage(s.text); setShowQuickQuestions(false) }}
+                className="shrink-0 flex items-center gap-1.5 px-4 py-2.5 rounded-full border border-white/[6%] bg-white/[3%] text-[13px] text-white/45 hover:bg-gradient-to-r hover:from-[#d05bf8]/10 hover:to-[#ff18a0]/10 hover:text-white/70 hover:border-[#d05bf8]/20 transition-all whitespace-nowrap hover:shadow-[0_0_10px_rgba(208,91,248,0.1)]">
+                <span>{s.icon}</span> {s.text}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Input Area */}
+        <div className="relative z-10 border-t border-white/[4%] bg-[#0a0a0f]/90 backdrop-blur-2xl">
+          {/* Dropdowns */}
+          {showQuickQuestions && (
+            <div ref={quickQuestionsRef} data-dropdown className="absolute bottom-full left-0 mb-2 w-full bg-[#13131a]/95 backdrop-blur-2xl border border-white/[8%] rounded-2xl shadow-[0_-10px_40px_rgba(0,0,0,0.4)] overflow-hidden z-20">
+              <div className="p-3 space-y-3">
+                {/* Section 1: Text suggestions */}
+                <div>
+                  <div className="flex items-center gap-2 px-2 pb-2">
+                    <span className="text-xs">💬</span>
+                    <span className="text-[11px] font-bold text-white/40 uppercase tracking-wider">文字互动</span>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {INPUT_SUGGESTIONS.text.map((s, i) => (
+                      <button key={i} onClick={() => { setMessage(s.text); setShowQuickQuestions(false) }}
+                        className="flex items-center gap-1.5 px-3 py-2 rounded-full border border-white/[6%] bg-white/[3%] text-[13px] text-white/50 hover:bg-[#d05bf8]/10 hover:text-white/80 hover:border-[#d05bf8]/20 transition-all">
+                        <span className="text-sm">{s.icon}</span> {s.text}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                {/* Section 2: Video suggestions */}
+                <div>
+                  <div className="flex items-center gap-2 px-2 pb-2">
+                    <span className="text-xs">📹</span>
+                    <span className="text-[11px] font-bold text-white/40 uppercase tracking-wider">视频互动</span>
+                    <span className="text-[9px] px-1.5 py-0.5 bg-red-500/20 text-red-400 rounded-full">实时镜头</span>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {INPUT_SUGGESTIONS.video.map((s, i) => (
+                      <button key={i} onClick={() => { setMessage(s.text); setShowQuickQuestions(false) }}
+                        className="flex items-center gap-1.5 px-3 py-2 rounded-full border border-[#d05bf8]/10 bg-[#d05bf8]/[3%] text-[13px] text-[#d05bf8]/60 hover:bg-[#d05bf8]/10 hover:text-[#d05bf8] hover:border-[#d05bf8]/25 transition-all">
+                        <span className="text-sm">{s.icon}</span> {s.text}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                {/* Section 3: Hot topics */}
+                <div>
+                  <div className="flex items-center gap-2 px-2 pb-2">
+                    <span className="text-xs">🔥</span>
+                    <span className="text-[11px] font-bold text-red-400/50 uppercase tracking-wider">热门私密话题</span>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {INPUT_SUGGESTIONS.hot.map((s, i) => (
+                      <button key={i} onClick={() => { setMessage(s.text); setShowQuickQuestions(false) }}
+                        className="flex items-center gap-1.5 px-3 py-2 rounded-full border border-red-500/10 bg-red-500/[3%] text-[13px] text-red-400/50 hover:bg-red-500/10 hover:text-red-400 hover:border-red-500/25 transition-all">
+                        <span className="text-sm">{s.icon}</span> {s.text}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+          {showGifts && (
+            <div ref={giftsRef} data-dropdown className="absolute bottom-full right-0 mb-2 w-[380px] bg-[#13131a]/95 backdrop-blur-2xl border border-white/[8%] rounded-2xl shadow-[0_-10px_40px_rgba(0,0,0,0.4)] overflow-hidden z-20">
+              <div className="px-5 py-3.5 border-b border-white/[5%] flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Gift size={14} className="text-[#d05bf8]" />
+                  <span className="text-sm font-bold text-white/60">发送礼物解锁内容</span>
+                </div>
+                <span className="text-[10px] px-2 py-0.5 bg-gradient-to-r from-[#d05bf8]/20 to-[#ff18a0]/20 text-[#d05bf8] rounded-full font-medium">✨ 实时镜头</span>
+              </div>
+              <div className="p-3 grid grid-cols-2 gap-2 max-h-[400px] overflow-y-auto scrollbar-hide">
+                {GIFTS.map((gift, i) => (
                   <button
-                    key={txt}
-                    onClick={() => setInput(txt)}
-                    className="shrink-0 px-2 py-1 text-[10px] bg-white/[4%] rounded-full text-white/40 hover:bg-white/[8%] hover:text-white transition-all"
+                    key={i}
+                    onClick={() => { handleSend(`送你${gift.cost}💎 ${gift.name}！`); setShowGifts(false); }}
+                    className="flex flex-col p-3 rounded-xl border border-white/[5%] bg-white/[2%] hover:bg-[#d05bf8]/[5%] hover:border-[#d05bf8]/15 transition-all text-left group"
                   >
-                    {txt}
+                    <div className="flex items-center gap-2 mb-1.5">
+                      <span className="text-2xl">{gift.icon}</span>
+                      <div className="flex-1">
+                        <span className="text-[13px] font-semibold text-white/70 group-hover:text-white/90 transition-colors">{gift.name}</span>
+                        <div className="flex items-center gap-1">
+                          <span className="text-[12px] font-bold text-[#d05bf8]">{gift.cost} 💎</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-1.5 px-2 py-1.5 rounded-lg bg-white/[3%]">
+                      <span className="text-[10px]">{gift.rewardType === 'photo' ? '📸' : gift.rewardType === 'video' ? '🎬' : gift.rewardType === 'voice' ? '🎤' : '🎁'}</span>
+                      <span className="text-[11px] text-white/40">{gift.reward}</span>
+                    </div>
                   </button>
                 ))}
               </div>
-
-              {/* Input Row */}
-              <div className="flex items-end gap-2">
-                <button className="size-8 flex items-center justify-center rounded-full text-white/30 hover:text-white hover:bg-white/[8%] transition-all shrink-0">
-                  <Smile size={16} />
-                </button>
-                <div className="flex-1 relative">
-                  <textarea
-                    value={input}
-                    onChange={e => setInput(e.target.value)}
-                    onKeyDown={handleKeyDown}
-                    placeholder="Type a message..."
-                    rows={1}
-                    className="w-full bg-white/[4%] border border-white/[5%] rounded-xl px-3 py-2 pr-12 text-white text-xs placeholder:text-white/30 focus:outline-none focus:border-[#d05bf8]/40 transition-all resize-none"
-                    style={{ minHeight: '36px', maxHeight: '80px', height: 'auto' }}
-                    onInput={e => {
-                      const t = e.target as HTMLTextAreaElement
-                      t.style.height = 'auto'
-                      t.style.height = Math.min(t.scrollHeight, 80) + 'px'
-                    }}
-                  />
-                  <div className="absolute right-2 bottom-1.5 flex gap-0.5">
-                    <button className="size-6 flex items-center justify-center rounded-full text-white/25 hover:text-white transition-all">
-                      <Image size={14} />
-                    </button>
-                  </div>
-                </div>
-                <button
-                  onClick={sendMessage}
-                  disabled={!input.trim()}
-                  className="size-8 flex items-center justify-center rounded-full bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] text-white disabled:opacity-40 disabled:cursor-not-allowed hover:opacity-90 transition-all shrink-0 active:scale-95"
-                >
-                  <Send size={14} />
-                </button>
-              </div>
             </div>
-          </>
-        ) : (
-          <div className="flex-1 flex items-center justify-center">
-            <div className="text-center">
-              <div className="size-12 rounded-xl bg-white/[3%] flex items-center justify-center mx-auto mb-3">
-                <MessageSquare size={24} className="text-white/20" />
+          )}
+
+          <div className="flex items-end gap-2 px-5 py-3.5">
+            <button data-quick-questions-toggle
+              onClick={() => { setShowQuickQuestions(!showQuickQuestions); setShowGifts(false); }}
+              className="flex items-center gap-1.5 px-4 py-2.5 rounded-full bg-white/[3%] hover:bg-white/[5%] border border-white/[5%] hover:border-[#d05bf8]/20 text-white/45 text-[15px] transition-all shrink-0"
+            >
+              <MessageCircle size={16} />
+              <span>提问</span>
+              <ChevronDown size={12} />
+            </button>
+
+            <button className="flex items-center justify-center size-10 rounded-full hover:bg-white/[5%] transition-all shrink-0">
+              <Smile size={20} className="text-white/30" />
+            </button>
+
+            <div className="flex-1">
+              <textarea
+                value={message}
+                onChange={e => setMessage(e.target.value)}
+                onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); } }}
+                placeholder={`给 ${char.name} 发消息...`}
+                rows={1}
+                className="w-full bg-white/[3%] border border-white/[5%] rounded-2xl py-3 px-5 text-[16px] text-white placeholder:text-white/20 focus:outline-none focus:border-[#d05bf8]/25 focus:bg-white/[4%] focus:shadow-[0_0_15px_rgba(208,91,248,0.08)] transition-all resize-none min-h-[46px] max-h-[120px]"
+              />
+            </div>
+
+            <button data-gifts-toggle
+              onClick={() => { setShowGifts(!showGifts); setShowQuickQuestions(false); }}
+              className="relative flex items-center justify-center size-10 rounded-full bg-gradient-to-br from-[#d05bf8]/20 to-[#ff18a0]/20 border border-[#d05bf8]/20 hover:border-[#d05bf8]/40 hover:shadow-[0_0_20px_rgba(208,91,248,0.2)] transition-all shrink-0 group"
+            >
+              <Gift size={18} className="text-[#d05bf8] group-hover:text-[#e87bff] transition-colors" />
+              <Sparkles size={8} className="absolute -top-0.5 -right-0.5 text-[#ff18a0] animate-pulse" />
+            </button>
+
+            <button
+              onClick={() => handleSend()}
+              disabled={!message.trim()}
+              className={`flex items-center justify-center size-10 rounded-full transition-all shrink-0 ${
+                message.trim()
+                  ? 'bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] text-white shadow-[0_4px_15px_rgba(208,91,248,0.35)] hover:shadow-[0_4px_25px_rgba(208,91,248,0.5)] hover:scale-105'
+                  : 'bg-white/[3%] text-white/10'
+              }`}
+            >
+              <Send size={18} />
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* ═══════ RIGHT PANEL ═══════ */}
+      {showDetails && (
+        <div className="w-[330px] shrink-0 border-l border-white/[4%] flex flex-col bg-[#0d0d14] overflow-y-auto scrollbar-hide">
+          {/* Close - hidden title */}
+          <div className="flex items-center justify-end px-5 pt-4 pb-1">
+            <button onClick={() => setShowDetails(false)} className="size-8 rounded-full hover:bg-white/[5%] flex items-center justify-center">
+              <X size={16} className="text-white/30" />
+            </button>
+          </div>
+
+          {/* Main Photo - SINGLE IMAGE, clickable */}
+          <div className="px-5 pb-4">
+            <div onClick={() => setLightboxImage(nsfwAvatar || char.avatar)} className="relative w-full aspect-[3/4] rounded-2xl overflow-hidden shadow-[0_8px_30px_rgba(0,0,0,0.4)] cursor-pointer group">
+              <img src={nsfwAvatar || char.avatar} alt={displayName} className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform" />
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center">
+                <div className="opacity-0 group-hover:opacity-100 transition-opacity">
+                  <ImageIcon size={28} className="text-white/60 drop-shadow-lg" />
+                </div>
               </div>
-              <h3 className="text-white font-semibold text-sm mb-1">Select a chat</h3>
-              <p className="text-white/40 text-xs">Choose a conversation</p>
             </div>
           </div>
-        )}
-      </main>
+
+          {/* Character Self-Introduction - ABOVE call buttons */}
+          <div className="px-5 pb-4">
+            <div className="p-4 rounded-2xl bg-[#1a1a24] border border-white/[5%]">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-sm">💬</span>
+                <span className="text-xs font-bold text-white/40">{char.name}的个人简介</span>
+              </div>
+              <p className="text-[13px] text-white/55 leading-relaxed">
+                {char.name}是一个{char.personality?.split(',')[0]?.trim()?.toLowerCase() || '迷人'}的灵魂。
+                {char.occupation ? ` 她是一位${char.occupation}，` : ''}
+                {char.bio}
+                {char.fantasy ? ` 在她的幻想中，${char.fantasy.toLowerCase()}。` : ''}
+                {char.greeting ? ` 她想对你说：「${char.greeting}」` : ''}
+              </p>
+            </div>
+          </div>
+
+          {/* Action Buttons - Dreamy */}
+          <div className="px-5 pb-3 flex gap-2">
+            <button className="flex-1 py-3.5 rounded-xl bg-gradient-to-r from-emerald-500/15 to-emerald-400/10 text-emerald-300 text-sm font-bold flex items-center justify-center gap-2 hover:from-emerald-500/25 hover:to-emerald-400/20 transition-all border border-emerald-500/15 shadow-[0_0_12px_rgba(52,211,153,0.1)] hover:shadow-[0_0_20px_rgba(52,211,153,0.2)]">
+              <Phone size={16} className="drop-shadow-[0_0_4px_rgba(52,211,153,0.5)]" /> 给我打电话
+            </button>
+            <button className="flex-1 py-3.5 rounded-xl bg-gradient-to-r from-[#d05bf8]/15 to-[#ff18a0]/10 text-[#d05bf8] text-sm font-bold flex items-center justify-center gap-2 hover:from-[#d05bf8]/25 hover:to-[#ff18a0]/20 transition-all border border-[#d05bf8]/15 shadow-[0_0_12px_rgba(208,91,248,0.1)] hover:shadow-[0_0_20px_rgba(208,91,248,0.2)]">
+              <Video size={16} className="drop-shadow-[0_0_4px_rgba(208,91,248,0.5)]" /> 视频通话
+            </button>
+          </div>
+
+          {/* Generate + Voice - Dreamy */}
+          <div className="px-5 pb-3 flex gap-2">
+            <Link to="/generate" className="flex-1 py-3.5 rounded-xl bg-gradient-to-r from-[#d05bf8]/10 to-[#ff18a0]/10 border border-[#d05bf8]/15 text-sm font-bold text-[#d05bf8] hover:from-[#d05bf8]/20 hover:to-[#ff18a0]/15 transition-all flex items-center justify-center gap-2 shadow-[0_0_8px_rgba(208,91,248,0.08)]">
+              <ImageIcon size={16} className="drop-shadow-[0_0_4px_rgba(208,91,248,0.4)]" /> 生成媒体
+            </Link>
+            <button className="flex-1 py-3.5 rounded-xl bg-gradient-to-r from-[#ff18a0]/10 to-[#d05bf8]/10 border border-[#ff18a0]/15 text-sm font-bold text-[#ff18a0] hover:from-[#ff18a0]/20 hover:to-[#d05bf8]/15 transition-all flex items-center justify-center gap-2 shadow-[0_0_8px_rgba(255,24,160,0.08)]">
+              <Music size={16} className="drop-shadow-[0_0_4px_rgba(255,24,160,0.4)]" /> 语音预览
+            </button>
+          </div>
+
+          {/* About Her */}
+          <div className="px-5 pb-4">
+            <div className="flex items-center gap-2 mb-3">
+              <Heart size={15} className="text-[#ff18a0]" />
+              <h3 className="text-[15px] font-bold text-white/90">她是什么样的？</h3>
+            </div>
+            <div className="space-y-0">
+              {[
+                ['💗', '性格', char.personality || char.tags.join(', ')],
+                ['💼', '职业', char.occupation || '—'],
+                ['🎯', '爱好', char.hobbies?.join(', ') || '—'],
+                ['💕', '关系', char.relationship || '—'],
+                ['✨', '幻想', char.fantasy || '—'],
+                ['🎂', '年龄', `${char.age || '—'}`],
+                ['🟢', '状态', char.isOnline ? '在线' : '离线'],
+                ['🌐', '语言', 'English'],
+              ].map(([icon, label, value]) => (
+                <div key={label} className="flex items-start justify-between py-3 border-b border-white/[4%] gap-3">
+                  <span className="text-[14px] text-white/50 shrink-0 flex items-center gap-2">
+                    <span className="text-sm">{icon}</span>
+                    {label}
+                  </span>
+                  <span className="text-[14px] text-white/70 font-medium text-right">{value}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Her Appearance */}
+          <div className="px-5 pb-4">
+            <div className="flex items-center gap-2 mb-3">
+              <Eye size={15} className="text-[#d05bf8]" />
+              <h3 className="text-[15px] font-bold text-white/90">她的外貌</h3>
+            </div>
+            <div className="grid grid-cols-2 gap-x-4 gap-y-3.5">
+              {[
+                ['🌍', '种族', char.ethnicity || '—'],
+                ['🎂', '年龄', `${char.age || '—'}`],
+                ['💃', '体型', char.bodyType || '—'],
+                ['👁', '眼睛', char.eyeColor || '—'],
+                ['💇', '发型', char.hairStyle || '—'],
+                ['🎨', '发色', char.hairColor || '—'],
+                ['✨', '胸部', char.chest || '—'],
+                ['🍑', '臀部', char.butt || '—'],
+                ['👗', '服装', char.outfit || '—'],
+                ['⭐', '特征', char.specialFeature || '—'],
+              ].map(([icon, label, value]) => (
+                <div key={label} className="flex flex-col">
+                  <span className="text-[11px] text-white/40 flex items-center gap-1.5">
+                    <span className="text-sm">{icon}</span>
+                    {label}
+                  </span>
+                  <span className="text-[14px] text-white/65 mt-0.5 font-medium">{value}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Gallery - unique images + gift-unlocked content */}
+          <div className="px-5 pb-4">
+            <div className="flex items-center gap-2 mb-3">
+              <ImageIcon size={14} className="text-white/35" />
+              <h3 className="text-[15px] font-bold text-white/90">作品集</h3>
+              <span className="text-[11px] text-white/30">{galleryImages.length + unlockedContent.filter(c => c.startsWith('video:')).length} 项</span>
+            </div>
+            <div className="grid grid-cols-4 gap-2">
+              {galleryImages.map((img, i) => (
+                <div key={`p-${i}`} onClick={() => setLightboxImage(img)} className="aspect-[3/4] rounded-xl overflow-hidden cursor-pointer hover:scale-105 transition-all border border-white/[5%]">
+                  <img src={img} alt={`gallery ${i + 1}`} className="w-full h-full object-cover" />
+                </div>
+              ))}
+              {unlockedContent.filter(c => c.startsWith('video:')).map((v, i) => (
+                <div key={`v-${i}`} onClick={() => setLightboxVideo(v.replace('video:', ''))} className="aspect-[3/4] rounded-xl overflow-hidden cursor-pointer hover:scale-105 transition-all border border-white/[5%] relative">
+                  <video src={v.replace('video:', '')} muted className="w-full h-full object-cover" />
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+                    <MonitorPlay size={20} className="text-white/80" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Live Camera - only if character has live video */}
+          {hasLiveVideo && (
+          <div className="px-5 pb-6">
+            <div className="flex items-center gap-2 mb-3">
+              <MonitorPlay size={14} className="text-[#ff18a0]" />
+              <h3 className="text-sm font-bold text-white/80">实时镜头</h3>
+              <span className="text-[9px] px-2 py-0.5 bg-gradient-to-r from-red-500/20 to-[#ff18a0]/20 text-red-400 rounded-full font-bold border border-red-500/10">🔴 LIVE</span>
+            </div>
+            <div onClick={() => setLightboxVideo(videoAvatar)} className="relative w-full aspect-video rounded-xl overflow-hidden bg-white/[3%] border border-white/[5%] shadow-[0_4px_15px_rgba(0,0,0,0.3)] cursor-pointer group">
+              <video src={videoAvatar} autoPlay loop muted playsInline className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform" />
+              <div className="absolute top-3 left-3 flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-500/80 backdrop-blur-sm shadow-[0_0_10px_rgba(239,68,68,0.3)]">
+                <span className="size-2 rounded-full bg-white animate-pulse" />
+                <span className="text-[10px] text-white font-bold">LIVE</span>
+              </div>
+            </div>
+          </div>
+          )}
+
+        </div>
+      )}
+
+      {/* ═══════ LIGHTBOX ═══════ */}
+      {(lightboxImage || lightboxVideo) && (
+        <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-sm flex items-center justify-center" onClick={() => { setLightboxImage(null); setLightboxVideo(null) }}>
+          <button onClick={() => { setLightboxImage(null); setLightboxVideo(null) }} className="absolute top-5 right-5 size-12 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-all z-10">
+            <X size={24} className="text-white" />
+          </button>
+          {lightboxImage && (
+            <img src={lightboxImage} alt="fullscreen" className="max-w-[90vw] max-h-[90vh] object-contain rounded-2xl shadow-2xl" onClick={e => e.stopPropagation()} />
+          )}
+          {lightboxVideo && (
+            <video src={lightboxVideo} autoPlay loop controls className="max-w-[90vw] max-h-[90vh] object-contain rounded-2xl shadow-2xl" onClick={e => e.stopPropagation()} />
+          )}
+        </div>
+      )}
+
+      {/* ═══════ NAME EDIT MODAL ═══════ */}
+      {isEditingName && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center" onClick={() => setIsEditingName(false)}>
+          <div className="bg-[#16161e] border border-white/[6%] rounded-2xl p-5 w-[300px] shadow-[0_15px_50px_rgba(0,0,0,0.6)]" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center gap-2 mb-3">
+              <span>💕</span>
+              <span className="text-[14px] font-semibold text-white/80">给女友取一个新名字</span>
+            </div>
+            <input ref={nameInputRef} type="text" value={customName || char.name}
+              onChange={e => setCustomName(e.target.value)}
+              onKeyDown={e => { if (e.key === 'Enter') setIsEditingName(false) }}
+              placeholder="输入新名字..."
+              className="w-full bg-white/[4%] border border-white/[6%] rounded-xl py-2.5 px-3.5 text-[14px] text-white placeholder:text-white/20 focus:outline-none focus:border-[#d05bf8]/30 mb-3" autoFocus />
+            <div className="flex gap-2">
+              <button onClick={() => { setCustomName(''); setIsEditingName(false) }} className="flex-1 py-2 rounded-lg bg-white/[4%] text-white/40 text-[12px] font-medium hover:bg-white/[6%] transition-all">重置</button>
+              <button onClick={() => setIsEditingName(false)} className="flex-1 py-2 rounded-lg bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] text-white text-[12px] font-bold">保存</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
