@@ -49,9 +49,7 @@ export default function Chat() {
   const [showQuickQuestions, setShowQuickQuestions] = useState(false)
   const [showGifts, setShowGifts] = useState(false)
   const [isTyping, setIsTyping] = useState(false)
-  const [unlockedGallery, setUnlockedGallery] = useState<Set<number>>(new Set([0]))
-  const [liveUnlocked, setLiveUnlocked] = useState(false)
-  const dropdownRef = useRef<HTMLDivElement>(null)
+  const [unlockedContent, setUnlockedContent] = useState<string[]>([])
 
   const char = characters.find(c => c.username === username || c.id === username)
   if (!char) return <div className="flex items-center justify-center h-screen bg-[#0a0a0f] text-white/40 text-lg">Character not found</div>
@@ -74,6 +72,12 @@ export default function Chat() {
     setShowQuickQuestions(false)
     setShowGifts(false)
     setIsTyping(true)
+
+    // If sending a gift, add unlocked content to gallery
+    if (msgText.includes('💎')) {
+      const rewardPhoto = nsfwAvatar || char.avatar
+      setUnlockedContent(prev => [...prev, `photo:${rewardPhoto}`])
+    }
     setTimeout(() => {
       const replies = [
         "Mmm, I like where this is going... tell me more 😘",
@@ -99,16 +103,22 @@ export default function Chat() {
 
   // Close dropdowns on outside click
   useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
-        setShowQuickQuestions(false)
-        setShowGifts(false)
-      }
+    if (!showQuickQuestions && !showGifts) return
+    const handleClose = (e: MouseEvent) => {
+      const target = e.target as HTMLElement
+      // Don't close if clicking inside dropdown or the toggle buttons
+      if (target.closest('[data-dropdown]') || target.closest('[data-dropdown-toggle]')) return
+      setShowQuickQuestions(false)
+      setShowGifts(false)
     }
-    if (showQuickQuestions || showGifts) {
-      document.addEventListener('mousedown', handleClickOutside)
+    // Use setTimeout to avoid immediate trigger from the current click
+    const timer = setTimeout(() => {
+      document.addEventListener('mousedown', handleClose)
+    }, 10)
+    return () => {
+      clearTimeout(timer)
+      document.removeEventListener('mousedown', handleClose)
     }
-    return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [showQuickQuestions, showGifts])
 
   const otherChars = characters.filter(c => c.id !== char.id).slice(0, 12)
@@ -319,10 +329,10 @@ export default function Chat() {
         </div>
 
         {/* Input Area */}
-        <div ref={dropdownRef} className="relative z-10 border-t border-white/[4%] bg-[#0a0a0f]/90 backdrop-blur-2xl">
+        <div className="relative z-10 border-t border-white/[4%] bg-[#0a0a0f]/90 backdrop-blur-2xl">
           {/* Dropdowns */}
           {showQuickQuestions && (
-            <div className="absolute bottom-full left-0 mb-2 w-full bg-[#13131a]/95 backdrop-blur-2xl border border-white/[8%] rounded-2xl shadow-[0_-10px_40px_rgba(0,0,0,0.4)] overflow-hidden z-20">
+            <div data-dropdown className="absolute bottom-full left-0 mb-2 w-full bg-[#13131a]/95 backdrop-blur-2xl border border-white/[8%] rounded-2xl shadow-[0_-10px_40px_rgba(0,0,0,0.4)] overflow-hidden z-20">
               <div className="p-3 space-y-3">
                 {/* Section 1: Text suggestions */}
                 <div>
@@ -374,7 +384,7 @@ export default function Chat() {
             </div>
           )}
           {showGifts && (
-            <div className="absolute bottom-full right-0 mb-2 w-[380px] bg-[#13131a]/95 backdrop-blur-2xl border border-white/[8%] rounded-2xl shadow-[0_-10px_40px_rgba(0,0,0,0.4)] overflow-hidden z-20">
+            <div data-dropdown className="absolute bottom-full right-0 mb-2 w-[380px] bg-[#13131a]/95 backdrop-blur-2xl border border-white/[8%] rounded-2xl shadow-[0_-10px_40px_rgba(0,0,0,0.4)] overflow-hidden z-20">
               <div className="px-5 py-3.5 border-b border-white/[5%] flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Gift size={14} className="text-[#d05bf8]" />
@@ -409,7 +419,7 @@ export default function Chat() {
           )}
 
           <div className="flex items-end gap-2 px-5 py-3.5">
-            <button
+            <button data-dropdown-toggle
               onClick={() => { setShowQuickQuestions(!showQuickQuestions); setShowGifts(false); }}
               className="flex items-center gap-1.5 px-4 py-2.5 rounded-full bg-white/[3%] hover:bg-white/[5%] border border-white/[5%] hover:border-[#d05bf8]/20 text-white/45 text-[15px] transition-all shrink-0"
             >
@@ -433,7 +443,7 @@ export default function Chat() {
               />
             </div>
 
-            <button
+            <button data-dropdown-toggle
               onClick={() => { setShowGifts(!showGifts); setShowQuickQuestions(false); }}
               className="relative flex items-center justify-center size-10 rounded-full bg-gradient-to-br from-[#d05bf8]/20 to-[#ff18a0]/20 border border-[#d05bf8]/20 hover:border-[#d05bf8]/40 hover:shadow-[0_0_20px_rgba(208,91,248,0.2)] transition-all shrink-0 group"
             >
@@ -572,35 +582,23 @@ export default function Chat() {
             </div>
           </div>
 
-          {/* Gallery - 1 free + 3 locked */}
+          {/* Gallery - All unlocked, gift content added here */}
           <div className="px-5 pb-4">
             <div className="flex items-center gap-2 mb-3">
               <ImageIcon size={14} className="text-white/35" />
               <h3 className="text-sm font-bold text-white/80">作品集</h3>
-              <span className="text-[10px] text-white/25">1/{galleryImages.length} 已解锁</span>
+              <span className="text-[10px] text-white/25">{galleryImages.length + unlockedContent.filter(c => c.startsWith('photo:')).length} 张</span>
             </div>
             <div className="grid grid-cols-4 gap-2">
-              {galleryImages.map((img, i) => {
-                const isUnlocked = unlockedGallery.has(i)
-                return (
-                  <div key={i} className="relative aspect-[3/4] rounded-xl overflow-hidden cursor-pointer hover:scale-105 transition-all border border-white/[5%]">
-                    {isUnlocked ? (
-                      <img src={img} alt={`gallery ${i + 1}`} className="w-full h-full object-cover" />
-                    ) : (
-                      <>
-                        <img src={img} alt={`gallery ${i + 1}`} className="w-full h-full object-cover opacity-30" />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex flex-col items-center justify-end pb-2" onClick={() => setUnlockedGallery(prev => new Set([...prev, i]))}>
-                          <span className="text-[10px] font-bold text-[#d05bf8] bg-black/40 px-2 py-0.5 rounded-full">🔒 2 💎</span>
-                        </div>
-                      </>
-                    )}
-                  </div>
-                )
-              })}
+              {[...galleryImages, ...unlockedContent.filter(c => c.startsWith('photo:')).map(c => c.replace('photo:', ''))].map((img, i) => (
+                <div key={i} className="aspect-[3/4] rounded-xl overflow-hidden cursor-pointer hover:scale-105 transition-all border border-white/[5%]">
+                  <img src={img} alt={`gallery ${i + 1}`} className="w-full h-full object-cover" />
+                </div>
+              ))}
             </div>
           </div>
 
-          {/* Live Camera - 20💎 to unlock */}
+          {/* Live Camera - Directly viewable */}
           <div className="px-5 pb-6">
             <div className="flex items-center gap-2 mb-3">
               <MonitorPlay size={14} className="text-[#ff18a0]" />
@@ -608,7 +606,7 @@ export default function Chat() {
               <span className="text-[9px] px-2 py-0.5 bg-gradient-to-r from-red-500/20 to-[#ff18a0]/20 text-red-400 rounded-full font-bold border border-red-500/10">🔴 LIVE</span>
             </div>
             <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-white/[3%] border border-white/[5%] shadow-[0_4px_15px_rgba(0,0,0,0.3)]">
-              {liveUnlocked && videoAvatar ? (
+              {videoAvatar ? (
                 <>
                   <video src={videoAvatar} autoPlay loop muted playsInline className="w-full h-full object-cover" />
                   <div className="absolute top-3 left-3 flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-500/80 backdrop-blur-sm shadow-[0_0_10px_rgba(239,68,68,0.3)]">
@@ -617,16 +615,9 @@ export default function Chat() {
                   </div>
                 </>
               ) : (
-                <div className="flex flex-col items-center justify-center h-full cursor-pointer" onClick={() => setLiveUnlocked(true)}>
-                  <div className="relative">
-                    <MonitorPlay size={40} className="text-white/15 mx-auto mb-2" />
-                    <div className="absolute inset-0 bg-[#d05bf8]/20 blur-xl rounded-full" />
-                  </div>
-                  <p className="text-sm text-white/30 mb-2">实时预览</p>
-                  <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-[#d05bf8]/15 border border-[#d05bf8]/20">
-                    <span className="text-sm">🔒</span>
-                    <span className="text-[13px] font-bold text-[#d05bf8]">20 💎 解锁观看</span>
-                  </div>
+                <div className="flex flex-col items-center justify-center h-full">
+                  <MonitorPlay size={40} className="text-white/15 mx-auto mb-2" />
+                  <p className="text-sm text-white/30">实时预览</p>
                 </div>
               )}
             </div>
