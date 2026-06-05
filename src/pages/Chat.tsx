@@ -3,40 +3,42 @@ import { useParams, Link, useNavigate } from 'react-router-dom'
 import { ArrowLeft, Phone, Video, MoreHorizontal, Send, Smile, Image as ImageIcon, Search, ChevronRight, ChevronLeft, X, MonitorPlay, Pencil, Gift, Sparkles, ChevronDown, MessageCircle, Heart, Star, Flame, Wand2, Filter, Crown, Music, MapPin, Clock, Eye } from 'lucide-react'
 import { characters } from '../data/characters'
 
-const QUICK_REPLIES = [
-  { text: "嘿，你穿的是什么？😏", icon: "😏" },
-  { text: "请介绍一下你自己 💖", icon: "💖" },
-  { text: "你最大的幻想是什么？", icon: "🔥" },
-  { text: "给我发个自拍 📸", icon: "📸" },
-  { text: "我们来玩个游戏吧 🎮", icon: "🎮" },
-  { text: "什么能让你兴奋？🔥", icon: "💋" },
-  { text: "描述一下你理想的约会", icon: "🌙" },
-  { text: "我一直在想你...", icon: "💭" },
-]
-
-const QUICK_QUESTIONS = [
-  { icon: '💬', text: "今天过得怎么样？", desc: "开始轻松聊天" },
-  { icon: '😍', text: "你今天看起来真美", desc: "给个赞美" },
-  { icon: '🎭', text: "我们来角色扮演吧", desc: "开始冒险" },
-  { icon: '🌙', text: "今晚在做什么呢？", desc: "营造氛围" },
-  { icon: '🔥', text: "说点撩人的话", desc: "升温互动" },
-  { icon: '💕', text: "我想你了", desc: "表达爱意" },
-  { icon: '📸', text: "发张照片给我看看", desc: "请求自拍" },
-  { icon: '🎵', text: "给我唱首歌吧", desc: "创意互动" },
-  { icon: '💭', text: "你最喜欢什么？", desc: "了解她" },
-  { icon: '🌹', text: "约会的话你想去哪里？", desc: "浪漫话题" },
-]
-
 const GIFTS = [
-  { icon: '🌹', name: '玫瑰', price: 'Free', priceColor: 'text-emerald-400' },
-  { icon: '💎', name: '钻石', price: '+50', priceColor: 'text-[#d05bf8]' },
-  { icon: '💐', name: '鲜花', price: '+400', priceColor: 'text-[#d05bf8]' },
-  { icon: '👑', name: '冠冕', price: '200元红包', priceColor: 'text-red-400' },
-  { icon: '🍫', name: '巧克力', price: 'Free', priceColor: 'text-emerald-400' },
-  { icon: '🥂', name: '香槟', price: '+150', priceColor: 'text-[#d05bf8]' },
-  { icon: '💍', name: '戒指', price: '500元红包', priceColor: 'text-red-400' },
-  { icon: '🎪', name: '锦旗', price: '+1000', priceColor: 'text-[#d05bf8]' },
+  { icon: '🌹', name: '玫瑰', cost: 99, reward: '解锁一张性感自拍', rewardType: 'photo' },
+  { icon: '💎', name: '钻石', cost: 199, reward: '解锁性感内衣写真', rewardType: 'photo' },
+  { icon: '👗', name: '晚礼服', cost: 249, reward: '解锁晚礼服实时镜头', rewardType: 'video' },
+  { icon: '👑', name: '皇冠', cost: 399, reward: '解锁专属角色扮演', rewardType: 'photo' },
+  { icon: '💍', name: '戒指', cost: 599, reward: '解锁亲密语音消息', rewardType: 'voice' },
+  { icon: '🏖️', name: '度假', cost: 799, reward: '解锁泳装实时镜头', rewardType: 'video' },
+  { icon: '🥂', name: '香槟', cost: 999, reward: '解锁私人定制内容', rewardType: 'video' },
+  { icon: '✨', name: '梦幻', cost: 1299, reward: '解锁全部私密内容', rewardType: 'all' },
 ]
+
+const INPUT_SUGGESTIONS = {
+  text: [
+    { icon: '👀', text: '给我看看' },
+    { icon: '📩', text: '发给我' },
+    { icon: '🙏', text: '我能看看吗' },
+    { icon: '💋', text: '亲一个' },
+    { icon: '😘', text: '想你了' },
+    { icon: '💕', text: '抱抱我' },
+  ],
+  video: [
+    { icon: '🎬', text: '给我发视频' },
+    { icon: '📹', text: '发给我视频' },
+    { icon: '✨', text: '来个实时镜头' },
+    { icon: '🎥', text: '给我看看你在干嘛' },
+  ],
+  hot: [
+    { icon: '🔥', text: '给我看看私处' },
+    { icon: '🍑', text: '给我看看臀部' },
+    { icon: '💋', text: '给我看看胸部' },
+    { icon: '😈', text: '脱掉衣服' },
+    { icon: '🥵', text: '做给我看' },
+    { icon: '💦', text: '让我看看你有多湿' },
+  ],
+}
+
 
 export default function Chat() {
   const { username } = useParams()
@@ -282,13 +284,10 @@ export default function Chat() {
         {/* Quick Reply Suggestions */}
         <div className="relative z-10 px-5 pb-3">
           <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
-            {QUICK_REPLIES.map((reply, i) => (
-              <button
-                key={i}
-                onClick={() => handleSend(reply.text)}
-                className="shrink-0 px-4 py-2.5 rounded-full border border-white/[6%] bg-white/[3%] text-[13px] text-white/45 hover:bg-gradient-to-r hover:from-[#d05bf8]/10 hover:to-[#ff18a0]/10 hover:text-white/70 hover:border-[#d05bf8]/20 transition-all whitespace-nowrap hover:shadow-[0_0_10px_rgba(208,91,248,0.1)]"
-              >
-                {reply.text}
+            {INPUT_SUGGESTIONS.text.map((s, i) => (
+              <button key={i} onClick={() => handleSend(s.text)}
+                className="shrink-0 flex items-center gap-1.5 px-4 py-2.5 rounded-full border border-white/[6%] bg-white/[3%] text-[13px] text-white/45 hover:bg-gradient-to-r hover:from-[#d05bf8]/10 hover:to-[#ff18a0]/10 hover:text-white/70 hover:border-[#d05bf8]/20 transition-all whitespace-nowrap hover:shadow-[0_0_10px_rgba(208,91,248,0.1)]">
+                <span>{s.icon}</span> {s.text}
               </button>
             ))}
           </div>
@@ -306,47 +305,86 @@ export default function Chat() {
         <div className="relative z-10 border-t border-white/[4%] bg-[#0a0a0f]/90 backdrop-blur-2xl">
           {/* Dropdowns */}
           {showQuickQuestions && (
-            <div className="absolute bottom-full left-5 mb-2 w-[340px] bg-[#13131a]/95 backdrop-blur-2xl border border-white/[8%] rounded-2xl shadow-[0_-10px_40px_rgba(0,0,0,0.4)] overflow-hidden z-20">
-              <div className="px-5 py-3.5 border-b border-white/[5%] flex items-center gap-2">
-                <span className="text-sm">✨</span>
-                <span className="text-sm font-bold text-white/60">快速提问</span>
-              </div>
-              <div className="p-2 max-h-[360px] overflow-y-auto scrollbar-hide">
-                {QUICK_QUESTIONS.map((q, i) => (
-                  <button
-                    key={i}
-                    onClick={() => { handleSend(q.text); setShowQuickQuestions(false); }}
-                    className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/[4%] transition-all text-left group"
-                  >
-                    <span className="text-xl shrink-0 w-8 text-center">{q.icon}</span>
-                    <div className="flex-1 min-w-0">
-                      <span className="text-[14px] text-white/65 group-hover:text-white/90 transition-colors font-medium">{q.text}</span>
-                      <p className="text-[11px] text-white/25 mt-0.5">{q.desc}</p>
-                    </div>
-                  </button>
-                ))}
+            <div className="absolute bottom-full left-0 mb-2 w-full bg-[#13131a]/95 backdrop-blur-2xl border border-white/[8%] rounded-2xl shadow-[0_-10px_40px_rgba(0,0,0,0.4)] overflow-hidden z-20">
+              <div className="p-3 space-y-3">
+                {/* Section 1: Text suggestions */}
+                <div>
+                  <div className="flex items-center gap-2 px-2 pb-2">
+                    <span className="text-xs">💬</span>
+                    <span className="text-[11px] font-bold text-white/40 uppercase tracking-wider">文字互动</span>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {INPUT_SUGGESTIONS.text.map((s, i) => (
+                      <button key={i} onClick={() => { handleSend(s.text); setShowQuickQuestions(false); }}
+                        className="flex items-center gap-1.5 px-3 py-2 rounded-full border border-white/[6%] bg-white/[3%] text-[13px] text-white/50 hover:bg-[#d05bf8]/10 hover:text-white/80 hover:border-[#d05bf8]/20 transition-all">
+                        <span className="text-sm">{s.icon}</span> {s.text}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                {/* Section 2: Video suggestions */}
+                <div>
+                  <div className="flex items-center gap-2 px-2 pb-2">
+                    <span className="text-xs">📹</span>
+                    <span className="text-[11px] font-bold text-white/40 uppercase tracking-wider">视频互动</span>
+                    <span className="text-[9px] px-1.5 py-0.5 bg-red-500/20 text-red-400 rounded-full">实时镜头</span>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {INPUT_SUGGESTIONS.video.map((s, i) => (
+                      <button key={i} onClick={() => { handleSend(s.text); setShowQuickQuestions(false); }}
+                        className="flex items-center gap-1.5 px-3 py-2 rounded-full border border-[#d05bf8]/10 bg-[#d05bf8]/[3%] text-[13px] text-[#d05bf8]/60 hover:bg-[#d05bf8]/10 hover:text-[#d05bf8] hover:border-[#d05bf8]/25 transition-all">
+                        <span className="text-sm">{s.icon}</span> {s.text}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                {/* Section 3: Hot topics */}
+                <div>
+                  <div className="flex items-center gap-2 px-2 pb-2">
+                    <span className="text-xs">🔥</span>
+                    <span className="text-[11px] font-bold text-red-400/50 uppercase tracking-wider">热门私密话题</span>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {INPUT_SUGGESTIONS.hot.map((s, i) => (
+                      <button key={i} onClick={() => { handleSend(s.text); setShowQuickQuestions(false); }}
+                        className="flex items-center gap-1.5 px-3 py-2 rounded-full border border-red-500/10 bg-red-500/[3%] text-[13px] text-red-400/50 hover:bg-red-500/10 hover:text-red-400 hover:border-red-500/25 transition-all">
+                        <span className="text-sm">{s.icon}</span> {s.text}
+                      </button>
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
           )}
           {showGifts && (
-            <div className="absolute bottom-full right-5 mb-2 w-[260px] bg-[#13131a]/95 backdrop-blur-2xl border border-white/[8%] rounded-2xl shadow-[0_-10px_40px_rgba(0,0,0,0.4)] overflow-hidden z-20">
+            <div className="absolute bottom-full right-0 mb-2 w-[380px] bg-[#13131a]/95 backdrop-blur-2xl border border-white/[8%] rounded-2xl shadow-[0_-10px_40px_rgba(0,0,0,0.4)] overflow-hidden z-20">
               <div className="px-5 py-3.5 border-b border-white/[5%] flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Gift size={14} className="text-[#d05bf8]" />
-                  <span className="text-sm font-bold text-white/60">发送礼物</span>
+                  <span className="text-sm font-bold text-white/60">发送礼物解锁内容</span>
                 </div>
                 <span className="text-[10px] px-2 py-0.5 bg-gradient-to-r from-[#d05bf8]/20 to-[#ff18a0]/20 text-[#d05bf8] rounded-full font-medium">✨ 实时镜头</span>
               </div>
-              <div className="py-1">
+              <div className="p-3 grid grid-cols-2 gap-2 max-h-[400px] overflow-y-auto scrollbar-hide">
                 {GIFTS.map((gift, i) => (
                   <button
                     key={i}
-                    onClick={() => { handleSend(`送你一个${gift.name}！${gift.icon}`); setShowGifts(false); }}
-                    className="w-full flex items-center gap-3 px-5 py-3 hover:bg-white/[4%] transition-all group"
+                    onClick={() => { handleSend(`送你${gift.cost}💎 ${gift.name}！`); setShowGifts(false); }}
+                    className="flex flex-col p-3 rounded-xl border border-white/[5%] bg-white/[2%] hover:bg-[#d05bf8]/[5%] hover:border-[#d05bf8]/15 transition-all text-left group"
                   >
-                    <span className="text-2xl shrink-0">{gift.icon}</span>
-                    <span className="text-[14px] text-white/60 group-hover:text-white/80 transition-colors flex-1">{gift.name}</span>
-                    <span className={`text-[13px] font-semibold ${gift.priceColor}`}>{gift.price}</span>
+                    <div className="flex items-center gap-2 mb-1.5">
+                      <span className="text-2xl">{gift.icon}</span>
+                      <div className="flex-1">
+                        <span className="text-[13px] font-semibold text-white/70 group-hover:text-white/90 transition-colors">{gift.name}</span>
+                        <div className="flex items-center gap-1">
+                          <span className="text-[12px] font-bold text-[#d05bf8]">{gift.cost} 💎</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-1.5 px-2 py-1.5 rounded-lg bg-white/[3%]">
+                      <span className="text-[10px]">{gift.rewardType === 'photo' ? '📸' : gift.rewardType === 'video' ? '🎬' : gift.rewardType === 'voice' ? '🎤' : '🎁'}</span>
+                      <span className="text-[11px] text-white/40">{gift.reward}</span>
+                    </div>
                   </button>
                 ))}
               </div>
