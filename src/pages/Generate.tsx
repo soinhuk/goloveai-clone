@@ -200,10 +200,10 @@ export default function Generate() {
   
   // 模式标签
   const modeTabs = [
-    { key: 'model-video' as const, icon: Video, label: 'Model Video' },
-    { key: 'model-image' as const, icon: ImageIcon, label: 'Model Image' },
-    { key: 'custom-video' as const, icon: Wand2, label: 'Custom Video' },
-    { key: 'custom-image' as const, icon: Upload, label: 'Custom Image' },
+    { key: 'model-video' as const, icon: Video, label: '生成视频' },
+    { key: 'model-image' as const, icon: ImageIcon, label: '生成图片' },
+    { key: 'custom-video' as const, icon: Wand2, label: '自定义视频' },
+    { key: 'custom-image' as const, icon: Upload, label: '自定义图片' },
   ]
   
   // Character picker with glassmorphism
@@ -225,7 +225,7 @@ export default function Generate() {
               <div className="flex gap-2 px-5 py-4 shrink-0">
                 {(['All', 'Realistic', 'Anime'] as const).map(type => (
                   <button key={type} onClick={() => { setCharTypeFilter(type); setCharIndex(0) }}
-                    className={`px-4 py-2 rounded-full text-[12px] font-semibold transition-all ${charTypeFilter === type ? 'bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] text-white shadow-lg shadow-[#d05bf8]/30' : 'bg-white/[5%] text-white/50 hover:bg-white/[8%]'} ${charTypeFilter === type ? 'neon-setting-btn selected' : ''}`}>
+                    className={`px-4 py-2 rounded-full text-[13px] font-semibold transition-all ${charTypeFilter === type ? 'bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] text-white shadow-lg shadow-[#d05bf8]/30' : 'bg-white/[5%] text-white/50 hover:bg-white/[8%]'} ${charTypeFilter === type ? 'neon-setting-btn selected' : ''}`}>
                     {type}
                   </button>
                 ))}
@@ -259,7 +259,7 @@ export default function Generate() {
                                     <img src={char.avatar} alt={char.name} className="w-full h-full object-cover" />
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
                                     <div className="absolute bottom-0 left-0 right-0 p-2">
-                                      <div className="text-[11px] font-semibold text-white text-center truncate">{char.name}</div>
+                                      <div className="text-[13px] font-semibold text-white text-center truncate">{char.name}</div>
                                     </div>
                                     {selectedChar.id === char.id && (
                                       <div className="absolute top-2 right-2 size-6 rounded-full bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] flex items-center justify-center shadow-lg">
@@ -309,7 +309,7 @@ export default function Generate() {
                     <img src={action.image} alt={action.name} className="w-full h-full object-cover pointer-events-none" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent pointer-events-none" />
                     <div className="absolute bottom-2 left-2 right-2 pointer-events-none">
-                      <span className="text-[11px] font-medium text-white truncate block">{action.name}</span>
+                      <span className="text-[13px] font-medium text-white truncate block">{action.name}</span>
                     </div>
                     {selectedAction === action.name && (
                       <div className="absolute top-2 right-2 size-5 rounded-full bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] flex items-center justify-center">
@@ -346,7 +346,7 @@ export default function Generate() {
                     <img src={cloth.image} alt={cloth.name} className="w-full h-full object-cover pointer-events-none" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent pointer-events-none" />
                     <div className="absolute bottom-2 left-2 right-2 pointer-events-none">
-                      <span className="text-[11px] font-medium text-white truncate block">{cloth.name}</span>
+                      <span className="text-[13px] font-medium text-white truncate block">{cloth.name}</span>
                     </div>
                     {selectedClothes === cloth.name && (
                       <div className="absolute top-2 right-2 size-5 rounded-full bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] flex items-center justify-center">
@@ -383,7 +383,7 @@ export default function Generate() {
                     <img src={getBgImagePath(bg)} alt={bg} className="w-full h-full object-cover pointer-events-none" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent pointer-events-none" />
                     <div className="absolute bottom-2 left-2 right-2 pointer-events-none">
-                      <span className="text-[11px] font-medium text-white truncate block">{bg}</span>
+                      <span className="text-[13px] font-medium text-white truncate block">{bg}</span>
                     </div>
                     {selectedBg === bg && (
                       <div className="absolute top-2 right-2 size-5 rounded-full bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] flex items-center justify-center">
@@ -455,7 +455,7 @@ export default function Generate() {
                 )}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none" />
                 <div className="absolute bottom-4 left-4 right-4 pointer-events-none">
-                  <div className="text-[11px] text-white/50 mb-1">{label}</div>
+                  <div className="text-[13px] text-white/50 mb-1">{label}</div>
                   <div className="text-[14px] font-bold">{selected}</div>
                 </div>
                 {onClear && (
@@ -470,7 +470,7 @@ export default function Generate() {
                 <div className="size-12 rounded-full backdrop-blur-md flex items-center justify-center mb-2" style={{ background: 'rgba(255,24,160,0.2)', border: '1px solid rgba(208,91,248,0.3)' }}>
                   <Plus size={24} className="text-white" />
                 </div>
-                <span className="text-[12px] font-medium text-white">{label}</span>
+                <span className="text-[13px] font-medium text-white">{label}</span>
               </div>
             )}
           </div>
@@ -496,7 +496,7 @@ export default function Generate() {
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none" />
             <div className="absolute bottom-3 left-3 right-3 pointer-events-none">
               <div className="text-[10px] text-white/50 mb-1">{label}</div>
-              <div className="text-[12px] font-bold">{selected}</div>
+              <div className="text-[13px] font-bold">{selected}</div>
             </div>
             {onClear && (
               <button onClick={e => { e.stopPropagation(); onClear() }}
@@ -510,7 +510,7 @@ export default function Generate() {
             <div className="size-10 rounded-full backdrop-blur-md flex items-center justify-center mb-2" style={{ background: 'rgba(208,91,248,0.15)', border: '1px solid rgba(208,91,248,0.25)' }}>
               <Plus size={20} className="text-white/60" />
             </div>
-            <span className="text-[12px] font-medium text-white/40">{label}</span>
+            <span className="text-[13px] font-medium text-white/40">{label}</span>
           </div>
         )}
       </div>
@@ -632,7 +632,7 @@ export default function Generate() {
               <div className="absolute inset-0 rounded-full ring-2 ring-[#d05bf8]/50" />
             </div>
             <div className="text-center">
-              <span className="text-[11px] font-bold block bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] bg-clip-text text-transparent">{selectedChar.name}</span>
+              <span className="text-[13px] font-bold block bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] bg-clip-text text-transparent">{selectedChar.name}</span>
               <span className="text-[9px] text-white/40 block mt-0.5">{charTypeFilter}</span>
             </div>
           </button>
@@ -648,7 +648,7 @@ export default function Generate() {
                 <button 
                   key={tab.key} 
                   onClick={() => setMode(tab.key)}
-                  className={`shrink-0 flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-[12px] font-semibold transition-all duration-200 ${
+                  className={`shrink-0 flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-[13px] font-semibold transition-all duration-200 ${
                     mode === tab.key 
                       ? 'bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] text-white shadow-lg shadow-[#d05bf8]/40 ring-1 ring-white/20' 
                       : 'bg-white/[4%] text-white/50 hover:bg-white/[8%] hover:text-white/70'
@@ -698,14 +698,14 @@ export default function Generate() {
                   <div className="px-4 mt-6 max-w-[600px] mx-auto space-y-4 relative z-10">
                     {/* Resolution - Neon buttons */}
                                   <div className="space-y-2">
-                                    <span className="text-[11px] text-white/50 font-medium flex items-center gap-2">
+                                    <span className="text-[13px] text-white/50 font-medium flex items-center gap-2">
                                       <span className="w-1 h-3 rounded-full bg-gradient-to-b from-[#d05bf8] to-[#ff18a0]" />
                                       Resolution
                                     </span>
                                     <div className="flex gap-2">
                                       {['480p', '720p', '1080p'].map(r => (
                                         <button key={r} onClick={() => setVideoResolution(r)}
-                                          className={`relative px-4 py-2.5 rounded-xl text-[12px] font-bold transition-all duration-300 overflow-hidden group ${r === videoResolution ? 'text-white' : 'text-white/40 hover:text-white'} ${r === videoResolution ? 'neon-setting-btn selected' : ''}`}>
+                                          className={`relative px-4 py-2.5 rounded-xl text-[13px] font-bold transition-all duration-300 overflow-hidden group ${r === videoResolution ? 'text-white' : 'text-white/40 hover:text-white'} ${r === videoResolution ? 'neon-setting-btn selected' : ''}`}>
                                           <span className={`absolute inset-0 rounded-xl transition-all duration-300 ${
                                             r === videoResolution 
                                               ? 'bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] shadow-[0_0_20px_rgba(208,91,248,0.5)]' 
@@ -721,14 +721,14 @@ export default function Generate() {
                                   </div>
                                   {/* Quantity - Neon buttons */}
                                   <div className="space-y-2">
-                                    <span className="text-[11px] text-white/50 font-medium flex items-center gap-2">
+                                    <span className="text-[13px] text-white/50 font-medium flex items-center gap-2">
                                       <span className="w-1 h-3 rounded-full bg-gradient-to-b from-[#d05bf8] to-[#ff18a0]" />
                                       Quantity
                                     </span>
                                     <div className="flex gap-2">
                                       {[1, 2, 4].map(q => (
                                         <button key={q} onClick={() => setVideoQuantity(q)}
-                                          className={`relative px-4 py-2.5 rounded-xl text-[12px] font-bold transition-all duration-300 overflow-hidden group ${q === videoQuantity ? 'text-white' : 'text-white/40 hover:text-white'} ${q === videoQuantity ? 'neon-setting-btn selected' : ''}`}>
+                                          className={`relative px-4 py-2.5 rounded-xl text-[13px] font-bold transition-all duration-300 overflow-hidden group ${q === videoQuantity ? 'text-white' : 'text-white/40 hover:text-white'} ${q === videoQuantity ? 'neon-setting-btn selected' : ''}`}>
                                           <span className={`absolute inset-0 rounded-xl transition-all duration-300 ${
                                             q === videoQuantity 
                                               ? 'bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] shadow-[0_0_20px_rgba(208,91,248,0.5)]' 
@@ -750,14 +750,14 @@ export default function Generate() {
                             <div className="px-4 mt-6 max-w-[600px] mx-auto space-y-4 relative z-10">
                               {/* Quantity */}
                               <div className="space-y-2">
-                                <span className="text-[11px] text-white/50 font-medium flex items-center gap-2">
+                                <span className="text-[13px] text-white/50 font-medium flex items-center gap-2">
                                   <span className="w-1 h-3 rounded-full bg-gradient-to-b from-[#d05bf8] to-[#ff18a0]" />
                                   Quantity
                                 </span>
                                 <div className="flex gap-2">
                                   {[1, 2, 4, 8].map(q => (
                                     <button key={q} onClick={() => setImageQuantity(q)}
-                                      className={`relative px-4 py-2.5 rounded-xl text-[12px] font-bold transition-all duration-300 overflow-hidden group ${q === imageQuantity ? 'text-white' : 'text-white/40 hover:text-white'} ${q === imageQuantity ? 'neon-setting-btn selected' : ''}`}>
+                                      className={`relative px-4 py-2.5 rounded-xl text-[13px] font-bold transition-all duration-300 overflow-hidden group ${q === imageQuantity ? 'text-white' : 'text-white/40 hover:text-white'} ${q === imageQuantity ? 'neon-setting-btn selected' : ''}`}>
                                       <span className={`absolute inset-0 rounded-xl transition-all duration-300 ${
                                         q === imageQuantity 
                                           ? 'bg-gradient-to-r from-[#d05bf8] to-[#ff18a0] shadow-[0_0_20px_rgba(208,91,248,0.5)]' 
@@ -773,14 +773,14 @@ export default function Generate() {
                               </div>
                               {/* Aspect - unavailable */}
                               <div className="space-y-2">
-                                <span className="text-[11px] text-white/50 font-medium flex items-center gap-2">
+                                <span className="text-[13px] text-white/50 font-medium flex items-center gap-2">
                                   <span className="w-1 h-3 rounded-full bg-gradient-to-b from-white/30 to-white/10" />
                                   Aspect
                                 </span>
                                 <div className="flex gap-2">
                                   {['9:16', '16:9', '3:4', '4:3', '1:1', '21:9'].map(r => (
-                                    <button key={r}
-                                      className="relative px-4 py-2.5 rounded-xl text-[12px] font-bold text-white/20 cursor-not-allowed">
+                                    <button key={r} onClick={() => setImageAspect(r)}
+                                      className={`relative px-4 py-2.5 rounded-xl text-[13px] font-bold transition-all ${imageAspect === r ? 'bg-gradient-to-r from-[#d05bf8]/30 to-[#ff18a0]/30 text-white ring-1 ring-[#d05bf8]/50' : 'bg-white/[5%] text-white/50 hover:bg-white/[10%]'}`}>
                                       <span className="absolute inset-0 rounded-xl bg-white/[3%]" />
                                       <span className="relative z-10">{r}</span>
                                     </button>
@@ -789,14 +789,14 @@ export default function Generate() {
                               </div>
                               {/* Resolution - unavailable */}
                               <div className="space-y-2">
-                                <span className="text-[11px] text-white/50 font-medium flex items-center gap-2">
+                                <span className="text-[13px] text-white/50 font-medium flex items-center gap-2">
                                   <span className="w-1 h-3 rounded-full bg-gradient-to-b from-white/30 to-white/10" />
                                   Resolution
                                 </span>
                                 <div className="flex gap-2">
                                   {['480p', '720p', '1080p'].map(r => (
-                                    <button key={r}
-                                      className="relative px-4 py-2.5 rounded-xl text-[12px] font-bold text-white/20 cursor-not-allowed">
+                                    <button key={r} onClick={() => setImageResolution(r)}
+                                      className={`relative px-4 py-2.5 rounded-xl text-[13px] font-bold transition-all ${imageResolution === r ? 'bg-gradient-to-r from-[#d05bf8]/30 to-[#ff18a0]/30 text-white ring-1 ring-[#d05bf8]/50' : 'bg-white/[5%] text-white/50 hover:bg-white/[10%]'}`}>
                                       <span className="absolute inset-0 rounded-xl bg-white/[3%]" />
                                       <span className="relative z-10">{r}</span>
                                     </button>
@@ -814,11 +814,11 @@ export default function Generate() {
             {mode === 'custom-video' && (
               <>
                 <div className="flex items-center gap-3">
-                  <span className="text-[11px] text-white/40 shrink-0 w-20">Quantity</span>
+                  <span className="text-[13px] text-white/40 shrink-0 w-20">Quantity</span>
                   <div className="flex gap-1.5">
                     {[1, 2, 4].map(q => (
                       <button key={q} onClick={() => setCustomVideoQuantity(q)}
-                        className={`px-3 py-1.5 rounded-lg text-[12px] font-medium transition-all ${
+                        className={`px-3 py-1.5 rounded-lg text-[13px] font-medium transition-all ${
                           customVideoQuantity === q ? 'bg-pink-start/30 text-white' : 'bg-white/[5%] text-white/40'
                         }`}>
                         {q}
@@ -827,11 +827,11 @@ export default function Generate() {
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <span className="text-[11px] text-white/40 shrink-0 w-20">Duration</span>
+                  <span className="text-[13px] text-white/40 shrink-0 w-20">Duration</span>
                   <div className="flex gap-1.5">
                     {[5, 6, 7, 8, 9, 10].map(d => (
                       <button key={d} onClick={() => setCustomVideoDuration(d)}
-                        className={`px-3 py-1.5 rounded-lg text-[12px] font-medium transition-all ${
+                        className={`px-3 py-1.5 rounded-lg text-[13px] font-medium transition-all ${
                           customVideoDuration === d ? 'bg-pink-start/30 text-white' : 'bg-white/[5%] text-white/40'
                         }`}>
                         {d}s
@@ -840,11 +840,11 @@ export default function Generate() {
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <span className="text-[11px] text-white/40 shrink-0 w-20">Aspect</span>
+                  <span className="text-[13px] text-white/40 shrink-0 w-20">Aspect</span>
                   <div className="flex gap-1.5">
                     {['9:16', '16:9', '1:1'].map(r => (
                       <button key={r} onClick={() => setCustomVideoAspect(r)}
-                        className={`px-3 py-1.5 rounded-lg text-[12px] font-medium transition-all ${
+                        className={`px-3 py-1.5 rounded-lg text-[13px] font-medium transition-all ${
                           customVideoAspect === r ? 'bg-pink-start/30 text-white' : 'bg-white/[5%] text-white/40'
                         }`}>
                         {r}
@@ -853,11 +853,11 @@ export default function Generate() {
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <span className="text-[11px] text-white/40 shrink-0 w-20">Resolution</span>
+                  <span className="text-[13px] text-white/40 shrink-0 w-20">Resolution</span>
                   <div className="flex gap-1.5">
                     {['480p', '720p', '1080p'].map(r => (
                       <button key={r} onClick={() => setCustomVideoResolution(r)}
-                        className={`px-3 py-1.5 rounded-lg text-[12px] font-medium transition-all ${
+                        className={`px-3 py-1.5 rounded-lg text-[13px] font-medium transition-all ${
                           customVideoResolution === r ? 'bg-pink-start/30 text-white' : 'bg-white/[5%] text-white/40'
                         }`}>
                         {r}
@@ -871,11 +871,11 @@ export default function Generate() {
             {mode === 'custom-image' && (
               <>
                 <div className="flex items-center gap-3">
-                  <span className="text-[11px] text-white/40 shrink-0 w-20">Quantity</span>
+                  <span className="text-[13px] text-white/40 shrink-0 w-20">Quantity</span>
                   <div className="flex gap-1.5">
                     {[1, 2, 4, 8].map(q => (
                       <button key={q} onClick={() => setCustomImageQuantity(q)}
-                        className={`px-3 py-1.5 rounded-lg text-[12px] font-medium transition-all ${
+                        className={`px-3 py-1.5 rounded-lg text-[13px] font-medium transition-all ${
                           customImageQuantity === q ? 'bg-pink-start/30 text-white' : 'bg-white/[5%] text-white/40'
                         }`}>
                         {q}
@@ -884,22 +884,22 @@ export default function Generate() {
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <span className="text-[11px] text-white/40 shrink-0 w-20">Aspect</span>
+                  <span className="text-[13px] text-white/40 shrink-0 w-20">Aspect</span>
                   <div className="flex gap-1.5">
                     {['9:16', '16:9', '3:4', '4:3', '1:1', '21:9'].map(r => (
-                      <button key={r}
-                        className="px-3 py-1.5 rounded-lg text-[12px] font-medium bg-white/[3%] text-white/20 cursor-not-allowed">
+                      <button key={r} onClick={() => setCustomImageAspect(r)}
+                        className={`px-3 py-1.5 rounded-lg text-[13px] font-medium transition-all ${customImageAspect === r ? 'bg-pink-start/30 text-white' : 'bg-white/[5%] text-white/50 hover:bg-white/[10%]'}`}>
                         {r}
                       </button>
                     ))}
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <span className="text-[11px] text-white/40 shrink-0 w-20">Resolution</span>
+                  <span className="text-[13px] text-white/40 shrink-0 w-20">Resolution</span>
                   <div className="flex gap-1.5">
                     {['480p', '720p', '1080p'].map(r => (
-                      <button key={r}
-                        className="px-3 py-1.5 rounded-lg text-[12px] font-medium bg-white/[3%] text-white/20 cursor-not-allowed">
+                      <button key={r} onClick={() => setCustomImageResolution(r)}
+                        className={`px-3 py-1.5 rounded-lg text-[13px] font-medium transition-all ${customImageResolution === r ? 'bg-pink-start/30 text-white' : 'bg-white/[5%] text-white/50 hover:bg-white/[10%]'}`}>
                         {r}
                       </button>
                     ))}
@@ -912,7 +912,7 @@ export default function Generate() {
             <div className="space-y-3">
               {/* 正面提示 */}
               <div className="space-y-1.5">
-                <label className="text-[11px] text-white/50 font-medium">
+                <label className="text-[13px] text-white/50 font-medium">
                   {mode === 'custom-video' ? 'Video Description' : 'Image Description'}
                 </label>
                 <textarea 
@@ -927,7 +927,7 @@ export default function Generate() {
               
               {/* 负面提示 */}
               <div className="space-y-1.5">
-                <label className="text-[11px] text-white/50 font-medium">
+                <label className="text-[13px] text-white/50 font-medium">
                   {mode === 'custom-video' ? 'What to Avoid (Video)' : 'What to Avoid (Image)'}
                 </label>
                 <textarea 
@@ -968,7 +968,7 @@ export default function Generate() {
                 </button>
               ) : (
                 <div className="w-1/3 py-3.5 rounded-2xl bg-white/[5%] border border-white/[8%] text-center backdrop-blur-sm">
-                  <span className="text-[12px] font-semibold text-white/40">
+                  <span className="text-[13px] font-semibold text-white/40">
                     {isModelMode ? 'Select Options' : 'Enter Description'}
                   </span>
                 </div>
